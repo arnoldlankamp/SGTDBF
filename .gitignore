@@ -1,0 +1,5 @@
+interface/bin
+util/bin
+parser/bin
+forest/bin
+test/bin
