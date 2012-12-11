@@ -10,8 +10,8 @@ public final class CharStackNode extends AbstractMatchableStackNode{
 	
 	private final AbstractNode result;
 	
-	public CharStackNode(int id, int dot, char character){
-		super(id, dot);
+	public CharStackNode(int id, boolean isEndNode, char character){
+		super(id, isEndNode);
 		
 		this.production = "["+character+"]";
 		

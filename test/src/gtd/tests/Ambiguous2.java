@@ -1,11 +1,10 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
 
 /*
 S ::= Aab | bab
@@ -13,48 +12,28 @@ A ::= B
 B ::= b
 */
 public class Ambiguous2 extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_A0 = new NonTerminalStackNode(0, 0, "A");
-	private final static AbstractStackNode NONTERMINAL_B1 = new NonTerminalStackNode(1, 0, "B");
-	private final static AbstractStackNode LITERAL_b2 = new LiteralStackNode(2, 0, new char[]{'b'});
-	private final static AbstractStackNode LITERALL_ab3 = new LiteralStackNode(3, 1, new char[]{'a','b'});
-	private final static AbstractStackNode LITERAL_bab4 = new LiteralStackNode(4, 0, new char[]{'b','a','b'});
 	
 	public Ambiguous2(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] S_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(NONTERMINAL_A0, LITERALL_ab3);
-		eb.addAlternative(LITERAL_bab4);
-		S_EXPECT = eb.buildExpectMatrix();
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Sort("A"), new Literal("ab")),
+			new Alternative(new Literal("bab"))
+		};
 	}
 	
-	public AbstractStackNode[] S(){
-		return S_EXPECT;
+	public Alternative[] A(){
+		return new Alternative[]{
+			new Alternative(new Sort("B"))
+		};
 	}
 	
-	private final static AbstractStackNode[] A_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(NONTERMINAL_B1);
-		A_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] A(){
-		return A_EXPECT;
-	}
-	
-	private final static AbstractStackNode[] B_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LITERAL_b2);
-		B_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] B(){
-		return B_EXPECT;
+	public Alternative[] B(){
+		return new Alternative[]{
+			new Alternative(new Literal("b"))
+		};
 	}
 	
 	public static void main(String[] args){

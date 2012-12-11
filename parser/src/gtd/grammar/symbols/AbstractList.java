@@ -25,7 +25,7 @@ public abstract class AbstractList extends AbstractSymbol{
 			nameBuilder.append(symbol.name);
 			nameBuilder.append(", ");
 			nameBuilder.append(separators[0].name);
-			for(int i = 0; i < separators.length; ++i){
+			for(int i = 1; i < separators.length; ++i){
 				nameBuilder.append(' ');
 				nameBuilder.append(separators[i].name);
 			}

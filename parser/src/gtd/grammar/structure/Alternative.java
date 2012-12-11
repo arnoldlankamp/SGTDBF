@@ -2,11 +2,15 @@ package gtd.grammar.structure;
 
 import gtd.grammar.symbols.AbstractSymbol;
 
-public class Alternative extends AbstractSymbol implements IStructure{
+public class Alternative{
+	public final String name;
+	
 	public final AbstractSymbol[] alternative;
 	
 	public Alternative(AbstractSymbol... alternative){
-		super(generateName(alternative));
+		super();
+		
+		this.name = generateName(alternative);
 		
 		this.alternative = alternative;
 	}

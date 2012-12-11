@@ -1,10 +1,9 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Char;
+import gtd.grammar.symbols.Sort;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -13,28 +12,16 @@ import java.lang.management.ThreadMXBean;
 S ::= aSa | a 
 */
 public class ASA extends SGTDBF{
-	private final static AbstractStackNode LITERAL_0 = new LiteralStackNode(0, 0, "a".toCharArray());
-	private final static AbstractStackNode NONTERMINAL_S1 = new NonTerminalStackNode(1, 1, "S");
-	private final static AbstractStackNode LITERAL_2 = new LiteralStackNode(2, 2, "a".toCharArray());
-
-	private final static AbstractStackNode LITERAL_3 = new LiteralStackNode(3, 0, "a".toCharArray());
 	
 	private ASA(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] SMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(LITERAL_0, NONTERMINAL_S1, LITERAL_2);
-		eb.addAlternative(LITERAL_3);
-		
-		SMatrix = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] S(){
-		return SMatrix;
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Char('a'), new Sort("S"), new Char('a')),
+			new Alternative(new Char('a'))
+		};
 	}
 	
 	private final static int ITERATIONS = 3;

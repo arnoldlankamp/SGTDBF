@@ -8,8 +8,8 @@ public final class CaseInsensitiveLiteralStackNode extends AbstractMatchableStac
 	
 	private final AbstractNode result;
 	
-	public CaseInsensitiveLiteralStackNode(int id, int dot, char[] ciLiteral){
-		super(id, dot);
+	public CaseInsensitiveLiteralStackNode(int id, boolean isEndNode, char[] ciLiteral){
+		super(id, isEndNode);
 		
 		int nrOfCharacters = ciLiteral.length;
 		this.ciLiteral = new char[nrOfCharacters][];

@@ -6,7 +6,7 @@ public class CharRange extends AbstractSymbol{
 	public final char to;
 	
 	public CharRange(char from, char to){
-		super(String.format("[%c - %c]", Character.valueOf(from), Character.valueOf(to)));
+		super(String.format("[%c-%c]", Character.valueOf(from), Character.valueOf(to)));
 		
 		this.from = from;
 		this.to = to;

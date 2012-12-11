@@ -8,8 +8,8 @@ public final class LiteralStackNode extends AbstractMatchableStackNode{
 	
 	private final LiteralNode result;
 	
-	public LiteralStackNode(int id, int dot, char[] literal){
-		super(id, dot);
+	public LiteralStackNode(int id, boolean isEndNode, char[] literal){
+		super(id, isEndNode);
 
 		this.literal = literal;
 		result = new LiteralNode(literal);

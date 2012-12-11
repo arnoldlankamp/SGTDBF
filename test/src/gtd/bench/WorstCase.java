@@ -1,11 +1,10 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.CharStackNode;
-import gtd.stack.EpsilonStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Char;
+import gtd.grammar.symbols.Epsilon;
+import gtd.grammar.symbols.Sort;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -14,30 +13,18 @@ import java.lang.management.ThreadMXBean;
 S ::= SSS | SS | a | epsilon
 */
 public class WorstCase extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_S0 = new NonTerminalStackNode(0, 0, "S");
-	private final static AbstractStackNode NONTERMINAL_S1 = new NonTerminalStackNode(1, 1, "S");
-	private final static AbstractStackNode NONTERMINAL_S2 = new NonTerminalStackNode(2, 2, "S");
-	private final static AbstractStackNode TERMINAL_a5 = new CharStackNode(5, 0, 'a');
-	private final static AbstractStackNode EP6 = new EpsilonStackNode(6, 0);
 	
 	public WorstCase(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] SMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(NONTERMINAL_S0, NONTERMINAL_S1);
-		eb.addAlternative(NONTERMINAL_S0, NONTERMINAL_S1, NONTERMINAL_S2);
-		eb.addAlternative(TERMINAL_a5);
-		eb.addAlternative(EP6);
-		
-		SMatrix = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] S(){
-		return SMatrix;
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Sort("S"), new Sort("S"), new Sort("S")),
+			new Alternative(new Sort("S"), new Sort("S")),
+			new Alternative(new Char('a')),
+			new Alternative(new Epsilon())
+		};
 	}
 	
 	private final static int ITERATIONS = 5;

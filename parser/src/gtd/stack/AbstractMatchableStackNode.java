@@ -4,8 +4,8 @@ import gtd.result.AbstractNode;
 
 public abstract class AbstractMatchableStackNode extends AbstractStackNode{
 	
-	protected AbstractMatchableStackNode(int id, int dot){
-		super(id, dot);
+	protected AbstractMatchableStackNode(int id, boolean isEndNode){
+		super(id, isEndNode);
 	}
 	
 	protected AbstractMatchableStackNode(AbstractMatchableStackNode original, int startLocation){

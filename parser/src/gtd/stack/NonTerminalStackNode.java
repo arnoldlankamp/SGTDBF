@@ -5,8 +5,8 @@ import gtd.result.AbstractNode;
 public final class NonTerminalStackNode extends AbstractStackNode{
 	private final String nonTerminal;
 	
-	public NonTerminalStackNode(int id, int dot, String nonTerminal){
-		super(id, dot);
+	public NonTerminalStackNode(int id, boolean isEndNode, String nonTerminal){
+		super(id, isEndNode);
 		
 		this.nonTerminal = nonTerminal;
 	}

@@ -13,15 +13,14 @@ public abstract class AbstractStackNode{
 	public final static int START_SYMBOL_ID = -1;
 	public final static int DEFAULT_START_LOCATION = -1;
 	
-	protected AbstractStackNode[] production;
-	protected AbstractStackNode[][] alternateProductions;
+	protected AbstractStackNode next;
+	protected AbstractStackNode[] alternateNexts;
 	protected IntegerObjectList<EdgesSet> edgesMap;
 	protected ArrayList<Link>[] prefixesMap;
 	
 	protected EdgesSet incomingEdges;
 	
 	protected final int id;
-	protected final int dot;
 	
 	protected final int startLocation;
 	
@@ -32,11 +31,12 @@ public abstract class AbstractStackNode{
 	private BitSet propagatedPrefixes;
 	private IntegerList propagatedReductions;
 	
-	protected AbstractStackNode(int id, int dot){
+	protected AbstractStackNode(int id, boolean isEndNode){
 		super();
 		
 		this.id = id;
-		this.dot = dot;
+		
+		this.isEndNode = isEndNode;
 		
 		startLocation = DEFAULT_START_LOCATION;
 	}
@@ -45,10 +45,9 @@ public abstract class AbstractStackNode{
 		super();
 		
 		id = original.id;
-		dot = original.dot;
 		
-		production = original.production;
-		alternateProductions = original.alternateProductions;
+		next = original.next;
+		alternateNexts = original.alternateNexts;
 		
 		this.isEndNode = original.isEndNode;
 		this.isSeparator = original.isSeparator;
@@ -59,10 +58,6 @@ public abstract class AbstractStackNode{
 	// General.
 	public int getId(){
 		return id;
-	}
-	
-	public void markAsEndNode(){
-		isEndNode = true;
 	}
 	
 	public boolean isEndNode(){
@@ -107,40 +102,32 @@ public abstract class AbstractStackNode{
 	}
 	
 	// Linking & prefixes.
-	public int getDot(){
-		return dot;
-	}
-	
-	public void setProduction(AbstractStackNode[] production){
-		this.production = production;
-	}
-	
-	public void addProduction(AbstractStackNode[] production){
-		if(this.production == null){
-			this.production = production;
+	public void addNext(AbstractStackNode next){
+		if(this.next == null){
+			this.next = next;
 		}else{
-			if(alternateProductions == null){
-				alternateProductions = new AbstractStackNode[][]{production};
+			if(alternateNexts == null){
+				alternateNexts = new AbstractStackNode[]{next};
 			}else{
-				int nrOfAlternateProductions = alternateProductions.length;
-				AbstractStackNode[][] newAlternateProductions = new AbstractStackNode[nrOfAlternateProductions + 1][];
-				System.arraycopy(alternateProductions, 0, newAlternateProductions, 0, nrOfAlternateProductions);
-				newAlternateProductions[nrOfAlternateProductions] = production;
-				alternateProductions = newAlternateProductions;
+				int nrOfAlternateNexts = alternateNexts.length;
+				AbstractStackNode[] newAlternateNexts = new AbstractStackNode[nrOfAlternateNexts + 1];
+				System.arraycopy(alternateNexts, 0, newAlternateNexts, 0, nrOfAlternateNexts);
+				newAlternateNexts[nrOfAlternateNexts] = next;
+				alternateNexts = newAlternateNexts;
 			}
 		}
 	}
 	
 	public boolean hasNext(){
-		return ((dot + 1) < production.length);
+		return (next != null);
 	}
 	
-	public AbstractStackNode[] getProduction(){
-		return production;
+	public AbstractStackNode getNext(){
+		return next;
 	}
 	
-	public AbstractStackNode[][] getAlternateProductions(){
-		return alternateProductions;
+	public AbstractStackNode[] getAlternateNexts(){
+		return alternateNexts;
 	}
 	
 	public void initEdges(){

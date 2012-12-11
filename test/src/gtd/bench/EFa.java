@@ -1,10 +1,9 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.CharStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Char;
+import gtd.grammar.symbols.Sort;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -15,61 +14,29 @@ E ::= E + F | F
 F ::= a | ( E )
 */
 public class EFa extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_E0 = new NonTerminalStackNode(0, 0, "E");
-	
-	private final static AbstractStackNode NONTERMINAL_E1 = new NonTerminalStackNode(1, 0, "E");
-	private final static AbstractStackNode LITERAL_2 = new CharStackNode(2, 1, '+');
-	private final static AbstractStackNode NONTERMINAL_F3 = new NonTerminalStackNode(3, 2, "F");
-	private final static AbstractStackNode NONTERMINAL_F4 = new NonTerminalStackNode(4, 0, "F");
-	
-	private final static AbstractStackNode LITERAL_5 = new CharStackNode(5, 0, 'a');
-	private final static AbstractStackNode LITERAL_6 = new CharStackNode(6, 0, '(');
-	private final static AbstractStackNode NONTERMINAL_E7 = new NonTerminalStackNode(7, 1, "E");
-	private final static AbstractStackNode LITERAL_8 = new CharStackNode(8, 2, ')');
 	
 	private EFa(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] SMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(NONTERMINAL_E0);
-		
-		SMatrix = eb.buildExpectMatrix();
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Sort("E"))
+		};
 	}
 	
-	public AbstractStackNode[] S(){
-		return SMatrix;
+	public Alternative[] E(){
+		return new Alternative[]{
+			new Alternative(new Sort("E"), new Char('+'), new Sort("F")),
+			new Alternative(new Sort("F"))
+		};
 	}
 	
-	private final static AbstractStackNode[] EMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(NONTERMINAL_E1, LITERAL_2, NONTERMINAL_F3);
-		eb.addAlternative(NONTERMINAL_F4);
-		
-		EMatrix = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] E(){
-		return EMatrix;
-	}
-	
-	private final static AbstractStackNode[] FMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(LITERAL_5);
-		eb.addAlternative(LITERAL_6, NONTERMINAL_E7, LITERAL_8);
-		
-		FMatrix = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] F(){
-		return FMatrix;
+	public Alternative[] F(){
+		return new Alternative[]{
+			new Alternative(new Char('a')),
+			new Alternative(new Char('('), new Sort("E"), new Char(')'))
+		};
 	}
 	
 	private final static int ITERATIONS = 3;

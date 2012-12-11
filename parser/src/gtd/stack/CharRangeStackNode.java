@@ -10,8 +10,8 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	
 	private final AbstractNode result;
 	
-	public CharRangeStackNode(int id, int dot, String production, char[][] ranges){
-		super(id, dot);
+	public CharRangeStackNode(int id, boolean isEndNode, String production, char[][] ranges){
+		super(id, isEndNode);
 		
 		this.production = production;
 

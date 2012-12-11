@@ -4,10 +4,10 @@ import gtd.result.AbstractNode;
 
 public abstract class AbstractExpandableStackNode extends AbstractStackNode{
 	public final static int DEFAULT_LIST_EPSILON_ID = -2;
-	public final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, 0);
+	public final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, true);
 	
-	protected AbstractExpandableStackNode(int id, int dot){
-		super(id, dot);
+	protected AbstractExpandableStackNode(int id, boolean isEndNode){
+		super(id, isEndNode);
 	}
 	
 	protected AbstractExpandableStackNode(AbstractExpandableStackNode original, int startLocation){

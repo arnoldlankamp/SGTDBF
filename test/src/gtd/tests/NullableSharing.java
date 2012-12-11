@@ -1,11 +1,10 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Epsilon;
+import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.EpsilonStackNode;
-import gtd.stack.NonTerminalStackNode;
 
 /*
 * S ::= N N
@@ -13,46 +12,27 @@ import gtd.stack.NonTerminalStackNode;
 * A ::= epsilon
 */
 public class NullableSharing extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_A0 = new NonTerminalStackNode(0, 0, "A");
-	private final static AbstractStackNode NONTERMINAL_N1 = new NonTerminalStackNode(1, 0, "N");
-	private final static AbstractStackNode NONTERMINAL_N2 = new NonTerminalStackNode(2, 1, "N");
-	private final static AbstractStackNode EPSILON3 = new EpsilonStackNode(3, 0);
 	
 	public NullableSharing(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] S_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(NONTERMINAL_N1, NONTERMINAL_N2);
-		S_EXPECT = eb.buildExpectMatrix();
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Sort("N"), new Sort("N"))
+		};
 	}
 	
-	public AbstractStackNode[] S(){
-		return S_EXPECT;
+	public Alternative[] N(){
+		return new Alternative[]{
+			new Alternative(new Sort("A"))
+		};
 	}
 	
-	private final static AbstractStackNode[] A_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(EPSILON3);
-		A_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] A(){
-		return A_EXPECT;
-	}
-	
-	private final static AbstractStackNode[] N_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(NONTERMINAL_A0);
-		N_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] N(){
-		return N_EXPECT;
+	public Alternative[] A(){
+		return new Alternative[]{
+			new Alternative(new Epsilon())
+		};
 	}
 	
 	public static void main(String[] args){

@@ -1,38 +1,27 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Sort;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
-public class ASbc extends SGTDBF{
-	private final static AbstractStackNode LITERAL_0 = new LiteralStackNode(0, 0, "a".toCharArray());
-	private final static AbstractStackNode NONTERMINAL_S1 = new NonTerminalStackNode(1, 1, "S");
-	private final static AbstractStackNode LITERAL_2 = new LiteralStackNode(2, 2, "b".toCharArray());
-	private final static AbstractStackNode LITERAL_3 = new LiteralStackNode(3, 2, "c".toCharArray());
-	private final static AbstractStackNode LITERAL_4 = new LiteralStackNode(4, 0, "a".toCharArray());
+/*
+S ::= aSb | a 
+*/
+public class ASb extends SGTDBF{
 	
-	private ASbc(char[] input){
+	private ASb(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] SMatrix;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		
-		eb.addAlternative(LITERAL_0, NONTERMINAL_S1, LITERAL_2);
-		eb.addAlternative(LITERAL_0, NONTERMINAL_S1, LITERAL_3);
-		eb.addAlternative(LITERAL_4);
-		
-		SMatrix = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] S(){
-		return SMatrix;
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Literal("a"), new Sort("S"), new Literal("b")),
+			new Alternative(new Literal("a"))
+		};
 	}
 	
 	private final static int ITERATIONS = 3;
@@ -45,6 +34,7 @@ public class ASbc extends SGTDBF{
 		for(int i = (size / 2); i >= 0; --i){
 			input[i] = 'a';
 		}
+		
 		
 		return input;
 	}
@@ -67,8 +57,8 @@ public class ASbc extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			ASbc aSbc = new ASbc(input);
-			aSbc.parse("S");
+			ASb aSb = new ASb(input);
+			aSb.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
 			long time = (end - start) / 1000000;
@@ -83,8 +73,8 @@ public class ASbc extends SGTDBF{
 		char[] input = createInput(5);
 		
 		for(int i = 9999; i >= 0; --i){
-			ASbc aSbc = new ASbc(input);
-			aSbc.parse("S");
+			ASb aSb = new ASb(input);
+			aSb.parse("S");
 		}
 		
 		// The benchmarks.

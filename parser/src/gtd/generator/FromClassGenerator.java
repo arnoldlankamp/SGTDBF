@@ -1,7 +1,6 @@
 package gtd.generator;
 
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Sort;
 import gtd.stack.AbstractStackNode;
 import gtd.util.HashMap;
 
@@ -10,12 +9,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class FromClassGenerator{
-	private final Class<?> clazz;
+	private final Object parserInstance;
 	
-	public FromClassGenerator(Class<?> clazz){
+	public FromClassGenerator(Object parserInstance){
 		super();
 		
-		this.clazz = clazz;
+		this.parserInstance = parserInstance;
 	}
 	
 	public HashMap<String, AbstractStackNode[]> generate(){
@@ -23,15 +22,14 @@ public class FromClassGenerator{
 		
 		int idCounter = 1;
 		
-		Method[] methods = clazz.getMethods();
+		Method[] methods = parserInstance.getClass().getMethods();
 		for(int i = methods.length - 1; i >= 0; --i){
 			Method method = methods[i];
 			
 			if(method.getReturnType() == Alternative[].class &&
-					(method.getModifiers() & Modifier.STATIC) == Modifier.STATIC &&
 					(method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC){
 				try{
-					Alternative[] alternatives = (Alternative[]) method.invoke(null);
+					Alternative[] alternatives = (Alternative[]) method.invoke(parserInstance);
 					Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
 					AbstractStackNode[] expects = alternativesProcessor.buildExpects();
 					expectMatrix.put(method.getName(), expects);
@@ -39,29 +37,13 @@ public class FromClassGenerator{
 				}catch(IllegalAccessException ex){
 					throw new RuntimeException(ex); // Should never happen
 				}catch(InvocationTargetException ex){
-					throw new RuntimeException("Unable to invoke method: " + method.getName() + " on class: " + clazz.getName(), ex);
+					throw new RuntimeException("Unable to invoke method: " + method.getName() + " on class: " + parserInstance.getClass().getName(), ex);
+				}catch(EmptyAlternativeException ex){
+					throw new RuntimeException(String.format("Encountered an empty alternative in: %s.", method.getName()), ex);
 				}
 			}
 		}
 		
 		return expectMatrix;
-	}
-	
-	// Temp (for testing only)
-	private static class TestParser{
-		public static Alternative[] S(){
-			return new Alternative[]{
-					new Alternative(new Sort("A"), new Sort("B")),
-					new Alternative(new Sort("C")),
-					new Alternative(new Sort("C"), new Sort("D"))
-					};
-		}
-	}
-	
-	public static void main(String[] args){
-		FromClassGenerator generator = new FromClassGenerator(TestParser.class);
-		HashMap<String, AbstractStackNode[]> expectMatrix = generator.generate();
-		System.out.println(expectMatrix.containsKey("S"));
-		System.out.println(expectMatrix.get("S").length);
 	}
 }

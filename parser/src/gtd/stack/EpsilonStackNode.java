@@ -6,8 +6,8 @@ import gtd.result.EpsilonNode;
 public final class EpsilonStackNode extends AbstractMatchableStackNode{
 	private final static EpsilonNode result = new EpsilonNode();
 	
-	public EpsilonStackNode(int id, int dot){
-		super(id, dot);
+	public EpsilonStackNode(int id, boolean isEndNode){
+		super(id, isEndNode);
 	}
 	
 	private EpsilonStackNode(EpsilonStackNode original, int startLocation){

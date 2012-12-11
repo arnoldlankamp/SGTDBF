@@ -2,15 +2,13 @@ package gtd.stack;
 
 
 public final class SeparatedListStackNode extends AbstractExpandableStackNode{
-	private final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, 0);
-	
 	private final String nodeName;
 
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public SeparatedListStackNode(int id, int dot, AbstractStackNode child, AbstractStackNode[] separators, String nodeName, boolean isPlusList){
-		super(id, dot);
+	public SeparatedListStackNode(int id, boolean isEndNode, AbstractStackNode child, AbstractStackNode[] separators, String nodeName, boolean isPlusList){
+		super(id, isEndNode);
 		
 		this.nodeName = nodeName;
 		
@@ -29,30 +27,20 @@ public final class SeparatedListStackNode extends AbstractExpandableStackNode{
 	
 	private static AbstractStackNode[] generateChildren(AbstractStackNode child,  AbstractStackNode[] separators){
 		AbstractStackNode listNode = child.getCleanCopy(DEFAULT_START_LOCATION);
-		listNode.markAsEndNode();
 		
-		int numberOfSeparators = separators.length;
-		AbstractStackNode[] prod = new AbstractStackNode[numberOfSeparators + 2];
-		
-		listNode.setProduction(prod);
-		prod[0] = listNode; // Start
-		for(int i = numberOfSeparators - 1; i >= 0; --i){
+		AbstractStackNode previous = listNode;
+		for(int i = 0; i < separators.length; ++i){
 			AbstractStackNode separator = separators[i];
-			separator.setProduction(prod);
-			separator.markAsSeparator();
-			prod[i + 1] = separator;
+			previous.addNext(separator);
+			previous = separator;
 		}
-		prod[numberOfSeparators + 1] = listNode; // End
+		previous.addNext(listNode);
 		
 		return new AbstractStackNode[]{listNode};
 	}
 	
 	private static AbstractStackNode generateEmptyChild(){
-		AbstractStackNode empty = EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
-		empty.setProduction(new AbstractStackNode[]{empty});
-		empty.markAsEndNode();
-		
-		return empty;
+		return EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
 	}
 	
 	public String getName(){

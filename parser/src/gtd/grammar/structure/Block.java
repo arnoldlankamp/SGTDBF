@@ -1,7 +1,7 @@
 package gtd.grammar.structure;
 
 
-public class Block implements IStructure{
+public class Block{
 	public final Alternative[] alternatives;
 	
 	public Block(Alternative... alternatives){

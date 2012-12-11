@@ -1,7 +1,6 @@
 package gtd.generator;
 
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.structure.Sequence;
 import gtd.grammar.symbols.AbstractSymbol;
 import gtd.grammar.symbols.CILiteral;
 import gtd.grammar.symbols.Char;
@@ -24,7 +23,6 @@ import gtd.stack.NonTerminalStackNode;
 import gtd.stack.OptionalStackNode;
 import gtd.stack.SeparatedListStackNode;
 import gtd.util.ArrayList;
-import gtd.util.BackwardLink;
 import gtd.util.MarkableForwardSplittingLink;
 import gtd.util.SortedIntegerObjectList;
 
@@ -75,20 +73,20 @@ public class Preprocessor{
 		return null;
 	}
 	
-	private AbstractStackNode buildStackNode(AbstractSymbol symbol, int position){
+	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode){
 		if(symbol instanceof Sort){
-			return new NonTerminalStackNode(++idCounter, position, ((Sort) symbol).sortName);
+			return new NonTerminalStackNode(++idCounter, endNode, ((Sort) symbol).sortName);
 		}else if(symbol instanceof Epsilon){
-			return new EpsilonStackNode(++idCounter, position);
+			return new EpsilonStackNode(++idCounter, endNode);
 		}else if(symbol instanceof Char){
-			return new CharStackNode(++idCounter, position, ((Char) symbol).character);
+			return new CharStackNode(++idCounter, endNode, ((Char) symbol).character);
 		}else if(symbol instanceof CharRange){
 			CharRange charRange = (CharRange) symbol;
 			char[][] ranges = new char[1][];
 			ranges[0] = new char[2];
 			ranges[0][0] = charRange.from;
 			ranges[0][1] = charRange.to;
-			return new CharRangeStackNode(++idCounter, position, charRange.name, ranges);
+			return new CharRangeStackNode(++idCounter, endNode, charRange.name, ranges);
 		}else if(symbol instanceof CharRanges){
 			CharRanges charRanges = (CharRanges) symbol;
 			CharRange[] charRangesArray = charRanges.charRanges;
@@ -100,149 +98,72 @@ public class Preprocessor{
 				ranges[i][0] = charRange.from;
 				ranges[i][1] = charRange.to;
 			}
-			return new CharRangeStackNode(++idCounter, position, charRanges.name, ranges);
+			return new CharRangeStackNode(++idCounter, endNode, charRanges.name, ranges);
 		}else if(symbol instanceof Literal){
-			return new LiteralStackNode(++idCounter, position, ((Literal) symbol).literal.toCharArray());
+			return new LiteralStackNode(++idCounter, endNode, ((Literal) symbol).literal.toCharArray());
 		}else if(symbol instanceof CILiteral){
-			return new CaseInsensitiveLiteralStackNode(++idCounter, position, ((CILiteral) symbol).literal.toCharArray());
+			return new CaseInsensitiveLiteralStackNode(++idCounter, endNode, ((CILiteral) symbol).literal.toCharArray());
 		}else if(symbol instanceof Optional){
 			Optional optional = (Optional) symbol;
-			AbstractStackNode child = buildStackNode(optional.symbol, 0);
-			return new OptionalStackNode(++idCounter, position, child, optional.name);
+			AbstractStackNode child = buildStackNode(optional.symbol, true);
+			return new OptionalStackNode(++idCounter, endNode, child, optional.name);
 		}else if(symbol instanceof PlusList){
 			PlusList plusList = (PlusList) symbol;
-			AbstractStackNode child = buildStackNode(plusList.symbol, 0);
+			AbstractStackNode child = buildStackNode(plusList.symbol, true);
 			AbstractSymbol[] separatorSymbols = plusList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
-				return new ListStackNode(++idCounter, position, child, plusList.name, true);
+				return new ListStackNode(++idCounter, endNode, child, plusList.name, true);
 			}
 			
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], i + 1);
+				separators[i] = buildStackNode(separatorSymbols[i], false);
 				separators[i].markAsSeparator();
 			}
 			
-			return new SeparatedListStackNode(++idCounter, position, child, separators, plusList.name, true);
+			return new SeparatedListStackNode(++idCounter, endNode, child, separators, plusList.name, true);
 		}else if(symbol instanceof StarList){
 			StarList starList = (StarList) symbol;
-			AbstractStackNode child = buildStackNode(starList.symbol, 0);
+			AbstractStackNode child = buildStackNode(starList.symbol, true);
 			AbstractSymbol[] separatorSymbols = starList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
-				return new ListStackNode(++idCounter, position, child, starList.name, false);
+				return new ListStackNode(++idCounter, endNode, child, starList.name, false);
 			}
 			
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], i + 1);
+				separators[i] = buildStackNode(separatorSymbols[i], false);
 				separators[i].markAsSeparator();
 			}
 			
-			return new SeparatedListStackNode(++idCounter, position, child, separators, starList.name, false);
-		}else if(symbol instanceof Sequence){
-			throw new RuntimeException("Sequence symbols are currently unsupported");
-		}else if(symbol instanceof Alternative){
-			throw new RuntimeException("Alternative symbols are currently unsupported");
+			return new SeparatedListStackNode(++idCounter, endNode, child, separators, starList.name, false);
 		}else{
 			throw new RuntimeException(String.format("Unsupported symbol type: %s", symbol.getClass().toString()));
 		}
 	}
 	
-	private void gatherPrefixSharedAlternatives(AbstractStackNode[] sharedPrefix, MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot, BackwardLink<AbstractStackNode> alternativePrefix, ArrayList<AbstractStackNode> alternativeFirstNodes, int position){
-		AbstractStackNode stackNode = buildStackNode(alternativeTreeRoot.element, position);
-		
-		if(alternativeTreeRoot.mark) stackNode.markAsEndNode(); // TODO Make constructor arg and move
-		
-		ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> alternativeTreeRootContinuations = alternativeTreeRoot.nexts;
-		int numberOfAlternativeTreeRootContinuations = alternativeTreeRootContinuations.size();
-		if(numberOfAlternativeTreeRootContinuations > 0){
-			BackwardLink<AbstractStackNode> alternativeChain = new BackwardLink<AbstractStackNode>(alternativePrefix, stackNode);
-			
-			int nextPosition = position + 1;
-			
-			gatherAlternatives(alternativeTreeRootContinuations.get(0), alternativeChain, alternativeFirstNodes, nextPosition);
-			
-			if(numberOfAlternativeTreeRootContinuations > 1){
-				AbstractStackNode[] sharedSubPrefix = new AbstractStackNode[position + 1];
-				AbstractStackNode[] sharedSubProduction = alternativeFirstNodes.get(alternativeFirstNodes.size() - 1).getProduction();
-				System.arraycopy(sharedSubProduction, 0, sharedSubPrefix, 0, position + 1);
-				
-				for(int i = numberOfAlternativeTreeRootContinuations - 1; i >= 1; --i){
-					gatherPrefixSharedAlternatives(sharedSubPrefix, alternativeTreeRootContinuations.get(i), alternativeChain, alternativeFirstNodes, nextPosition);
-				}
-			}
-		}else{
-			AbstractStackNode[] production = new AbstractStackNode[position + 1];
-			System.arraycopy(sharedPrefix, 0, production, 0, sharedPrefix.length);
-			
-			BackwardLink<AbstractStackNode> symbolLink = alternativePrefix;
-			production[position] = stackNode;
-			stackNode.setProduction(production);
-			for(int i = position - 1; i >= sharedPrefix.length; --i){
-				AbstractStackNode node = symbolLink.element;
-				production[i] = node;
-				node.setProduction(production);
-				
-				symbolLink = symbolLink.previous;
-			}
-			
-			sharedPrefix[sharedPrefix.length - 1].addProduction(production);
-		}
-	}
-	
-	private void gatherAlternatives(MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot, BackwardLink<AbstractStackNode> alternativePrefix, ArrayList<AbstractStackNode> alternativeFirstNodes, int position){
-		AbstractStackNode stackNode = buildStackNode(alternativeTreeRoot.element, position);
-		
-		if(alternativeTreeRoot.mark) stackNode.markAsEndNode(); // TODO Make constructor arg and move
-		
-		ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> alternativeTreeRootContinuations = alternativeTreeRoot.nexts;
-		int numberOfAlternativeTreeRootContinuations = alternativeTreeRootContinuations.size();
-		if(numberOfAlternativeTreeRootContinuations > 0){
-			BackwardLink<AbstractStackNode> alternativeChain = new BackwardLink<AbstractStackNode>(alternativePrefix, stackNode);
-			
-			int nextPosition = position + 1;
-			
-			gatherAlternatives(alternativeTreeRootContinuations.get(0), alternativeChain, alternativeFirstNodes, nextPosition);
-			
-			if(numberOfAlternativeTreeRootContinuations > 1){
-				AbstractStackNode[] sharedPrefix = new AbstractStackNode[position + 1];
-				AbstractStackNode[] sharedProduction = alternativeFirstNodes.get(alternativeFirstNodes.size() - 1).getProduction();
-				System.arraycopy(sharedProduction, 0, sharedPrefix, 0, position + 1);
-				
-				for(int i = numberOfAlternativeTreeRootContinuations - 1; i >= 1; --i){
-					gatherPrefixSharedAlternatives(sharedPrefix, alternativeTreeRootContinuations.get(i), alternativeChain, alternativeFirstNodes, nextPosition);
-				}
-			}
-		}else{
-			AbstractStackNode[] production = new AbstractStackNode[position + 1];
-			BackwardLink<AbstractStackNode> symbolLink = alternativePrefix;
-			production[position] = stackNode;
-			stackNode.setProduction(production);
-			for(int i = position - 1; i >= 0; --i){
-				AbstractStackNode node = symbolLink.element;
-				production[i] = node;
-				node.setProduction(production);
-				
-				symbolLink = symbolLink.previous;
-			}
-			
-			alternativeFirstNodes.add(production[0]);
+	private void addContinuations(AbstractStackNode node, ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> continuations){
+		for(int i = continuations.size() - 1; i >= 0; --i){
+			MarkableForwardSplittingLink<AbstractSymbol> continuation = continuations.get(i);
+			AbstractStackNode nextNode = buildStackNode(continuation.element, continuation.mark);
+			node.addNext(nextNode);
+			addContinuations(nextNode, continuation.nexts);
 		}
 	}
 	
 	private AbstractStackNode[] transformToStackNodes(ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree){
-		ArrayList<AbstractStackNode> alternativeFirstNodes = new ArrayList<AbstractStackNode>();
-		for(int i = expectTree.size() - 1; i >= 0; --i){
-			MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot = expectTree.get(i);
-			gatherAlternatives(alternativeTreeRoot, null, alternativeFirstNodes, 0);
-		}
+		int numberOfExpects = expectTree.size();
+		AbstractStackNode[] expects = new AbstractStackNode[numberOfExpects];
 		
-		Object[] alternativeFirstNodesBackingArray = alternativeFirstNodes.getBackingArray();
-		int numberOfAlternativeFirstNodes = alternativeFirstNodes.size();
-		AbstractStackNode[] expects = new AbstractStackNode[numberOfAlternativeFirstNodes];
-		System.arraycopy(alternativeFirstNodesBackingArray, 0, expects, 0, numberOfAlternativeFirstNodes);
+		for(int i = numberOfExpects - 1; i >= 0; --i){
+			MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot = expectTree.get(i);
+			AbstractStackNode node = buildStackNode(alternativeTreeRoot.element, alternativeTreeRoot.mark);
+			addContinuations(node, alternativeTreeRoot.nexts);
+			
+			expects[i] = node;
+		}
 		
 		return expects;
 	}
@@ -250,13 +171,16 @@ public class Preprocessor{
 	private static ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> calculateSharing(SortedIntegerObjectList<ArrayList<Alternative>> sortedAlternatives){
 		ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree = new ArrayList<MarkableForwardSplittingLink<AbstractSymbol>>();
 		
-		for(int i = sortedAlternatives.size() -1; i >= 0; --i){
+		for(int i = sortedAlternatives.size() - 1; i >= 0; --i){
 			ArrayList<Alternative> alternativesList = sortedAlternatives.getValue(i);
 			
 			for(int j = alternativesList.size() - 1; j >= 0; --j){
 				Alternative alternative = alternativesList.get(j);
 				
 				AbstractSymbol[] symbols = alternative.alternative;
+				if(symbols.length == 0){
+					throw new EmptyAlternativeException();
+				}
 				
 				AbstractSymbol firstSymbol = symbols[0];
 				MarkableForwardSplittingLink<AbstractSymbol> sharedLink = shareSymbol(firstSymbol, expectTree);

@@ -1,5 +1,6 @@
 package gtd;
 
+import gtd.generator.FromClassGenerator;
 import gtd.result.AbstractContainerNode;
 import gtd.result.AbstractNode;
 import gtd.result.ListContainerNode;
@@ -18,8 +19,6 @@ import gtd.util.IntegerList;
 import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
 
-import java.lang.reflect.Method;
-
 @SuppressWarnings({"unchecked", "cast"})
 public class SGTDBF implements IGTD{
 	protected final char[] input;
@@ -36,7 +35,7 @@ public class SGTDBF implements IGTD{
 	
 	protected int location;
 	
-	private final HashMap<String, AbstractStackNode[]> expectCache;
+	private final HashMap<String, AbstractStackNode[]> expectMatrix;
 	
 	public SGTDBF(char[] input){
 		super();
@@ -54,30 +53,9 @@ public class SGTDBF implements IGTD{
 		sharedNextNodes = new EntryReturningIntegerKeyedHashMap<AbstractStackNode>();
 		
 		location = 0;
-		
-		expectCache = new HashMap<String, AbstractStackNode[]>();
-	}
-	
-	protected AbstractStackNode[] invokeExpects(String name){
-		AbstractStackNode[] expects = expectCache.get(name);
-		if(expects == null){
-			try{
-				Method method = getClass().getMethod(name);
-				try{
-					method.setAccessible(true); // Try to bypass the 'isAccessible' check to save time.
-				}catch(SecurityException sex){
-					// Ignore this if it happens.
-				}
-				
-				expects = (AbstractStackNode[]) method.invoke(this);
-			}catch(Exception ex){
-				// Not going to happen.
-				throw new RuntimeException(ex);
-			}
-			expectCache.putUnsafe(name, expects);
-		}
-		
-		return expects;
+
+		FromClassGenerator generator = new FromClassGenerator(this);
+		expectMatrix = generator.generate();
 	}
 	
 	private AbstractStackNode updateNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result){
@@ -225,9 +203,7 @@ public class SGTDBF implements IGTD{
 	
 	private void propagatePrefixes(AbstractStackNode next, AbstractNode nextResult, int nrOfAddedEdges){
 		// Proceed with the tail of the production.
-		int nextDot = next.getDot() + 1;
-		AbstractStackNode[] prod = next.getProduction();
-		AbstractStackNode nextNext = prod[nextDot];
+		AbstractStackNode nextNext = next.getNext();
 		Entry<AbstractStackNode> nextNextAlternativeEntry = sharedNextNodes.get(nextNext.getId());
 		AbstractStackNode nextNextAlternative = null;
 		if(nextNextAlternativeEntry != null){
@@ -251,8 +227,8 @@ public class SGTDBF implements IGTD{
 		}
 		
 		// Handle alternative nexts (and prefix sharing).
-		AbstractStackNode[][] alternateProds = next.getAlternateProductions();
-		if(alternateProds != null){
+		AbstractStackNode[] alternateNexts = next.getAlternateNexts();
+		if(alternateNexts != null){
 			if(nextNextAlternative == null){ // If the first continuation has not been initialized yet (it may be a matchable that didn't match), create a dummy version to construct the necessary edges and prefixes.
 				if(!nextNext.isMatchable()) return; // Matchable, abort.
 				nextNextAlternative = nextNext.getCleanCopy(location);
@@ -262,10 +238,8 @@ public class SGTDBF implements IGTD{
 			IntegerObjectList<EdgesSet> nextNextEdgesMap = nextNextAlternative.getEdges();
 			ArrayList<Link>[] nextNextPrefixesMap = nextNextAlternative.getPrefixesMap();
 			
-			for(int i = alternateProds.length - 1; i >= 0; --i){
-				prod = alternateProds[i];
-				if(nextDot == prod.length) continue;
-				AbstractStackNode alternativeNext = prod[nextDot];
+			for(int i = alternateNexts.length - 1; i >= 0; --i){
+				AbstractStackNode alternativeNext = alternateNexts[i];
 				
 				Entry<AbstractStackNode> nextNextAltAlternativeEntry = sharedNextNodes.get(alternativeNext.getId());
 				if(nextNextAltAlternativeEntry != null){
@@ -386,16 +360,12 @@ public class SGTDBF implements IGTD{
 	}
 	
 	private void moveToNext(AbstractStackNode node, AbstractNode result){
-		int nextDot = node.getDot() + 1;
-
-		AbstractStackNode[] prod = node.getProduction();
-		AbstractStackNode newNext = prod[nextDot];
-		newNext.setProduction(prod);
+		AbstractStackNode newNext = node.getNext();
 		AbstractStackNode next = updateNextNode(newNext, node, result);
 		
 		// Handle alternative nexts (and prefix sharing).
-		AbstractStackNode[][] alternateProds = node.getAlternateProductions();
-		if(alternateProds != null){
+		AbstractStackNode[] alternateNexts = node.getAlternateNexts();
+		if(alternateNexts != null){
 			IntegerObjectList<EdgesSet> edgesMap = null;
 			ArrayList<Link>[] prefixesMap = null;
 			if(next != null){
@@ -403,10 +373,8 @@ public class SGTDBF implements IGTD{
 				prefixesMap = next.getPrefixesMap();
 			}
 			
-			for(int i = alternateProds.length - 1; i >= 0; --i){
-				prod = alternateProds[i];
-				if(nextDot == prod.length) continue;
-				AbstractStackNode newAlternativeNext = prod[nextDot];
+			for(int i = alternateNexts.length - 1; i >= 0; --i){
+				AbstractStackNode newAlternativeNext = alternateNexts[i];
 				
 				if(edgesMap != null){
 					updateAlternativeNextNode(newAlternativeNext, node, result, edgesMap, prefixesMap);
@@ -521,7 +489,7 @@ public class SGTDBF implements IGTD{
 				
 				cachedEdgesForExpect.put(node.getName(), cachedEdges);
 				
-				AbstractStackNode[] expects = invokeExpects(node.getMethodName());
+				AbstractStackNode[] expects = expectMatrix.get(node.getMethodName());
 				if(expects == null) return;
 				
 				handleExpects(cachedEdges, expects);
@@ -625,9 +593,9 @@ public class SGTDBF implements IGTD{
 	}
 	
 	public AbstractNode parse(String start){
+		
 		// Initialize.
-		AbstractStackNode rootNode = new NonTerminalStackNode(AbstractStackNode.START_SYMBOL_ID, 0, start);
-		rootNode.setProduction(new AbstractStackNode[]{rootNode});
+		AbstractStackNode rootNode = new NonTerminalStackNode(AbstractStackNode.START_SYMBOL_ID, true, start);
 		rootNode = rootNode.getCleanCopy(0);
 		rootNode.initEdges();
 		

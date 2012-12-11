@@ -2,15 +2,13 @@ package gtd.stack;
 
 
 public final class OptionalStackNode extends AbstractExpandableStackNode{
-	private final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, 0);
-	
 	private final String nodeName;
 	
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public OptionalStackNode(int id, int dot, AbstractStackNode optional, String nodeName){
-		super(id, dot);
+	public OptionalStackNode(int id, boolean isEndNode, AbstractStackNode optional, String nodeName){
+		super(id, isEndNode);
 		
 		this.nodeName = nodeName;
 		
@@ -29,18 +27,12 @@ public final class OptionalStackNode extends AbstractExpandableStackNode{
 	
 	private static AbstractStackNode[] generateChildren(AbstractStackNode optional){
 		AbstractStackNode child = optional.getCleanCopy(DEFAULT_START_LOCATION);
-		child.setProduction(new AbstractStackNode[]{child});
-		child.markAsEndNode();
 		
 		return new AbstractStackNode[]{child};
 	}
 	
 	private static AbstractStackNode generateEmptyChild(){
-		AbstractStackNode empty = EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
-		empty.setProduction(new AbstractStackNode[]{empty});
-		empty.markAsEndNode();
-		
-		return empty;
+		return EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
 	}
 	
 	public String getName(){

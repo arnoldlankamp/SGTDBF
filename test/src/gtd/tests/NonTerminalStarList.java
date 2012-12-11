@@ -1,46 +1,32 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Sort;
+import gtd.grammar.symbols.StarList;
 import gtd.result.AbstractNode;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.ListStackNode;
-import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
 
 /*
 S ::= A+
 A ::= a
 */
 public class NonTerminalStarList extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_A0 = new NonTerminalStackNode(0, 0, "A");
-	private final static AbstractStackNode LIST1 = new ListStackNode(1, 0, NONTERMINAL_A0, "A*", false);
-	private final static AbstractStackNode LITERAL_a2 = new LiteralStackNode(2, 0, new char[]{'a'});
 	
 	public NonTerminalStarList(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] S_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LIST1);
-		S_EXPECT = eb.buildExpectMatrix();
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new StarList(new Sort("A")))
+		};
 	}
 	
-	public AbstractStackNode[] S(){
-		return S_EXPECT;
-	}
-	
-	private final static AbstractStackNode[] A_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LITERAL_a2);
-		A_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] A(){
-		return A_EXPECT;
+	public Alternative[] A(){
+		return new Alternative[]{
+			new Alternative(new Literal("a"))
+		};
 	}
 	
 	public static void main(String[] args){

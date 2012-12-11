@@ -1,11 +1,10 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
-import gtd.preprocessing.ExpectBuilder;
+import gtd.grammar.structure.Alternative;
+import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
-import gtd.stack.AbstractStackNode;
-import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
 
 /*
 S ::= AB | AC
@@ -16,60 +15,34 @@ C ::= a
 NOTE: This test, tests prefix sharing.
 */
 public class Ambiguous8 extends SGTDBF{
-	private final static AbstractStackNode NONTERMINAL_A0 = new NonTerminalStackNode(0, 0, "A");
-	private final static AbstractStackNode NONTERMINAL_B1 = new NonTerminalStackNode(1, 1, "B");
-	private final static AbstractStackNode NONTERMINAL_C2 = new NonTerminalStackNode(2, 1, "C");
-	private final static AbstractStackNode LITERAL_a3 = new LiteralStackNode(3, 0, new char[]{'a'});
-	private final static AbstractStackNode LITERAL_a4 = new LiteralStackNode(4, 0, new char[]{'a'});
-	private final static AbstractStackNode LITERAL_a5 = new LiteralStackNode(5, 0, new char[]{'a'});
 	
 	public Ambiguous8(char[] input){
 		super(input);
 	}
 	
-	private final static AbstractStackNode[] S_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(NONTERMINAL_A0, NONTERMINAL_B1);
-		eb.addAlternative(NONTERMINAL_A0, NONTERMINAL_C2);
-		S_EXPECT = eb.buildExpectMatrix();
+	public Alternative[] S(){
+		return new Alternative[]{
+			new Alternative(new Sort("A"), new Sort("B")),
+			new Alternative(new Sort("A"), new Sort("C"))
+		};
 	}
 	
-	public AbstractStackNode[] S(){
-		return S_EXPECT;
+	public Alternative[] A(){
+		return new Alternative[]{
+			new Alternative(new Literal("a"))
+		};
 	}
 	
-	private final static AbstractStackNode[] A_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LITERAL_a3);
-		A_EXPECT = eb.buildExpectMatrix();
+	public Alternative[] B(){
+		return new Alternative[]{
+			new Alternative(new Literal("a"))
+		};
 	}
 	
-	public AbstractStackNode[] A(){
-		return A_EXPECT;
-	}
-	
-	private final static AbstractStackNode[] B_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LITERAL_a4);
-		B_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] B(){
-		return B_EXPECT;
-	}
-	
-	private final static AbstractStackNode[] C_EXPECT;
-	static{
-		ExpectBuilder eb = new ExpectBuilder();
-		eb.addAlternative(LITERAL_a5);
-		C_EXPECT = eb.buildExpectMatrix();
-	}
-	
-	public AbstractStackNode[] C(){
-		return C_EXPECT;
+	public Alternative[] C(){
+		return new Alternative[]{
+			new Alternative(new Literal("a"))
+		};
 	}
 	
 	public static void main(String[] args){
