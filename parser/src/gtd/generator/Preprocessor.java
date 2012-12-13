@@ -42,6 +42,15 @@ public class Preprocessor{
 	public int getIdCounter(){
 		return idCounter;
 	}
+
+	static int getSortIndex(ArrayList<String> sortIndexMap, String sortName){
+		int sortIndex = sortIndexMap.find(sortName);
+		if(sortIndex == -1){
+			sortIndex = sortIndexMap.size();
+			sortIndexMap.add(sortName);
+		}
+		return sortIndex;
+	}
 	
 	private static SortedIntegerObjectList<ArrayList<Alternative>> sortAlternativesByLength(Alternative[] alternatives){
 		SortedIntegerObjectList<ArrayList<Alternative>> sortedAlternatives = new SortedIntegerObjectList<ArrayList<Alternative>>();
@@ -73,9 +82,11 @@ public class Preprocessor{
 		return null;
 	}
 	
-	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode){
+	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode, ArrayList<String> sortIndexMap){
 		if(symbol instanceof Sort){
-			return new NonTerminalStackNode(++idCounter, endNode, ((Sort) symbol).sortName);
+			String sortName = ((Sort) symbol).sortName;
+			int sortIndex = getSortIndex(sortIndexMap, sortName);
+			return new NonTerminalStackNode(++idCounter, sortIndex, endNode, sortName);
 		}else if(symbol instanceof Epsilon){
 			return new EpsilonStackNode(++idCounter, endNode);
 		}else if(symbol instanceof Char){
@@ -105,11 +116,11 @@ public class Preprocessor{
 			return new CaseInsensitiveLiteralStackNode(++idCounter, endNode, ((CILiteral) symbol).literal.toCharArray());
 		}else if(symbol instanceof Optional){
 			Optional optional = (Optional) symbol;
-			AbstractStackNode child = buildStackNode(optional.symbol, true);
+			AbstractStackNode child = buildStackNode(optional.symbol, true, sortIndexMap);
 			return new OptionalStackNode(++idCounter, endNode, child, optional.name);
 		}else if(symbol instanceof PlusList){
 			PlusList plusList = (PlusList) symbol;
-			AbstractStackNode child = buildStackNode(plusList.symbol, true);
+			AbstractStackNode child = buildStackNode(plusList.symbol, true, sortIndexMap);
 			AbstractSymbol[] separatorSymbols = plusList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
 				return new ListStackNode(++idCounter, endNode, child, plusList.name, true);
@@ -118,14 +129,14 @@ public class Preprocessor{
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], false);
+				separators[i] = buildStackNode(separatorSymbols[i], false, sortIndexMap);
 				separators[i].markAsSeparator();
 			}
 			
 			return new SeparatedListStackNode(++idCounter, endNode, child, separators, plusList.name, true);
 		}else if(symbol instanceof StarList){
 			StarList starList = (StarList) symbol;
-			AbstractStackNode child = buildStackNode(starList.symbol, true);
+			AbstractStackNode child = buildStackNode(starList.symbol, true, sortIndexMap);
 			AbstractSymbol[] separatorSymbols = starList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
 				return new ListStackNode(++idCounter, endNode, child, starList.name, false);
@@ -134,7 +145,7 @@ public class Preprocessor{
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], false);
+				separators[i] = buildStackNode(separatorSymbols[i], false, sortIndexMap);
 				separators[i].markAsSeparator();
 			}
 			
@@ -144,23 +155,23 @@ public class Preprocessor{
 		}
 	}
 	
-	private void addContinuations(AbstractStackNode node, ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> continuations){
+	private void addContinuations(AbstractStackNode node, ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> continuations, ArrayList<String> sortIndexMap){
 		for(int i = continuations.size() - 1; i >= 0; --i){
 			MarkableForwardSplittingLink<AbstractSymbol> continuation = continuations.get(i);
-			AbstractStackNode nextNode = buildStackNode(continuation.element, continuation.mark);
+			AbstractStackNode nextNode = buildStackNode(continuation.element, continuation.mark, sortIndexMap);
 			node.addNext(nextNode);
-			addContinuations(nextNode, continuation.nexts);
+			addContinuations(nextNode, continuation.nexts, sortIndexMap);
 		}
 	}
 	
-	private AbstractStackNode[] transformToStackNodes(ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree){
+	private AbstractStackNode[] transformToStackNodes(ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree, ArrayList<String> sortIndexMap){
 		int numberOfExpects = expectTree.size();
 		AbstractStackNode[] expects = new AbstractStackNode[numberOfExpects];
 		
 		for(int i = numberOfExpects - 1; i >= 0; --i){
 			MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot = expectTree.get(i);
-			AbstractStackNode node = buildStackNode(alternativeTreeRoot.element, alternativeTreeRoot.mark);
-			addContinuations(node, alternativeTreeRoot.nexts);
+			AbstractStackNode node = buildStackNode(alternativeTreeRoot.element, alternativeTreeRoot.mark, sortIndexMap);
+			addContinuations(node, alternativeTreeRoot.nexts, sortIndexMap);
 			
 			expects[i] = node;
 		}
@@ -219,11 +230,11 @@ public class Preprocessor{
 		return expectTree;
 	}
 	
-	public AbstractStackNode[] buildExpects(){
+	public AbstractStackNode[] buildExpects(ArrayList<String> sortIndexMap){
 		SortedIntegerObjectList<ArrayList<Alternative>> sortedAlternatives = sortAlternativesByLength(alternatives);
 		
 		ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree = calculateSharing(sortedAlternatives);
 		
-		return transformToStackNodes(expectTree);
+		return transformToStackNodes(expectTree, sortIndexMap);
 	}
 }

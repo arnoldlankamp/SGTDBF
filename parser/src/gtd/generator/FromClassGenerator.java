@@ -2,7 +2,8 @@ package gtd.generator;
 
 import gtd.grammar.structure.Alternative;
 import gtd.stack.AbstractStackNode;
-import gtd.util.HashMap;
+import gtd.util.ArrayList;
+import gtd.util.IntegerKeyedHashMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,8 +18,9 @@ public class FromClassGenerator{
 		this.parserInstance = parserInstance;
 	}
 	
-	public HashMap<String, AbstractStackNode[]> generate(){
-		HashMap<String, AbstractStackNode[]> expectMatrix = new HashMap<String, AbstractStackNode[]>();
+	public ParserStructure generate(){
+		IntegerKeyedHashMap<AbstractStackNode[]> expectMap = new IntegerKeyedHashMap<AbstractStackNode[]>();
+		ArrayList<String> sortIndexMap = new ArrayList<String>();
 		
 		int idCounter = 1;
 		
@@ -31,8 +33,9 @@ public class FromClassGenerator{
 				try{
 					Alternative[] alternatives = (Alternative[]) method.invoke(parserInstance);
 					Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
-					AbstractStackNode[] expects = alternativesProcessor.buildExpects();
-					expectMatrix.put(method.getName(), expects);
+					AbstractStackNode[] expects = alternativesProcessor.buildExpects(sortIndexMap);
+					int sortIndex = Preprocessor.getSortIndex(sortIndexMap, method.getName());
+					expectMap.putUnsafe(sortIndex, expects);
 					idCounter = alternativesProcessor.getIdCounter();
 				}catch(IllegalAccessException ex){
 					throw new RuntimeException(ex); // Should never happen
@@ -44,6 +47,10 @@ public class FromClassGenerator{
 			}
 		}
 		
-		return expectMatrix;
+		AbstractStackNode[][] expectMatrix = new AbstractStackNode[sortIndexMap.size()][];
+		for(int i = 0; i < sortIndexMap.size(); ++i){
+			expectMatrix[i] = expectMap.get(i);
+		}
+		return new ParserStructure(expectMatrix, sortIndexMap);
 	}
 }

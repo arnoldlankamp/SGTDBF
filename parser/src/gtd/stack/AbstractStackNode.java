@@ -88,7 +88,7 @@ public abstract class AbstractStackNode{
 	
 	public abstract String getName();
 	
-	public abstract String getMethodName();
+	public abstract int getNonterminalIndex();
 	
 	public abstract AbstractNode match(char[] input, int location);
 	

@@ -1,6 +1,7 @@
 package gtd;
 
 import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.result.AbstractContainerNode;
 import gtd.result.AbstractNode;
 import gtd.result.ListContainerNode;
@@ -35,7 +36,8 @@ public class SGTDBF implements IGTD{
 	
 	protected int location;
 	
-	private final HashMap<String, AbstractStackNode[]> expectMatrix;
+	private final AbstractStackNode[][] expectMatrix;
+	private final ArrayList<String> sortIndexMap;
 	
 	public SGTDBF(char[] input){
 		super();
@@ -55,7 +57,9 @@ public class SGTDBF implements IGTD{
 		location = 0;
 
 		FromClassGenerator generator = new FromClassGenerator(this);
-		expectMatrix = generator.generate();
+		ParserStructure structure = generator.generate();
+		expectMatrix = structure.expectMatrix;
+		sortIndexMap = structure.sortIndexMap;
 	}
 	
 	private AbstractStackNode updateNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result){
@@ -489,7 +493,7 @@ public class SGTDBF implements IGTD{
 				
 				cachedEdgesForExpect.put(node.getName(), cachedEdges);
 				
-				AbstractStackNode[] expects = expectMatrix.get(node.getMethodName());
+				AbstractStackNode[] expects = expectMatrix[node.getNonterminalIndex()];
 				if(expects == null) return;
 				
 				handleExpects(cachedEdges, expects);
@@ -593,9 +597,8 @@ public class SGTDBF implements IGTD{
 	}
 	
 	public AbstractNode parse(String start){
-		
 		// Initialize.
-		AbstractStackNode rootNode = new NonTerminalStackNode(AbstractStackNode.START_SYMBOL_ID, true, start);
+		AbstractStackNode rootNode = new NonTerminalStackNode(AbstractStackNode.START_SYMBOL_ID, sortIndexMap.find(start), true, start);
 		rootNode = rootNode.getCleanCopy(0);
 		rootNode.initEdges();
 		

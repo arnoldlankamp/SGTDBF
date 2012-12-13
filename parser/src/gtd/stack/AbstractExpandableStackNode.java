@@ -24,7 +24,7 @@ public abstract class AbstractExpandableStackNode extends AbstractStackNode{
 		return false;
 	}
 	
-	public String getMethodName(){
+	public int getNonterminalIndex(){
 		throw new UnsupportedOperationException();
 	}
 	
