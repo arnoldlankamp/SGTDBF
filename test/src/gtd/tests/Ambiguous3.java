@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -12,17 +14,17 @@ A ::= aa | a
 */
 public class Ambiguous3 extends SGTDBF{
 	
-	public Ambiguous3(char[] input){
-		super(input);
+	public Ambiguous3(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("aa")),
 			new Alternative(new Literal("a"))
@@ -30,7 +32,8 @@ public class Ambiguous3 extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		Ambiguous3 a3 = new Ambiguous3("aaa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(Ambiguous3.class).generate();
+		Ambiguous3 a3 = new Ambiguous3("aaa".toCharArray(), structure);
 		AbstractNode result = a3.parse("S");
 		System.out.println(result);
 		

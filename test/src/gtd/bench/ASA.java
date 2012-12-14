@@ -1,6 +1,8 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
@@ -13,11 +15,11 @@ S ::= aSa | a
 */
 public class ASA extends SGTDBF{
 	
-	private ASA(char[] input){
-		super(input);
+	private ASA(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Char('a'), new Sort("S"), new Char('a')),
 			new Alternative(new Char('a'))
@@ -43,7 +45,7 @@ public class ASA extends SGTDBF{
 		Thread.sleep(1000);
 	}
 	
-	private static void runTest(char[] input) throws Exception{
+	private static void runTest(char[] input, ParserStructure structure) throws Exception{
 		ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 		
 		long total = 0;
@@ -52,7 +54,7 @@ public class ASA extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			ASA asa = new ASA(input);
+			ASA asa = new ASA(input,structure);
 			asa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -64,18 +66,20 @@ public class ASA extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
+		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
+		
 		// Warmup.
 		char[] input = createInput(51);
 		
 		for(int i = 9999; i >= 0; --i){
-			ASA asa = new ASA(input);
+			ASA asa = new ASA(input, structure);
 			asa.parse("S");
 		}
 		
 		// The benchmarks.
 		for(int i = 501; i <= 10001; i += 500){
 			input = createInput(i);
-			runTest(input);
+			runTest(input, structure);
 		}
 	}
 }

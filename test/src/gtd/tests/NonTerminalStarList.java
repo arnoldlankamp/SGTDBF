@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -13,24 +15,25 @@ A ::= a
 */
 public class NonTerminalStarList extends SGTDBF{
 	
-	public NonTerminalStarList(char[] input){
-		super(input);
+	public NonTerminalStarList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new StarList(new Sort("A")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("a"))
 		};
 	}
 	
 	public static void main(String[] args){
-		NonTerminalStarList nrsl = new NonTerminalStarList("aaa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(NonTerminalStarList.class).generate();
+		NonTerminalStarList nrsl = new NonTerminalStarList("aaa".toCharArray(), structure);
 		AbstractNode result = nrsl.parse("S");
 		System.out.println(result);
 		

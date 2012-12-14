@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Sort;
@@ -13,25 +15,25 @@ U ::= U S T | epsilon
 */
 public class HiddenRecursionEmpty extends SGTDBF{
 
-	public HiddenRecursionEmpty(char[] input){
-		super(input);
+	public HiddenRecursionEmpty(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("S"), new Sort("T"), new Sort("U")),
 			new Alternative(new Epsilon())
 		};
 	}
 	
-	public Alternative[] T(){
+	public static Alternative[] T(){
 		return new Alternative[]{
 			new Alternative(new Sort("T"), new Sort("U"), new Sort("S")),
 			new Alternative(new Epsilon())
 		};
 	}
 	
-	public Alternative[] U(){
+	public static Alternative[] U(){
 		return new Alternative[]{
 			new Alternative(new Sort("U"), new Sort("S"), new Sort("T")),
 			new Alternative(new Epsilon())
@@ -39,7 +41,8 @@ public class HiddenRecursionEmpty extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		HiddenRecursionEmpty hre = new HiddenRecursionEmpty("".toCharArray());
+		ParserStructure structure = new FromClassGenerator(HiddenRecursionEmpty.class).generate();
+		HiddenRecursionEmpty hre = new HiddenRecursionEmpty("".toCharArray(), structure);
 		AbstractNode result = hre.parse("S");
 		System.out.println(result);
 		

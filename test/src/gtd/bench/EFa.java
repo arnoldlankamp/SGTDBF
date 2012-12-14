@@ -1,6 +1,8 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
@@ -15,24 +17,24 @@ F ::= a | ( E )
 */
 public class EFa extends SGTDBF{
 	
-	private EFa(char[] input){
-		super(input);
+	private EFa(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("E"))
 		};
 	}
 	
-	public Alternative[] E(){
+	public static Alternative[] E(){
 		return new Alternative[]{
 			new Alternative(new Sort("E"), new Char('+'), new Sort("F")),
 			new Alternative(new Sort("F"))
 		};
 	}
 	
-	public Alternative[] F(){
+	public static Alternative[] F(){
 		return new Alternative[]{
 			new Alternative(new Char('a')),
 			new Alternative(new Char('('), new Sort("E"), new Char(')'))
@@ -70,7 +72,7 @@ public class EFa extends SGTDBF{
 		Thread.sleep(1000);
 	}
 	
-	private static void runTest(char[] input) throws Exception{
+	private static void runTest(char[] input, ParserStructure structure) throws Exception{
 		ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 		
 		long total = 0;
@@ -79,7 +81,7 @@ public class EFa extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			EFa eFa = new EFa(input);
+			EFa eFa = new EFa(input, structure);
 			eFa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -91,27 +93,29 @@ public class EFa extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
+		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
+		
 		char[] input = createInput(5);
 		
-		EFa testOut = new EFa(input);
+		EFa testOut = new EFa(input, structure);
 		if(testOut.parse("S") != null) System.out.println("WARNING: Running in parser instead of recognizer mode.");
 		
 		// Warmup.
 		for(int i = 9999; i >= 0; --i){
-			EFa eFa = new EFa(input);
+			EFa eFa = new EFa(input, structure);
 			eFa.parse("S");
 		}
 		
 		for(int i = 200001; i <= 1000001; i += 200000){
 			input = createInput(i);
-			EFa eFa = new EFa(input);
+			EFa eFa = new EFa(input, structure);
 			eFa.parse("S");
 		}
 		
 		// The benchmarks.
 		for(int i = 200001; i <= 1000001; i += 200000){
 			input = createInput(i);
-			runTest(input);
+			runTest(input, structure);
 		}
 	}
 }

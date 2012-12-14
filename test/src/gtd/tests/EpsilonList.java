@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.PlusList;
@@ -13,24 +15,25 @@ A ::= epsilon
 */
 public class EpsilonList extends SGTDBF{
 	
-	public EpsilonList(char[] input){
-		super(input);
+	public EpsilonList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Sort("A")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Epsilon())
 		};
 	}
 	
 	public static void main(String[] args){
-		EpsilonList el = new EpsilonList("".toCharArray());
+		ParserStructure structure = new FromClassGenerator(EpsilonList.class).generate();
+		EpsilonList el = new EpsilonList("".toCharArray(), structure);
 		AbstractNode result = el.parse("S");
 		System.out.println(result);
 		

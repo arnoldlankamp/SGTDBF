@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Literal;
@@ -14,23 +16,23 @@ B ::= B | epsilon
 */
 public class EmptyRightRecursion extends SGTDBF{
 	
-	public EmptyRightRecursion(char[] input){
-		super(input);
+	public EmptyRightRecursion(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("B"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("a"))
 		};
 	}
 	
-	public Alternative[] B(){
+	public static Alternative[] B(){
 		return new Alternative[]{
 			new Alternative(new Sort("B")),
 			new Alternative(new Epsilon())
@@ -38,7 +40,8 @@ public class EmptyRightRecursion extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		EmptyRightRecursion erre = new EmptyRightRecursion("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(EmptyRightRecursion.class).generate();
+		EmptyRightRecursion erre = new EmptyRightRecursion("a".toCharArray(), structure);
 		AbstractNode result = erre.parse("S");
 		System.out.println(result);
 		

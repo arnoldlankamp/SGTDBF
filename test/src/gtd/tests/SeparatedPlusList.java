@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.PlusList;
@@ -15,24 +17,25 @@ sep(X, Y) means, a list of X separated by Y's.
 */
 public class SeparatedPlusList extends SGTDBF{
 	
-	public SeparatedPlusList(char[] input){
-		super(input);
+	public SeparatedPlusList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Sort("A"), new Literal("b")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("a"))
 		};
 	}
 	
 	public static void main(String[] args){
-		SeparatedPlusList nrpl = new SeparatedPlusList("ababa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(SeparatedPlusList.class).generate();
+		SeparatedPlusList nrpl = new SeparatedPlusList("ababa".toCharArray(), structure);
 		AbstractNode result = nrpl.parse("S");
 		System.out.println(result);
 		

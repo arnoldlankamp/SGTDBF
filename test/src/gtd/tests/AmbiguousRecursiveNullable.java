@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -12,11 +14,11 @@ S ::= SSS | SS | a | epsilon
 */
 public class AmbiguousRecursiveNullable extends SGTDBF{
 	
-	public AmbiguousRecursiveNullable(char[] input){
-		super(input);
+	public AmbiguousRecursiveNullable(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("S"), new Sort("S"), new Sort("S")),
 			new Alternative(new Sort("S"), new Sort("S")),
@@ -26,7 +28,8 @@ public class AmbiguousRecursiveNullable extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		AmbiguousRecursiveNullable arn = new AmbiguousRecursiveNullable("aa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(AmbiguousRecursiveNullable.class).generate();
+		AmbiguousRecursiveNullable arn = new AmbiguousRecursiveNullable("aa".toCharArray(), structure);
 		AbstractNode result = arn.parse("S");
 		System.out.println(result);
 		

@@ -1,6 +1,5 @@
 package gtd;
 
-import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.result.AbstractContainerNode;
 import gtd.result.AbstractNode;
@@ -39,7 +38,7 @@ public class SGTDBF implements IGTD{
 	private final AbstractStackNode[][] expectMatrix;
 	private final ArrayList<String> sortIndexMap;
 	
-	public SGTDBF(char[] input){
+	public SGTDBF(char[] input, ParserStructure structure){
 		super();
 		
 		this.input = input;
@@ -55,9 +54,7 @@ public class SGTDBF implements IGTD{
 		sharedNextNodes = new EntryReturningIntegerKeyedHashMap<AbstractStackNode>();
 		
 		location = 0;
-
-		FromClassGenerator generator = new FromClassGenerator(this);
-		ParserStructure structure = generator.generate();
+		
 		expectMatrix = structure.expectMatrix;
 		sortIndexMap = structure.sortIndexMap;
 	}

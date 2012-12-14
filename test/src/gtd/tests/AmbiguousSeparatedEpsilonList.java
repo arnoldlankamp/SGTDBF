@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Literal;
@@ -15,31 +17,32 @@ import gtd.result.AbstractNode;
 */
 public class AmbiguousSeparatedEpsilonList extends SGTDBF{
 	
-	public AmbiguousSeparatedEpsilonList(char[] input){
-		super(input);
+	public AmbiguousSeparatedEpsilonList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Sort("A"), new Sort("SEP")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("a")),
 			new Alternative(new Epsilon())
 		};
 	}
 	
-	public Alternative[] SEP(){
+	public static Alternative[] SEP(){
 		return new Alternative[]{
 			new Alternative(new Epsilon())
 		};
 	}
 	
 	public static void main(String[] args){
-		AmbiguousSeparatedEpsilonList asel = new AmbiguousSeparatedEpsilonList("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(AmbiguousSeparatedEpsilonList.class).generate();
+		AmbiguousSeparatedEpsilonList asel = new AmbiguousSeparatedEpsilonList("a".toCharArray(), structure);
 		AbstractNode result = asel.parse("S");
 		System.out.println(result);
 		

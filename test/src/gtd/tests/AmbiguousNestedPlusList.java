@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.PlusList;
@@ -13,24 +15,25 @@ A ::= [a]+
 */
 public class AmbiguousNestedPlusList extends SGTDBF{
 	
-	public AmbiguousNestedPlusList(char[] input){
-		super(input);
+	public AmbiguousNestedPlusList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Sort("A")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Char('a')))
 		};
 	}
 	
 	public static void main(String[] args){
-		AmbiguousNestedPlusList anpl = new AmbiguousNestedPlusList("aa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(AmbiguousNestedPlusList.class).generate();
+		AmbiguousNestedPlusList anpl = new AmbiguousNestedPlusList("aa".toCharArray(), structure);
 		AbstractNode result = anpl.parse("S");
 		System.out.println(result);
 		

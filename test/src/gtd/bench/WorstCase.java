@@ -1,6 +1,8 @@
 package gtd.bench;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Epsilon;
@@ -14,11 +16,11 @@ S ::= SSS | SS | a | epsilon
 */
 public class WorstCase extends SGTDBF{
 	
-	public WorstCase(char[] input){
-		super(input);
+	public WorstCase(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("S"), new Sort("S"), new Sort("S")),
 			new Alternative(new Sort("S"), new Sort("S")),
@@ -46,7 +48,7 @@ public class WorstCase extends SGTDBF{
 		Thread.sleep(1000);
 	}
 	
-	private static void runTest(char[] input) throws Exception{
+	private static void runTest(char[] input, ParserStructure structure) throws Exception{
 		ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 		
 		long total = 0;
@@ -55,7 +57,7 @@ public class WorstCase extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			WorstCase wc = new WorstCase(input);
+			WorstCase wc = new WorstCase(input, structure);
 			wc.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -69,10 +71,11 @@ public class WorstCase extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
+		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
 		// Warmup.
 		char[] input = createInput(5);
 		for(int i = 9999; i >= 0; --i){
-			WorstCase wc = new WorstCase(input);
+			WorstCase wc = new WorstCase(input, structure);
 			wc.parse("S");
 		}
 		
@@ -84,7 +87,7 @@ public class WorstCase extends SGTDBF{
 		
 		for(int i = 50; i <= 500; i += 50){
 			input = createInput(i);
-			runTest(input);
+			runTest(input, structure);
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Literal;
@@ -12,11 +14,11 @@ S ::= SSSS | a | epsilon
 */
 public class HiddenHiddenRightRecursive extends SGTDBF{
 	
-	public HiddenHiddenRightRecursive(char[] input){
-		super(input);
+	public HiddenHiddenRightRecursive(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("S"), new Sort("S"), new Sort("S"), new Sort("S")),
 			new Alternative(new Literal("a")),
@@ -25,7 +27,8 @@ public class HiddenHiddenRightRecursive extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		HiddenHiddenRightRecursive hhrr = new HiddenHiddenRightRecursive("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(HiddenHiddenRightRecursive.class).generate();
+		HiddenHiddenRightRecursive hhrr = new HiddenHiddenRightRecursive("a".toCharArray(), structure);
 		AbstractNode result = hhrr.parse("S");
 		System.out.println(result);
 		

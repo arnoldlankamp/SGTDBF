@@ -10,12 +10,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class FromClassGenerator{
-	private final Object parserInstance;
+	private final Class<?> parserClass;
 	
-	public FromClassGenerator(Object parserInstance){
+	public FromClassGenerator(Class<?> parserClass){
 		super();
 		
-		this.parserInstance = parserInstance;
+		this.parserClass = parserClass;
 	}
 	
 	public ParserStructure generate(){
@@ -24,14 +24,15 @@ public class FromClassGenerator{
 		
 		int idCounter = 1;
 		
-		Method[] methods = parserInstance.getClass().getMethods();
+		Method[] methods = parserClass.getMethods();
 		for(int i = methods.length - 1; i >= 0; --i){
 			Method method = methods[i];
 			
 			if(method.getReturnType() == Alternative[].class &&
-					(method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC){
+					(method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC &&
+					(method.getModifiers() & Modifier.STATIC) == Modifier.STATIC){
 				try{
-					Alternative[] alternatives = (Alternative[]) method.invoke(parserInstance);
+					Alternative[] alternatives = (Alternative[]) method.invoke(null);
 					Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
 					AbstractStackNode[] expects = alternativesProcessor.buildExpects(sortIndexMap);
 					int sortIndex = Preprocessor.getSortIndex(sortIndexMap, method.getName());
@@ -40,7 +41,7 @@ public class FromClassGenerator{
 				}catch(IllegalAccessException ex){
 					throw new RuntimeException(ex); // Should never happen
 				}catch(InvocationTargetException ex){
-					throw new RuntimeException("Unable to invoke method: " + method.getName() + " on class: " + parserInstance.getClass().getName(), ex);
+					throw new RuntimeException("Unable to invoke method: " + method.getName() + " on class: " + parserClass.getName(), ex);
 				}catch(EmptyAlternativeException ex){
 					throw new RuntimeException(String.format("Encountered an empty alternative in: %s.", method.getName()), ex);
 				}

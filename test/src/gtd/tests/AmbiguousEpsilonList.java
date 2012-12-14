@@ -1,11 +1,13 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
+import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.PlusList;
 import gtd.grammar.symbols.Sort;
-import gtd.grammar.symbols.Epsilon;
 import gtd.result.AbstractNode;
 
 /*
@@ -14,17 +16,17 @@ A ::= a | epsilon
 */
 public class AmbiguousEpsilonList extends SGTDBF{
 	
-	public AmbiguousEpsilonList(char[] input){
-		super(input);
+	public AmbiguousEpsilonList(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new PlusList(new Sort("A")))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Char('a')),
 			new Alternative(new Epsilon())
@@ -32,7 +34,8 @@ public class AmbiguousEpsilonList extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		AmbiguousEpsilonList ael = new AmbiguousEpsilonList("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(AmbiguousEpsilonList.class).generate();
+		AmbiguousEpsilonList ael = new AmbiguousEpsilonList("a".toCharArray(), structure);
 		AbstractNode result = ael.parse("S");
 		System.out.println(result);
 		

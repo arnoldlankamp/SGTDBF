@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -11,11 +13,11 @@ S ::= SSS | SS | a
 */
 public class AmbiguousRecursive extends SGTDBF{
 	
-	public AmbiguousRecursive(char[] input){
-		super(input);
+	public AmbiguousRecursive(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("S"), new Sort("S"), new Sort("S")),
 			new Alternative(new Sort("S"), new Sort("S")),
@@ -24,7 +26,8 @@ public class AmbiguousRecursive extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		AmbiguousRecursive ar = new AmbiguousRecursive("aaa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(AmbiguousRecursive.class).generate();
+		AmbiguousRecursive ar = new AmbiguousRecursive("aaa".toCharArray(), structure);
 		AbstractNode result = ar.parse("S");
 		System.out.println(result);
 		

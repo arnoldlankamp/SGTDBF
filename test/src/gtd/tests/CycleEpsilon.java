@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Literal;
@@ -13,17 +15,17 @@ A ::= AA | a | epsilon
 */
 public class CycleEpsilon extends SGTDBF{
 	
-	public CycleEpsilon(char[] input){
-		super(input);
+	public CycleEpsilon(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A")),
 			new Alternative(new Literal("a")),
@@ -32,7 +34,8 @@ public class CycleEpsilon extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		CycleEpsilon ce = new CycleEpsilon("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(CycleEpsilon.class).generate();
+		CycleEpsilon ce = new CycleEpsilon("a".toCharArray(), structure);
 		AbstractNode result = ce.parse("S");
 		System.out.println(result);
 		

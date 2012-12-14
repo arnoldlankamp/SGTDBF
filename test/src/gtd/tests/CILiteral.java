@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.result.AbstractNode;
 
@@ -11,18 +13,19 @@ NOTE: ci(*) means whatever * represents is Case Insensitive.
 */
 public class CILiteral extends SGTDBF{
 	
-	public CILiteral(char[] input){
-		super(input);
+	public CILiteral(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new gtd.grammar.symbols.CILiteral("bla"))
 		};
 	}
 	
 	public static void main(String[] args){
-		CILiteral cil = new CILiteral("Bla".toCharArray());
+		ParserStructure structure = new FromClassGenerator(CILiteral.class).generate();
+		CILiteral cil = new CILiteral("Bla".toCharArray(), structure);
 		AbstractNode result = cil.parse("S");
 		System.out.println(result);
 		

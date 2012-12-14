@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -14,32 +16,32 @@ C ::= AA | a
 */
 public class NotAUselessSelfLoop extends SGTDBF{
 	
-	public NotAUselessSelfLoop(char[] input){
-		super(input);
+	public NotAUselessSelfLoop(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A")),
 			new Alternative(new Sort("B"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Sort("C"), new Sort("C")),
 			new Alternative(new Literal("a"))
 		};
 	}
 	
-	public Alternative[] B(){
+	public static Alternative[] B(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A")),
 			new Alternative(new Sort("C"), new Sort("C"))
 		};
 	}
 	
-	public Alternative[] C(){
+	public static Alternative[] C(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A")),
 			new Alternative(new Literal("a"))
@@ -47,7 +49,8 @@ public class NotAUselessSelfLoop extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		NotAUselessSelfLoop nausl = new NotAUselessSelfLoop("aaa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(NotAUselessSelfLoop.class).generate();
+		NotAUselessSelfLoop nausl = new NotAUselessSelfLoop("aaa".toCharArray(), structure);
 		AbstractNode result = nausl.parse("S");
 		System.out.println(result);
 		

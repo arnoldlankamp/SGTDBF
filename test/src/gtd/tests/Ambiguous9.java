@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -14,17 +16,17 @@ NOTE: This test, tests prefix sharing.
 */
 public class Ambiguous9 extends SGTDBF{
 	
-	public Ambiguous9(char[] input){
-		super(input);
+	public Ambiguous9(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("E"))
 		};
 	}
 	
-	public Alternative[] E(){
+	public static Alternative[] E(){
 		return new Alternative[]{
 			new Alternative(new Sort("E"), new Literal("+"), new Sort("E")),
 			new Alternative(new Sort("E"), new Literal("*"), new Sort("E")),
@@ -33,7 +35,8 @@ public class Ambiguous9 extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		Ambiguous9 a9 = new Ambiguous9("1+1+1".toCharArray());
+		ParserStructure structure = new FromClassGenerator(Ambiguous9.class).generate();
+		Ambiguous9 a9 = new Ambiguous9("1+1+1".toCharArray(), structure);
 		AbstractNode result = a9.parse("S");
 		System.out.println(result);
 		

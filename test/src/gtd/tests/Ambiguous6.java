@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -18,62 +20,63 @@ G ::= a
 */
 public class Ambiguous6 extends SGTDBF{
 	
-	public Ambiguous6(char[] input){
-		super(input);
+	public Ambiguous6(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A")),
 			new Alternative(new Sort("E"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Sort("B"))
 		};
 	}
 	
-	public Alternative[] B(){
+	public static Alternative[] B(){
 		return new Alternative[]{
 			new Alternative(new Sort("C"))
 		};
 	}
 	
-	public Alternative[] C(){
+	public static Alternative[] C(){
 		return new Alternative[]{
 			new Alternative(new Sort("D"))
 		};
 	}
 	
-	public Alternative[] D(){
+	public static Alternative[] D(){
 		return new Alternative[]{
 			new Alternative(new Sort("E")),
 			new Alternative(new Literal("a"))
 		};
 	}
 	
-	public Alternative[] E(){
+	public static Alternative[] E(){
 		return new Alternative[]{
 			new Alternative(new Sort("F"))
 		};
 	}
 	
-	public Alternative[] F(){
+	public static Alternative[] F(){
 		return new Alternative[]{
 			new Alternative(new Sort("G"))
 		};
 	}
 	
-	public Alternative[] G(){
+	public static Alternative[] G(){
 		return new Alternative[]{
 			new Alternative(new Literal("a"))
 		};
 	}
 	
 	public static void main(String[] args){
-		Ambiguous6 a6 = new Ambiguous6("a".toCharArray());
+		ParserStructure structure = new FromClassGenerator(Ambiguous6.class).generate();
+		Ambiguous6 a6 = new Ambiguous6("a".toCharArray(), structure);
 		AbstractNode result = a6.parse("S");
 		System.out.println(result);
 		

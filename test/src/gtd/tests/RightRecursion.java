@@ -1,6 +1,8 @@
 package gtd.tests;
 
 import gtd.SGTDBF;
+import gtd.generator.FromClassGenerator;
+import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
@@ -12,17 +14,17 @@ A ::= aA | a
 */
 public class RightRecursion extends SGTDBF{
 	
-	public RightRecursion(char[] input){
-		super(input);
+	public RightRecursion(char[] input, ParserStructure structure){
+		super(input, structure);
 	}
 	
-	public Alternative[] S(){
+	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"))
 		};
 	}
 	
-	public Alternative[] A(){
+	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Literal("a"), new Sort("A")),
 			new Alternative(new Literal("a"))
@@ -30,7 +32,8 @@ public class RightRecursion extends SGTDBF{
 	}
 	
 	public static void main(String[] args){
-		RightRecursion rr = new RightRecursion("aaa".toCharArray());
+		ParserStructure structure = new FromClassGenerator(RightRecursion.class).generate();
+		RightRecursion rr = new RightRecursion("aaa".toCharArray(), structure);
 		AbstractNode result = rr.parse("S");
 		System.out.println(result);
 		
