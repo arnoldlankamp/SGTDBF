@@ -2,34 +2,34 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 
-public final class NonTerminalStackNode extends AbstractStackNode{
-	private final int nonTerminalIndex;
-	private final String nonTerminal;
+public final class SortStackNode extends AbstractStackNode{
+	private final int containerIndex;
+	private final String sortName;
 	
-	public NonTerminalStackNode(int id, int nonTerminalIndex, boolean isEndNode, String nonTerminal){
+	public SortStackNode(int id, int containerIndex, boolean isEndNode, String sortName){
 		super(id, isEndNode);
 		
-		this.nonTerminalIndex = nonTerminalIndex;
-		this.nonTerminal = nonTerminal;
+		this.containerIndex = containerIndex;
+		this.sortName = sortName;
 	}
 	
-	private NonTerminalStackNode(NonTerminalStackNode original, int startLocation){
+	private SortStackNode(SortStackNode original, int startLocation){
 		super(original, startLocation);
 		
-		nonTerminalIndex = original.nonTerminalIndex;
-		nonTerminal = original.nonTerminal;
+		containerIndex = original.containerIndex;
+		sortName = original.sortName;
 	}
 	
 	public boolean isEmptyLeafNode(){
 		return false;
 	}
 	
-	public int getNonterminalIndex(){
-		return nonTerminalIndex;
+	public int getContainerIndex(){
+		return containerIndex;
 	}
 	
 	public String getName(){
-		return nonTerminal;
+		return sortName;
 	}
 	
 	public AbstractNode match(char[] input, int location){
@@ -37,7 +37,7 @@ public final class NonTerminalStackNode extends AbstractStackNode{
 	}
 	
 	public AbstractStackNode getCleanCopy(int startLocation){
-		return new NonTerminalStackNode(this, startLocation);
+		return new SortStackNode(this, startLocation);
 	}
 	
 	public AbstractStackNode getCleanCopyWithResult(int startLocation, AbstractNode result){
@@ -66,7 +66,7 @@ public final class NonTerminalStackNode extends AbstractStackNode{
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(nonTerminal);
+		sb.append(sortName);
 		sb.append(getId());
 		sb.append('(');
 		sb.append(startLocation);

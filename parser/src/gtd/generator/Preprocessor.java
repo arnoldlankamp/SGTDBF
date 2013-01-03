@@ -19,7 +19,7 @@ import gtd.stack.CharStackNode;
 import gtd.stack.EpsilonStackNode;
 import gtd.stack.ListStackNode;
 import gtd.stack.LiteralStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.stack.SortStackNode;
 import gtd.stack.OptionalStackNode;
 import gtd.stack.SeparatedListStackNode;
 import gtd.util.ArrayList;
@@ -43,7 +43,7 @@ public class Preprocessor{
 		return idCounter;
 	}
 
-	static int getSortIndex(ArrayList<String> sortIndexMap, String sortName){
+	static int getContainerIndex(ArrayList<String> sortIndexMap, String sortName){
 		int sortIndex = sortIndexMap.find(sortName);
 		if(sortIndex == -1){
 			sortIndex = sortIndexMap.size();
@@ -82,11 +82,11 @@ public class Preprocessor{
 		return null;
 	}
 	
-	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode, ArrayList<String> sortIndexMap){
+	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode, ArrayList<String> containerIndexMap){
 		if(symbol instanceof Sort){
 			String sortName = ((Sort) symbol).sortName;
-			int sortIndex = getSortIndex(sortIndexMap, sortName);
-			return new NonTerminalStackNode(++idCounter, sortIndex, endNode, sortName);
+			int containerIndex = getContainerIndex(containerIndexMap, sortName);
+			return new SortStackNode(++idCounter, containerIndex, endNode, sortName);
 		}else if(symbol instanceof Epsilon){
 			return new EpsilonStackNode(++idCounter, endNode);
 		}else if(symbol instanceof Char){
@@ -116,62 +116,68 @@ public class Preprocessor{
 			return new CaseInsensitiveLiteralStackNode(++idCounter, endNode, ((CILiteral) symbol).literal.toCharArray());
 		}else if(symbol instanceof Optional){
 			Optional optional = (Optional) symbol;
-			AbstractStackNode child = buildStackNode(optional.symbol, true, sortIndexMap);
-			return new OptionalStackNode(++idCounter, endNode, child, optional.name);
+			int containerIndex = getContainerIndex(containerIndexMap, optional.name);
+			
+			AbstractStackNode child = buildStackNode(optional.symbol, true, containerIndexMap);
+			return new OptionalStackNode(++idCounter, containerIndex, endNode, child, optional.name);
 		}else if(symbol instanceof PlusList){
 			PlusList plusList = (PlusList) symbol;
-			AbstractStackNode child = buildStackNode(plusList.symbol, true, sortIndexMap);
+			int containerIndex = getContainerIndex(containerIndexMap, plusList.name);
+			
+			AbstractStackNode child = buildStackNode(plusList.symbol, true, containerIndexMap);
 			AbstractSymbol[] separatorSymbols = plusList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
-				return new ListStackNode(++idCounter, endNode, child, plusList.name, true);
+				return new ListStackNode(++idCounter, containerIndex, endNode, child, plusList.name, true);
 			}
 			
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], false, sortIndexMap);
+				separators[i] = buildStackNode(separatorSymbols[i], false, containerIndexMap);
 				separators[i].markAsSeparator();
 			}
 			
-			return new SeparatedListStackNode(++idCounter, endNode, child, separators, plusList.name, true);
+			return new SeparatedListStackNode(++idCounter, containerIndex, endNode, child, separators, plusList.name, true);
 		}else if(symbol instanceof StarList){
 			StarList starList = (StarList) symbol;
-			AbstractStackNode child = buildStackNode(starList.symbol, true, sortIndexMap);
+			int containerIndex = getContainerIndex(containerIndexMap, starList.name);
+			
+			AbstractStackNode child = buildStackNode(starList.symbol, true, containerIndexMap);
 			AbstractSymbol[] separatorSymbols = starList.separators;
 			if(separatorSymbols == null || separatorSymbols.length == 0){
-				return new ListStackNode(++idCounter, endNode, child, starList.name, false);
+				return new ListStackNode(++idCounter, containerIndex, endNode, child, starList.name, false);
 			}
 			
 			int numberOfSeparators = separatorSymbols.length;
 			AbstractStackNode[] separators = new AbstractStackNode[numberOfSeparators];
 			for(int i = 0; i < numberOfSeparators; ++i){
-				separators[i] = buildStackNode(separatorSymbols[i], false, sortIndexMap);
+				separators[i] = buildStackNode(separatorSymbols[i], false, containerIndexMap);
 				separators[i].markAsSeparator();
 			}
 			
-			return new SeparatedListStackNode(++idCounter, endNode, child, separators, starList.name, false);
+			return new SeparatedListStackNode(++idCounter, containerIndex, endNode, child, separators, starList.name, false);
 		}else{
 			throw new RuntimeException(String.format("Unsupported symbol type: %s", symbol.getClass().toString()));
 		}
 	}
 	
-	private void addContinuations(AbstractStackNode node, ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> continuations, ArrayList<String> sortIndexMap){
+	private void addContinuations(AbstractStackNode node, ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> continuations, ArrayList<String> containerIndexMap){
 		for(int i = continuations.size() - 1; i >= 0; --i){
 			MarkableForwardSplittingLink<AbstractSymbol> continuation = continuations.get(i);
-			AbstractStackNode nextNode = buildStackNode(continuation.element, continuation.mark, sortIndexMap);
+			AbstractStackNode nextNode = buildStackNode(continuation.element, continuation.mark, containerIndexMap);
 			node.addNext(nextNode);
-			addContinuations(nextNode, continuation.nexts, sortIndexMap);
+			addContinuations(nextNode, continuation.nexts, containerIndexMap);
 		}
 	}
 	
-	private AbstractStackNode[] transformToStackNodes(ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree, ArrayList<String> sortIndexMap){
+	private AbstractStackNode[] transformToStackNodes(ArrayList<MarkableForwardSplittingLink<AbstractSymbol>> expectTree, ArrayList<String> containerIndexMap){
 		int numberOfExpects = expectTree.size();
 		AbstractStackNode[] expects = new AbstractStackNode[numberOfExpects];
 		
 		for(int i = numberOfExpects - 1; i >= 0; --i){
 			MarkableForwardSplittingLink<AbstractSymbol> alternativeTreeRoot = expectTree.get(i);
-			AbstractStackNode node = buildStackNode(alternativeTreeRoot.element, alternativeTreeRoot.mark, sortIndexMap);
-			addContinuations(node, alternativeTreeRoot.nexts, sortIndexMap);
+			AbstractStackNode node = buildStackNode(alternativeTreeRoot.element, alternativeTreeRoot.mark, containerIndexMap);
+			addContinuations(node, alternativeTreeRoot.nexts, containerIndexMap);
 			
 			expects[i] = node;
 		}

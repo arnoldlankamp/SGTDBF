@@ -35,7 +35,7 @@ public class FromClassGenerator{
 					Alternative[] alternatives = (Alternative[]) method.invoke(null);
 					Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
 					AbstractStackNode[] expects = alternativesProcessor.buildExpects(sortIndexMap);
-					int sortIndex = Preprocessor.getSortIndex(sortIndexMap, method.getName());
+					int sortIndex = Preprocessor.getContainerIndex(sortIndexMap, method.getName());
 					expectMap.putUnsafe(sortIndex, expects);
 					idCounter = alternativesProcessor.getIdCounter();
 				}catch(IllegalAccessException ex){

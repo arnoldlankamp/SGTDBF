@@ -7,8 +7,8 @@ public final class OptionalStackNode extends AbstractExpandableStackNode{
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public OptionalStackNode(int id, boolean isEndNode, AbstractStackNode optional, String nodeName){
-		super(id, isEndNode);
+	public OptionalStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode optional, String nodeName){
+		super(id, containerIndex, isEndNode);
 		
 		this.nodeName = nodeName;
 		

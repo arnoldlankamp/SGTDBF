@@ -20,7 +20,7 @@ public abstract class AbstractMatchableStackNode extends AbstractStackNode{
 		throw new UnsupportedOperationException();
 	}
 	
-	public int getNonterminalIndex(){
+	public int getContainerIndex(){
 		throw new UnsupportedOperationException();
 	}
 	

@@ -6,12 +6,18 @@ public abstract class AbstractExpandableStackNode extends AbstractStackNode{
 	public final static int DEFAULT_LIST_EPSILON_ID = -2;
 	public final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, true);
 	
-	protected AbstractExpandableStackNode(int id, boolean isEndNode){
+	private final int containerIndex;
+	
+	protected AbstractExpandableStackNode(int id, int containerIndex, boolean isEndNode){
 		super(id, isEndNode);
+		
+		this.containerIndex = containerIndex;
 	}
 	
 	protected AbstractExpandableStackNode(AbstractExpandableStackNode original, int startLocation){
 		super(original, startLocation);
+		
+		containerIndex = original.containerIndex;
 	}
 	
 	public abstract AbstractStackNode[] getChildren();
@@ -24,8 +30,8 @@ public abstract class AbstractExpandableStackNode extends AbstractStackNode{
 		return false;
 	}
 	
-	public int getNonterminalIndex(){
-		throw new UnsupportedOperationException();
+	public int getContainerIndex(){
+		return containerIndex;
 	}
 	
 	public AbstractNode match(char[] input, int location){

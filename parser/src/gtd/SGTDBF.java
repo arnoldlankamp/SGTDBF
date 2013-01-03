@@ -8,13 +8,12 @@ import gtd.result.SortContainerNode;
 import gtd.result.struct.Link;
 import gtd.stack.AbstractExpandableStackNode;
 import gtd.stack.AbstractStackNode;
-import gtd.stack.NonTerminalStackNode;
+import gtd.stack.SortStackNode;
 import gtd.stack.edge.EdgesSet;
 import gtd.util.ArrayList;
 import gtd.util.DoubleStack;
 import gtd.util.EntryReturningIntegerKeyedHashMap;
 import gtd.util.EntryReturningIntegerKeyedHashMap.Entry;
-import gtd.util.HashMap;
 import gtd.util.IntegerList;
 import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
@@ -29,19 +28,24 @@ public class SGTDBF implements IGTD{
 	private DoubleStack<AbstractStackNode, AbstractNode> stacksWithTerminalsToReduce;
 	private final DoubleStack<AbstractStackNode, AbstractNode> stacksWithNonTerminalsToReduce;
 	
-	private final HashMap<String, EdgesSet> cachedEdgesForExpect;
+	private EdgesSet[] cachedEdgesForExpect;
 	
 	private final EntryReturningIntegerKeyedHashMap<AbstractStackNode> sharedNextNodes;
 	
 	protected int location;
 	
 	private final AbstractStackNode[][] expectMatrix;
-	private final ArrayList<String> sortIndexMap;
+	private final ArrayList<String> containerIndexMap;
+	private final int numberOfContainers;
 	
 	public SGTDBF(char[] input, ParserStructure structure){
 		super();
 		
 		this.input = input;
+		
+		expectMatrix = structure.expectMatrix;
+		containerIndexMap = structure.sortIndexMap;
+		numberOfContainers = containerIndexMap.size();
 		
 		todoLists = (DoubleStack<AbstractStackNode, AbstractNode>[]) new DoubleStack[input.length + 1];
 		
@@ -49,14 +53,11 @@ public class SGTDBF implements IGTD{
 		stacksWithTerminalsToReduce = new DoubleStack<AbstractStackNode, AbstractNode>();
 		stacksWithNonTerminalsToReduce = new DoubleStack<AbstractStackNode, AbstractNode>();
 		
-		cachedEdgesForExpect = new HashMap<String, EdgesSet>();
+		cachedEdgesForExpect = new EdgesSet[numberOfContainers];
 		
 		sharedNextNodes = new EntryReturningIntegerKeyedHashMap<AbstractStackNode>();
 		
 		location = 0;
-		
-		expectMatrix = structure.expectMatrix;
-		sortIndexMap = structure.sortIndexMap;
 	}
 	
 	private AbstractStackNode updateNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result){
@@ -484,13 +485,13 @@ public class SGTDBF implements IGTD{
 			
 			terminalsTodo.push(node, node.getResult());
 		}else if(!node.isExpandable()){
-			EdgesSet cachedEdges = cachedEdgesForExpect.get(node.getName());
+			EdgesSet cachedEdges = cachedEdgesForExpect[node.getContainerIndex()];
 			if(cachedEdges == null){
 				cachedEdges = new EdgesSet(1);
 				
-				cachedEdgesForExpect.put(node.getName(), cachedEdges);
+				cachedEdgesForExpect[node.getContainerIndex()] = cachedEdges;
 				
-				AbstractStackNode[] expects = expectMatrix[node.getNonterminalIndex()];
+				AbstractStackNode[] expects = expectMatrix[node.getContainerIndex()];
 				if(expects == null) return;
 				
 				handleExpects(cachedEdges, expects);
@@ -504,11 +505,11 @@ public class SGTDBF implements IGTD{
 			
 			node.setIncomingEdges(cachedEdges);
 		}else{ // 'List'
-			EdgesSet cachedEdges = cachedEdgesForExpect.get(node.getName());
+			EdgesSet cachedEdges = cachedEdgesForExpect[node.getContainerIndex()];
 			if(cachedEdges == null){
 				cachedEdges = new EdgesSet();
 				
-				cachedEdgesForExpect.put(node.getName(), cachedEdges);
+				cachedEdgesForExpect[node.getContainerIndex()] = cachedEdges;
 				
 				AbstractStackNode[] listChildren = node.getChildren();
 				
@@ -595,7 +596,7 @@ public class SGTDBF implements IGTD{
 	
 	public AbstractNode parse(String start){
 		// Initialize.
-		AbstractStackNode rootNode = new NonTerminalStackNode(AbstractStackNode.START_SYMBOL_ID, sortIndexMap.find(start), true, start);
+		AbstractStackNode rootNode = new SortStackNode(AbstractStackNode.START_SYMBOL_ID, containerIndexMap.find(start), true, start);
 		rootNode = rootNode.getCleanCopy(0);
 		rootNode.initEdges();
 		
@@ -607,7 +608,7 @@ public class SGTDBF implements IGTD{
 			do{
 				if(shiftedLevel){ // Nullable fix for the first level.
 					sharedNextNodes.clear();
-					cachedEdgesForExpect.clear();
+					cachedEdgesForExpect = new EdgesSet[numberOfContainers];
 				}
 				
 				do{

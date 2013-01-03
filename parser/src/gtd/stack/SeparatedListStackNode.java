@@ -7,8 +7,8 @@ public final class SeparatedListStackNode extends AbstractExpandableStackNode{
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public SeparatedListStackNode(int id, boolean isEndNode, AbstractStackNode child, AbstractStackNode[] separators, String nodeName, boolean isPlusList){
-		super(id, isEndNode);
+	public SeparatedListStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode child, AbstractStackNode[] separators, String nodeName, boolean isPlusList){
+		super(id, containerIndex, isEndNode);
 		
 		this.nodeName = nodeName;
 		
