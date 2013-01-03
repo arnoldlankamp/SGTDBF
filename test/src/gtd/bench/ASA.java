@@ -66,7 +66,7 @@ public class ASA extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
-		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
+		ParserStructure structure = new FromClassGenerator(ASA.class).generate();
 		
 		// Warmup.
 		char[] input = createInput(51);

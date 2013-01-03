@@ -93,7 +93,7 @@ public class EFa extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
-		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
+		ParserStructure structure = new FromClassGenerator(EFa.class).generate();
 		
 		char[] input = createInput(5);
 		

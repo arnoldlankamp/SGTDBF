@@ -71,7 +71,7 @@ public class ASb extends SGTDBF{
 	}
 	
 	public static void main(String[] args) throws Exception{
-		ParserStructure structure = new FromClassGenerator(WorstCase.class).generate();
+		ParserStructure structure = new FromClassGenerator(ASb.class).generate();
 		
 		// Warmup.
 		char[] input = createInput(5);
