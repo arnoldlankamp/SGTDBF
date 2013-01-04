@@ -22,7 +22,7 @@ public class FromClassGenerator{
 		IntegerKeyedHashMap<AbstractStackNode[]> expectMap = new IntegerKeyedHashMap<AbstractStackNode[]>();
 		ArrayList<String> sortIndexMap = new ArrayList<String>();
 		
-		int idCounter = 1;
+		int idCounter = 0;
 		
 		Method[] methods = parserClass.getMethods();
 		for(int i = methods.length - 1; i >= 0; --i){
@@ -52,6 +52,6 @@ public class FromClassGenerator{
 		for(int i = 0; i < sortIndexMap.size(); ++i){
 			expectMatrix[i] = expectMap.get(i);
 		}
-		return new ParserStructure(expectMatrix, sortIndexMap);
+		return new ParserStructure(expectMatrix, sortIndexMap, idCounter + 1);
 	}
 }
