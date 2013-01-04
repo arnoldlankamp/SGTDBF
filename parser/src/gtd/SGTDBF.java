@@ -18,11 +18,14 @@ import gtd.util.IntegerList;
 import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
 
-@SuppressWarnings({"unchecked", "cast"})
+@SuppressWarnings({"unchecked"})
 public class SGTDBF implements IGTD{
+	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
+	
 	protected final char[] input;
 	
-	private final DoubleStack<AbstractStackNode, AbstractNode>[] todoLists;
+	private DoubleStack<AbstractStackNode, AbstractNode>[] todoLists;
+	private int queueIndex;
 	
 	private final Stack<AbstractStackNode> stacksToExpand;
 	private DoubleStack<AbstractStackNode, AbstractNode> stacksWithTerminalsToReduce;
@@ -46,8 +49,6 @@ public class SGTDBF implements IGTD{
 		expectMatrix = structure.expectMatrix;
 		containerIndexMap = structure.sortIndexMap;
 		numberOfContainers = containerIndexMap.size();
-		
-		todoLists = (DoubleStack<AbstractStackNode, AbstractNode>[]) new DoubleStack[input.length + 1];
 		
 		stacksToExpand = new Stack<AbstractStackNode>();
 		stacksWithTerminalsToReduce = new DoubleStack<AbstractStackNode, AbstractNode>();
@@ -418,31 +419,60 @@ public class SGTDBF implements IGTD{
 		}
 	}
 	
-	private boolean findFirstStackToReduce(){
-		for(int i = location; i < todoLists.length; ++i){
+	private boolean findFirstStacksToReduce(){
+		for(int i = 0; i < todoLists.length; ++i){
 			DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[i];
 			if(!(terminalsTodo == null || terminalsTodo.isEmpty())){
 				stacksWithTerminalsToReduce = terminalsTodo;
 				
-				location = i;
+				location += i;
+				
+				queueIndex = i;
+				
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	
 	private boolean findStacksToReduce(){
-		for(int i = location + 1; i < todoLists.length; ++i){
-			DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[i];
+		int queueDepth = todoLists.length;
+		for(int i = 1; i < queueDepth; ++i){
+			queueIndex = (queueIndex + 1) % queueDepth;
+			
+			DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[queueIndex];
 			if(!(terminalsTodo == null || terminalsTodo.isEmpty())){
 				stacksWithTerminalsToReduce = terminalsTodo;
 				
-				todoLists[location] = null;
-				location = i;
+				location += i;
+				
 				return true;
 			}
 		}
+		
 		return false;
+	}
+	
+	private void addTodo(AbstractStackNode node, int length, AbstractNode result){
+		if(result == null) throw new RuntimeException();
+		int queueDepth = todoLists.length;
+		if(length >= queueDepth){
+			DoubleStack<AbstractStackNode, AbstractNode>[] oldTodoLists = todoLists;
+			todoLists = new DoubleStack[length + 1];
+			System.arraycopy(oldTodoLists, queueIndex, todoLists, 0, queueDepth - queueIndex);
+			System.arraycopy(oldTodoLists, 0, todoLists, queueDepth - queueIndex, queueIndex);
+			queueDepth = length + 1;
+			queueIndex = 0;
+		}
+		
+		int insertLocation = (queueIndex + length) % queueDepth;
+		DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[insertLocation];
+		if(terminalsTodo == null){
+			terminalsTodo = new DoubleStack<AbstractStackNode, AbstractNode>();
+			todoLists[insertLocation] = terminalsTodo;
+		}
+		terminalsTodo.push(node, result);
 	}
 	
 	private void handleExpects(EdgesSet cachedEdges, AbstractStackNode[] expects){
@@ -450,20 +480,15 @@ public class SGTDBF implements IGTD{
 			AbstractStackNode first = expects[i];
 			
 			if(first.isMatchable()){
-				int endLocation = location + first.getLength();
+				int length = first.getLength();
+				int endLocation = location + length;
 				if(endLocation > input.length) continue;
 				
 				AbstractNode result = first.match(input, location);
 				if(result == null) continue; // Discard if it didn't match.
 				
-				DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[endLocation];
-				if(terminalsTodo == null){
-					terminalsTodo = new DoubleStack<AbstractStackNode, AbstractNode>();
-					todoLists[endLocation] = terminalsTodo;
-				}
-				
 				first = first.getCleanCopyWithResult(location, result);
-				terminalsTodo.push(first, result);
+				addTodo(first, length, result);
 			}else{
 				first = first.getCleanCopy(location);
 				stacksToExpand.push(first);
@@ -476,14 +501,7 @@ public class SGTDBF implements IGTD{
 	
 	private void expandStack(AbstractStackNode node){
 		if(node.isMatchable()){
-			int endLocation = location + node.getLength();
-			DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[endLocation];
-			if(terminalsTodo == null){
-				terminalsTodo = new DoubleStack<AbstractStackNode, AbstractNode>();
-				todoLists[endLocation] = terminalsTodo;
-			}
-			
-			terminalsTodo.push(node, node.getResult());
+			addTodo(node, node.getLength(), node.getResult());
 		}else if(!node.isExpandable()){
 			EdgesSet cachedEdges = cachedEdgesForExpect[node.getContainerIndex()];
 			if(cachedEdges == null){
@@ -523,20 +541,15 @@ public class SGTDBF implements IGTD{
 						sharedChild.setEdgesSetWithPrefix(cachedEdges, null, location);
 					}else{
 						if(child.isMatchable()){
-							int endLocation = location + child.getLength();
+							int length = child.getLength();
+							int endLocation = location + length;
 							if(endLocation > input.length) continue;
 							
 							AbstractNode result = child.match(input, location);
 							if(result == null) continue; // Discard if it didn't match.
 							
-							DoubleStack<AbstractStackNode, AbstractNode> terminalsTodo = todoLists[endLocation];
-							if(terminalsTodo == null){
-								terminalsTodo = new DoubleStack<AbstractStackNode, AbstractNode>();
-								todoLists[endLocation] = terminalsTodo;
-							}
-							
 							child = child.getCleanCopyWithResult(location, result);
-							terminalsTodo.push(child, result);
+							addTodo(child, length, result);
 						}else{
 							child = child.getCleanCopy(location);
 							stacksToExpand.push(child);
@@ -596,6 +609,8 @@ public class SGTDBF implements IGTD{
 	
 	public AbstractNode parse(String start){
 		// Initialize.
+		todoLists = new DoubleStack[DEFAULT_TODOLIST_CAPACITY];
+		
 		AbstractStackNode rootNode = new SortStackNode(AbstractStackNode.START_SYMBOL_ID, containerIndexMap.find(start), true, start);
 		rootNode = rootNode.getCleanCopy(0);
 		rootNode.initEdges();
@@ -603,7 +618,7 @@ public class SGTDBF implements IGTD{
 		stacksToExpand.push(rootNode);
 		expand();
 		
-		if(findFirstStackToReduce()){
+		if(findFirstStacksToReduce()){
 			boolean shiftedLevel = (location != 0);
 			do{
 				if(shiftedLevel){ // Nullable fix for the first level.
