@@ -46,21 +46,25 @@ public class EFa extends SGTDBF{
 	private static char[] createInput(int size){
 		int depth = (size - 3) / 4;
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append('a');
-		sb.append('+');
-		addInput(sb, depth);
+		char[] input = new char[((depth + 1) * 4) + 3];
+		int index = 0;
 		
-		return sb.toString().toCharArray();
-	}
-	
-	private static void addInput(StringBuilder sb, int counter){
-		sb.append('(');
-		sb.append('a');
-		sb.append('+');
-		if(counter != 0) addInput(sb, counter - 1);
-		else sb.append('a');
-		sb.append(')');
+		input[index++] = 'a';
+		input[index++] = '+';
+		
+		for(int i = depth; i >= 0; --i){
+			input[index++] = '(';
+			input[index++] = 'a';
+			input[index++] = '+';
+		}
+		
+		input[index++] = 'a';
+		
+		for(int i = depth; i >= 0; --i){
+			input[index++] = ')';
+		}
+		
+		return input;
 	}
 	
 	private static void cleanup() throws Exception{
