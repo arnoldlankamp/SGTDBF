@@ -80,20 +80,28 @@ public class EFa extends SGTDBF{
 		ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 		
 		long total = 0;
+		long totalReal = 0;
 		long lowest = Long.MAX_VALUE;
+		long lowestReal = Long.MAX_VALUE;
 		for(int i = ITERATIONS - 1; i >= 0; --i){
 			cleanup();
 			
+			long startReal = System.nanoTime();
 			long start = tmxb.getCurrentThreadCpuTime();
 			EFa eFa = new EFa(input, structure);
 			eFa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
+			long endReal = System.nanoTime();
 			
 			long time = (end - start) / 1000000;
+			long timeReal = (endReal - startReal) / 1000000;
 			total += time;
+			totalReal += timeReal;
 			lowest = (time < lowest) ? time : lowest;
+			lowestReal = (timeReal < lowestReal) ? timeReal : lowestReal;
 		}
-		System.out.println(input.length+": avg="+(total / ITERATIONS)+"ms, lowest="+lowest+"ms");
+		System.out.println(input.length+": avgCPU="+(total / ITERATIONS)+"ms, lowestCPU="+lowest+"ms");
+		System.out.println(input.length+": avgReal="+(totalReal / ITERATIONS)+"ms, lowestReal="+lowestReal+"ms");
 	}
 	
 	public static void main(String[] args) throws Exception{
