@@ -26,13 +26,12 @@ public final class ListStackNode extends AbstractExpandableStackNode{
 	}
 	
 	private static AbstractStackNode[] generateChildren(AbstractStackNode child){
-		AbstractStackNode listNode = child.getCleanCopy(DEFAULT_START_LOCATION);
-		listNode.addNext(listNode);
-		return new AbstractStackNode[]{listNode};
+		child.addNext(child);
+		return new AbstractStackNode[]{child};
 	}
 	
 	private static AbstractStackNode generateEmptyChild(){
-		return EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
+		return EMPTY;
 	}
 	
 	public String getName(){

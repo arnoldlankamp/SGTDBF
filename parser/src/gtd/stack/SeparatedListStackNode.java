@@ -26,21 +26,19 @@ public final class SeparatedListStackNode extends AbstractExpandableStackNode{
 	}
 	
 	private static AbstractStackNode[] generateChildren(AbstractStackNode child,  AbstractStackNode[] separators){
-		AbstractStackNode listNode = child.getCleanCopy(DEFAULT_START_LOCATION);
-		
-		AbstractStackNode previous = listNode;
+		AbstractStackNode previous = child;
 		for(int i = 0; i < separators.length; ++i){
 			AbstractStackNode separator = separators[i];
 			previous.addNext(separator);
 			previous = separator;
 		}
-		previous.addNext(listNode);
+		previous.addNext(child);
 		
-		return new AbstractStackNode[]{listNode};
+		return new AbstractStackNode[]{child};
 	}
 	
 	private static AbstractStackNode generateEmptyChild(){
-		return EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
+		return EMPTY;
 	}
 	
 	public String getName(){

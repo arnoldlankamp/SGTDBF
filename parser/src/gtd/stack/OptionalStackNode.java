@@ -7,12 +7,12 @@ public final class OptionalStackNode extends AbstractExpandableStackNode{
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public OptionalStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode optional, String nodeName){
+	public OptionalStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode child, String nodeName){
 		super(id, containerIndex, isEndNode);
 		
 		this.nodeName = nodeName;
 		
-		this.children = generateChildren(optional);
+		this.children = generateChildren(child);
 		this.emptyChild = generateEmptyChild();
 	}
 	
@@ -25,14 +25,12 @@ public final class OptionalStackNode extends AbstractExpandableStackNode{
 		emptyChild = original.emptyChild;
 	}
 	
-	private static AbstractStackNode[] generateChildren(AbstractStackNode optional){
-		AbstractStackNode child = optional.getCleanCopy(DEFAULT_START_LOCATION);
-		
+	private static AbstractStackNode[] generateChildren(AbstractStackNode child){
 		return new AbstractStackNode[]{child};
 	}
 	
 	private static AbstractStackNode generateEmptyChild(){
-		return EMPTY.getCleanCopy(DEFAULT_START_LOCATION);
+		return EMPTY;
 	}
 	
 	public String getName(){
