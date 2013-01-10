@@ -160,5 +160,12 @@ public class RunAll{
 		System.out.println("AmbiguousRecursiveNullable:");
 		AmbiguousRecursiveNullable.main(args);
 		System.out.println();
+		
+		System.out.println("Choice1:");
+		Choice1.main(args);
+		System.out.println();
+		System.out.println("Sequence1:");
+		Sequence1.main(args);
+		System.out.println();
 	}
 }

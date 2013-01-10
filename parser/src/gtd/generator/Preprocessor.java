@@ -6,22 +6,26 @@ import gtd.grammar.symbols.CILiteral;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.CharRange;
 import gtd.grammar.symbols.CharRanges;
+import gtd.grammar.symbols.Choice;
 import gtd.grammar.symbols.Epsilon;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Optional;
 import gtd.grammar.symbols.PlusList;
+import gtd.grammar.symbols.Sequence;
 import gtd.grammar.symbols.Sort;
 import gtd.grammar.symbols.StarList;
 import gtd.stack.AbstractStackNode;
 import gtd.stack.CaseInsensitiveLiteralStackNode;
 import gtd.stack.CharRangeStackNode;
 import gtd.stack.CharStackNode;
+import gtd.stack.ChoiceStackNode;
 import gtd.stack.EpsilonStackNode;
 import gtd.stack.ListStackNode;
 import gtd.stack.LiteralStackNode;
-import gtd.stack.SortStackNode;
 import gtd.stack.OptionalStackNode;
 import gtd.stack.SeparatedListStackNode;
+import gtd.stack.SequenceStackNode;
+import gtd.stack.SortStackNode;
 import gtd.util.ArrayList;
 import gtd.util.MarkableForwardSplittingLink;
 import gtd.util.SortedIntegerObjectList;
@@ -156,6 +160,31 @@ public class Preprocessor{
 			}
 			
 			return new SeparatedListStackNode(++idCounter, containerIndex, endNode, child, separators, starList.name, false);
+		}else if(symbol instanceof Choice){
+			Choice choice = (Choice) symbol;
+			int containerIndex = getContainerIndex(containerIndexMap, choice.name);
+			
+			AbstractSymbol[] childSymbols = choice.symbols;
+			int numberOfChildren = childSymbols.length;
+			AbstractStackNode[] children = new AbstractStackNode[numberOfChildren];
+			for(int i = 0; i < numberOfChildren; ++i){
+				children[i] = buildStackNode(childSymbols[i], true, containerIndexMap);
+			}
+			
+			return new ChoiceStackNode(++idCounter, containerIndex, endNode, children, choice.name);
+		}else if(symbol instanceof Sequence){
+			Sequence sequence = (Sequence) symbol;
+			int containerIndex = getContainerIndex(containerIndexMap, sequence.name);
+			
+			AbstractSymbol[] childSymbols = sequence.symbols;
+			int numberOfChildren = childSymbols.length;
+			AbstractStackNode[] children = new AbstractStackNode[numberOfChildren];
+			for(int i = 0; i < numberOfChildren - 1; ++i){
+				children[i] = buildStackNode(childSymbols[i], false, containerIndexMap);
+			}
+			children[numberOfChildren - 1] = buildStackNode(childSymbols[numberOfChildren - 1], true, containerIndexMap);
+			
+			return new SequenceStackNode(++idCounter, containerIndex, endNode, children, sequence.name);
 		}else{
 			throw new RuntimeException(String.format("Unsupported symbol type: %s", symbol.getClass().toString()));
 		}
