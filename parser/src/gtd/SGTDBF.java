@@ -121,7 +121,7 @@ public class SGTDBF implements IGTD{
 				return null;
 			}
 			
-			if(result.isEmpty()){
+			if(node.getStartLocation() == location){
 				if(alternative.isMatchable()){
 					if(alternative.isEmptyLeafNode()){
 						// Encountered possible stack 'overtake'.
@@ -167,7 +167,7 @@ public class SGTDBF implements IGTD{
 			next = next.getCleanCopy(location);
 		}
 		
-		if(!node.isMatchable() || result.isEmpty()){
+		if(!node.isMatchable() || node.getStartLocation() == location){
 			next.updateNode(node, result);
 		}else{
 			next.updateNodeAfterNonEmptyMatchable(node, result);
@@ -185,7 +185,7 @@ public class SGTDBF implements IGTD{
 				return false;
 			}
 			
-			if(result.isEmpty()){
+			if(node.getStartLocation() == location){
 				if(alternative.isMatchable()){
 					if(alternative.isEmptyLeafNode()){
 						// Encountered possible stack 'overtake'.
@@ -442,7 +442,7 @@ public class SGTDBF implements IGTD{
 	
 	private void move(AbstractStackNode node, AbstractNode result){
 		if(node.isEndNode()){
-			if(!result.isEmpty() || node.getId() == AbstractExpandableStackNode.DEFAULT_LIST_EPSILON_ID){
+			if(node.getStartLocation() != location || node.getId() == AbstractExpandableStackNode.DEFAULT_LIST_EPSILON_ID){
 				updateEdges(node, result);
 			}else{
 				updateNullableEdges(node, result);
