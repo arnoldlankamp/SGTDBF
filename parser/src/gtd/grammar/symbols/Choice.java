@@ -44,7 +44,9 @@ public class Choice extends AbstractSymbol{
 			for(int i = otherChoice.symbols.length - 1; i >= 0; --i){
 				if(!symbols[i].equals(otherChoice.symbols[i])) return false;
 			}
+			
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
