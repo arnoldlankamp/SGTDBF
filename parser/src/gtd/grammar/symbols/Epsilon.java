@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public class Epsilon extends AbstractSymbol{
 	
 	public Epsilon(){

@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public class Optional extends AbstractSymbol{
 	public final AbstractSymbol symbol;
 	

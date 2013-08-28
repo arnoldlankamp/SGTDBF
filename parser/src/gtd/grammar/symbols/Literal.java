@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public class Literal extends AbstractSymbol{
 	public final String literal;
 	

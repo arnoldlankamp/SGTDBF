@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public class Sort extends AbstractSymbol{
 	public final String sortName;
 	

@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public abstract class AbstractList extends AbstractSymbol{
 	public final boolean isPlusList;
 	public final AbstractSymbol symbol;

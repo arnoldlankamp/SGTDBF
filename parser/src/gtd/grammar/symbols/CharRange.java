@@ -1,6 +1,5 @@
 package gtd.grammar.symbols;
 
-
 public class CharRange extends AbstractSymbol{
 	public final char from;
 	public final char to;
