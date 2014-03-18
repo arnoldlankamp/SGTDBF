@@ -27,6 +27,12 @@ public class ArrayList<E>{
 		System.arraycopy(oldData, 0, data, 0, size);
 	}
 	
+	private void enlargeTo(int newSize){
+		E[] oldData = data;
+		data = (E[]) new Object[newSize];
+		System.arraycopy(oldData, 0, data, 0, size);
+	}
+	
 	public void add(E object){
 		while(size >= data.length){
 			enlarge();
@@ -35,20 +41,30 @@ public class ArrayList<E>{
 		data[size++] = object;
 	}
 	
+	public void addFromArray(Object[] array, int offset, int length) {
+		int requiredSize = size + length;
+		while(requiredSize >= data.length) {
+			enlargeTo(requiredSize << 1);
+		}
+		
+		System.arraycopy(array, offset, data, size, length);
+		size += length;
+	}
+	
 	public E get(int index){
 		return data[index];
 	}
 	
 	public boolean contains(E object){
 		for(int i = size - 1; i >= 0; --i){
-			if(data[i].equals(object)) return true;
+			if(object.equals(data[i])) return true;
 		}
 		return false;
 	}
 	
 	public int find(E object){
 		for(int i = size - 1; i >= 0; --i){
-			if(data[i].equals(object)) return i;
+			if(object.equals(data[i])) return i;
 		}
 		return -1;
 	}
@@ -65,7 +81,7 @@ public class ArrayList<E>{
 	
 	public E remove(E object){
 		for(int i = size - 1; i >= 0; --i){
-			if(data[i].equals(object)) return remove(i);
+			if(object.equals(data[i])) return remove(i);
 		}
 		return null;
 	}

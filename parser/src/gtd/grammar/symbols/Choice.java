@@ -1,6 +1,6 @@
 package gtd.grammar.symbols;
 
-public class Choice extends AbstractSymbol{
+public class Choice extends AbstractConstruct{
 	public final AbstractSymbol[] symbols;
 	
 	public Choice(AbstractSymbol... symbols){

@@ -1,5 +1,7 @@
 package gtd.grammar.symbols;
 
+import gtd.generator.IdentifiedSymbol;
+
 public class PlusList extends AbstractList{
 	
 	public PlusList(Char character, AbstractSymbol... separators){
@@ -20,5 +22,9 @@ public class PlusList extends AbstractList{
 	
 	public PlusList(Sort sort, AbstractSymbol... separators){
 		super(sort, true, separators);
+	}
+	
+	public PlusList(IdentifiedSymbol identifiedSymbol, AbstractSymbol... separators){
+		super(identifiedSymbol, false, separators);
 	}
 }

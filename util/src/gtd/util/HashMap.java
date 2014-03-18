@@ -169,7 +169,7 @@ public class HashMap<K, V>{
 		load = 0;
 	}
 	
-	private static class Entry<K, V>{
+	public static class Entry<K, V>{
 		public final int hash;
 		public final K key;
 		public V value;
@@ -185,7 +185,7 @@ public class HashMap<K, V>{
 		}
 	}
 	
-	public Iterator<Entry<K, V>> iterator(){
+	public Iterator<Entry<K, V>> entryIterator(){
 		return new EntryIterator<K, V>(this);
 	}
 	

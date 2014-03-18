@@ -1,6 +1,6 @@
 package gtd.grammar.symbols;
 
-public class Sequence extends AbstractSymbol{
+public class Sequence extends AbstractConstruct{
 	public final AbstractSymbol[] symbols;
 	
 	public Sequence(AbstractSymbol... symbols){

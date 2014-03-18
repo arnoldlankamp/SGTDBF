@@ -1,6 +1,6 @@
 package gtd.grammar.symbols;
 
-public abstract class AbstractList extends AbstractSymbol{
+public abstract class AbstractList extends AbstractConstruct{
 	public final boolean isPlusList;
 	public final AbstractSymbol symbol;
 	public final AbstractSymbol[] separators;

@@ -1,13 +1,16 @@
 package gtd.generator;
 
 import gtd.grammar.structure.Alternative;
+import gtd.grammar.structure.IStructure;
 import gtd.stack.AbstractStackNode;
 import gtd.util.ArrayList;
 import gtd.util.IntegerKeyedHashMap;
+import gtd.util.IntegerKeyedHashMap.Entry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Iterator;
 
 public class FromClassGenerator{
 	private final Class<?> parserClass;
@@ -20,7 +23,9 @@ public class FromClassGenerator{
 	
 	public ParserStructure generate(){
 		IntegerKeyedHashMap<AbstractStackNode[]> expectMap = new IntegerKeyedHashMap<AbstractStackNode[]>();
+		
 		ArrayList<String> sortIndexMap = new ArrayList<String>();
+		GrammarEncoder grammarEncoder = new GrammarEncoder(sortIndexMap);
 		
 		int idCounter = 0;
 		
@@ -28,16 +33,25 @@ public class FromClassGenerator{
 		for(int i = methods.length - 1; i >= 0; --i){
 			Method method = methods[i];
 			
-			if(method.getReturnType() == Alternative[].class &&
+			if(IStructure[].class.isAssignableFrom(method.getReturnType()) &&
 					(method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC &&
 					(method.getModifiers() & Modifier.STATIC) == Modifier.STATIC){
 				try{
-					Alternative[] alternatives = (Alternative[]) method.invoke(null);
-					Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
-					AbstractStackNode[] expects = alternativesProcessor.buildExpects(sortIndexMap);
-					int sortIndex = Preprocessor.getContainerIndex(sortIndexMap, method.getName());
-					expectMap.putUnsafe(sortIndex, expects);
-					idCounter = alternativesProcessor.getIdCounter();
+					IStructure[] structures = (IStructure[]) method.invoke(null);
+					
+					IntegerKeyedHashMap<ArrayList<Alternative>> encodedAlternatives = grammarEncoder.flatten(method.getName(), structures);
+					Iterator<Entry<ArrayList<Alternative>>> encodedAlternativesIterator = encodedAlternatives.entryIterator();
+					while(encodedAlternativesIterator.hasNext()){
+						Entry<ArrayList<Alternative>> encodedAlternativesEntry = encodedAlternativesIterator.next();
+						int sortIndex = encodedAlternativesEntry.key;
+						ArrayList<Alternative> alternatives = encodedAlternativesEntry.value;
+						
+						Preprocessor alternativesProcessor = new Preprocessor(alternatives, idCounter);
+						AbstractStackNode[] expects = alternativesProcessor.buildExpects();
+
+						expectMap.putUnsafe(sortIndex, expects);
+						idCounter = alternativesProcessor.getIdCounter();
+					}
 				}catch(IllegalAccessException ex){
 					throw new RuntimeException(ex); // Should never happen
 				}catch(InvocationTargetException ex){
