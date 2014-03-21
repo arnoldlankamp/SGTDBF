@@ -5,12 +5,14 @@ import gtd.grammar.symbols.AbstractSymbol;
 public class IdentifiedSymbol extends AbstractSymbol{
 	public final AbstractSymbol symbol;
 	public final int id;
+	public final boolean restricted;
 
-	public IdentifiedSymbol(AbstractSymbol symbol, int id) {
+	public IdentifiedSymbol(AbstractSymbol symbol, int id, boolean restricted) {
 		super(symbol.name);
 		
 		this.symbol = symbol;
 		this.id = id;
+		this.restricted = restricted;
 	}
 	
 	public int hashCode(){

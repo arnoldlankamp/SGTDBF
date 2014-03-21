@@ -1,6 +1,8 @@
 package gtd.grammar.symbols;
 
 public abstract class AbstractList extends AbstractConstruct{
+	private final static AbstractSymbol[] NO_SEPARATORS = new AbstractSymbol[0];
+	
 	public final boolean isPlusList;
 	public final AbstractSymbol symbol;
 	public final AbstractSymbol[] separators;
@@ -10,7 +12,7 @@ public abstract class AbstractList extends AbstractConstruct{
 		
 		this.isPlusList = isPlusList;
 		this.symbol = symbol;
-		this.separators = separators;
+		this.separators = separators != null ? separators : NO_SEPARATORS;
 	}
 	
 	private static String generateName(AbstractSymbol symbol, boolean isPlusList, AbstractSymbol[] separators){

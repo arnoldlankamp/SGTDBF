@@ -123,7 +123,7 @@ public class Preprocessor{
 				
 				AbstractStackNode child = buildStackNode(plusList.symbol, true);
 				AbstractSymbol[] separatorSymbols = plusList.separators;
-				if(separatorSymbols == null || separatorSymbols.length == 0){
+				if(separatorSymbols.length == 0){
 					return new ListStackNode(++idCounter, containerId, endNode, child, plusList.name, true);
 				}
 				
@@ -140,7 +140,7 @@ public class Preprocessor{
 				
 				AbstractStackNode child = buildStackNode(starList.symbol, true);
 				AbstractSymbol[] separatorSymbols = starList.separators;
-				if(separatorSymbols == null || separatorSymbols.length == 0){
+				if(separatorSymbols.length == 0){
 					return new ListStackNode(++idCounter, containerId, endNode, child, starList.name, false);
 				}
 				
