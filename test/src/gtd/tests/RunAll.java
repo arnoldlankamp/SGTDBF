@@ -167,5 +167,15 @@ public class RunAll{
 		System.out.println("Sequence1:");
 		Sequence1.main(args);
 		System.out.println();
+		
+		System.out.println("Priority:");
+		Priority.main(args);
+		System.out.println();
+		System.out.println("LeftAssociative:");
+		LeftAssociative.main(args);
+		System.out.println();
+		System.out.println("RightAssociative:");
+		RightAssociative.main(args);
+		System.out.println();
 	}
 }
