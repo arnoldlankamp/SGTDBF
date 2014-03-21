@@ -177,5 +177,8 @@ public class RunAll{
 		System.out.println("RightAssociative:");
 		RightAssociative.main(args);
 		System.out.println();
+		System.out.println("ScopedWithTopLevelSortReference:");
+		ScopedWithTopLevelSortReference.main(args);
+		System.out.println();
 	}
 }
