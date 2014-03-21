@@ -95,7 +95,7 @@ public class GrammarEncoder{
 			Optional optional = (Optional) construct;
 			AbstractSymbol optionalSymbol = identifySymbol(optional.symbol, sortName, scopedSortId, restrictedSortIndex);
 			Optional identifiedOptional = new Optional(optionalSymbol);
-			return new IdentifiedSymbol(identifiedOptional , getNextFreeSortIndex(), isRestrictedSort(optionalSymbol));
+			return new IdentifiedSymbol(identifiedOptional , getContainerIndex(optional.name), isRestrictedSort(optionalSymbol));
 		}else if(construct instanceof PlusList){
 			PlusList plusList = (PlusList) construct;
 			AbstractSymbol symbol = plusList.symbol;
@@ -103,7 +103,7 @@ public class GrammarEncoder{
 			AbstractSymbol[] identifiedSeparators = identifySymbols(plusList.separators, sortName, scopedSortId, restrictedSortIndex);
 			
 			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators);
-			return new IdentifiedSymbol(identifiedPlusList, getNextFreeSortIndex(), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
+			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(plusList.name), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
 		}else if(construct instanceof StarList){
 			StarList starList = (StarList) construct;
 			AbstractSymbol symbol = starList.symbol;
@@ -111,19 +111,19 @@ public class GrammarEncoder{
 			AbstractSymbol[] identifiedSeparators = identifySymbols(starList.separators, sortName, scopedSortId, restrictedSortIndex);
 			
 			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators);
-			return new IdentifiedSymbol(identifiedStarList, getNextFreeSortIndex(), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
+			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(starList.name), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
 		}else if(construct instanceof Choice){
 			Choice choice = (Choice) construct;
 			AbstractSymbol[] identifiedSymbols = identifySymbols(choice.symbols, sortName, scopedSortId, restrictedSortIndex);
 			
 			Choice identifiedChoice = new Choice(identifiedSymbols);
-			return new IdentifiedSymbol(identifiedChoice , getNextFreeSortIndex(), containsRestrictedSorts(identifiedSymbols));
+			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(choice.name), containsRestrictedSorts(identifiedSymbols));
 		}else if(construct instanceof Sequence){
 			Sequence sequence = (Sequence) construct;
 			AbstractSymbol[] identifiedSymbols = identifySymbols(sequence.symbols, sortName, scopedSortId, restrictedSortIndex);
 			
 			Sequence identifiedSequence = new Sequence(identifiedSymbols);
-			return new IdentifiedSymbol(identifiedSequence , getNextFreeSortIndex(), containsRestrictedSorts(identifiedSymbols));
+			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(sequence.name), containsRestrictedSorts(identifiedSymbols));
 		}else{
 			throw new RuntimeException(String.format("Unsupported construct type: %s", construct.getClass().toString()));
 		}
