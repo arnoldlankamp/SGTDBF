@@ -19,9 +19,7 @@ public class Sort extends AbstractSymbol{
 		
 		if(other instanceof Sort){
 			Sort otherSort = (Sort) other;
-			if(!sortName.equals(otherSort.sortName)) return false;
-			
-			return true;
+			return sortName.equals(otherSort.sortName);
 		}
 		return false;
 	}

@@ -1,5 +1,6 @@
 package gtd.generator;
 
+import gtd.generator.IdentifiedSymbol.Key;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.structure.IStructure;
 import gtd.stack.AbstractStackNode;
@@ -24,8 +25,8 @@ public class FromClassGenerator{
 	public ParserStructure generate(){
 		IntegerKeyedHashMap<AbstractStackNode[]> expectMap = new IntegerKeyedHashMap<AbstractStackNode[]>();
 		
-		ArrayList<String> sortIndexMap = new ArrayList<String>();
-		GrammarEncoder grammarEncoder = new GrammarEncoder(sortIndexMap);
+		ArrayList<Key> containerIndexMap = new ArrayList<Key>();
+		GrammarEncoder grammarEncoder = new GrammarEncoder(containerIndexMap);
 		
 		int idCounter = 0;
 		
@@ -60,6 +61,12 @@ public class FromClassGenerator{
 					throw new RuntimeException(String.format("Encountered an empty alternative in: %s.", method.getName()), ex);
 				}
 			}
+		}
+		
+		ArrayList<String> sortIndexMap = new ArrayList<String>();
+		for(int i = 0; i < containerIndexMap.size(); ++i){
+			Key identifiedSymbolKey = containerIndexMap.get(i);
+			sortIndexMap.add(identifiedSymbolKey.scopeId == 0 && !identifiedSymbolKey.isRestricted ? identifiedSymbolKey.symbol.name : null);
 		}
 		
 		AbstractStackNode[][] expectMatrix = new AbstractStackNode[sortIndexMap.size()][];

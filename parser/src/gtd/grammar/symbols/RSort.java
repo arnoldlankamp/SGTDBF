@@ -16,9 +16,7 @@ public class RSort extends Sort{
 		
 		if(other instanceof RSort){
 			RSort otherRSort = (RSort) other;
-			if(!sortName.equals(otherRSort.sortName)) return false;
-			
-			return true;
+			return sortName.equals(otherRSort.sortName);
 		}
 		return false;
 	}

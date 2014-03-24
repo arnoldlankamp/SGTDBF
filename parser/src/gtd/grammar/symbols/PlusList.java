@@ -25,6 +25,6 @@ public class PlusList extends AbstractList{
 	}
 	
 	public PlusList(IdentifiedSymbol identifiedSymbol, AbstractSymbol... separators){
-		super(identifiedSymbol, false, separators);
+		super(identifiedSymbol, true, separators);
 	}
 }

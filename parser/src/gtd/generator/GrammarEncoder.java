@@ -1,5 +1,6 @@
 package gtd.generator;
 
+import gtd.generator.IdentifiedSymbol.Key;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.structure.IStructure;
 import gtd.grammar.structure.Scope;
@@ -21,42 +22,42 @@ import gtd.util.ArrayList;
 import gtd.util.IntegerKeyedHashMap;
 
 public class GrammarEncoder{
-	private final ArrayList<String> sortIndexMap;
+	private final ArrayList<Key> containerIndexMap;
+	private int scopeIndexCounter;
 	
-	public GrammarEncoder(ArrayList<String> sortIndexMap) {
+	public GrammarEncoder(ArrayList<Key> containerIndexMap) {
 		super();
 		
-		this.sortIndexMap = sortIndexMap;
+		this.containerIndexMap = containerIndexMap;
+		this.scopeIndexCounter = 0;
 	}
 	
-	private int getContainerIndex(String sortName){
-		int sortIndex = sortIndexMap.find(sortName);
+	private int getContainerIndex(Key identifiedSymbolKey){
+		int sortIndex = containerIndexMap.find(identifiedSymbolKey);
 		if(sortIndex == -1){
-			sortIndex = sortIndexMap.size();
-			sortIndexMap.add(sortName);
+			sortIndex = containerIndexMap.size();
+			containerIndexMap.add(identifiedSymbolKey);
 		}
 		return sortIndex;
 	}
 	
-	private int getNextFreeSortIndex() {
-		int sortIndex = sortIndexMap.size();
-		sortIndexMap.add(null);
-		return sortIndex;
+	private int getNextFreeScopeIndex(){
+		return ++scopeIndexCounter;
 	}
 	
-	private static PlusList constructIdentifiedPlusList(AbstractSymbol idenfitiedSymbol, AbstractSymbol[] identifiedSeparators){
-		if(idenfitiedSymbol instanceof Char){
-			return new PlusList((Char) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof CharRange){
-			return new PlusList((CharRange) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof Literal){
-			return new PlusList((Literal) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof CILiteral){
-			return new PlusList((CILiteral) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof IdentifiedSymbol){
-			return new PlusList((IdentifiedSymbol) idenfitiedSymbol, identifiedSeparators);
+	private static PlusList constructIdentifiedPlusList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators){
+		if(identifiedSymbol instanceof Char){
+			return new PlusList((Char) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CharRange){
+			return new PlusList((CharRange) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof Literal){
+			return new PlusList((Literal) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CILiteral){
+			return new PlusList((CILiteral) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof IdentifiedSymbol){
+			return new PlusList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
 		}else{
-			throw new RuntimeException(String.format("Unsupported plus list symbol type: %s", idenfitiedSymbol.getClass().toString()));
+			throw new RuntimeException(String.format("Unsupported plus list symbol type: %s", identifiedSymbol.getClass().toString()));
 		}
 	}
 	
@@ -90,104 +91,113 @@ public class GrammarEncoder{
 		return false;
 	}
 	
-	private IdentifiedSymbol identifyConstruct(AbstractConstruct construct, String sortName, int scopedSortId, int restrictedSortIndex){
+	private IdentifiedSymbol identifyConstruct(AbstractConstruct construct, String sortName, int scopeId){
 		if(construct instanceof Optional){
 			Optional optional = (Optional) construct;
-			AbstractSymbol optionalSymbol = identifySymbol(optional.symbol, sortName, scopedSortId, restrictedSortIndex);
+			AbstractSymbol optionalSymbol = identifySymbol(optional.symbol, sortName, scopeId);
 			Optional identifiedOptional = new Optional(optionalSymbol);
-			return new IdentifiedSymbol(identifiedOptional , getContainerIndex(optional.name), isRestrictedSort(optionalSymbol));
+			boolean containsRestrictedSort = isRestrictedSort(optionalSymbol);
+			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof PlusList){
 			PlusList plusList = (PlusList) construct;
 			AbstractSymbol symbol = plusList.symbol;
-			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopedSortId, restrictedSortIndex);
-			AbstractSymbol[] identifiedSeparators = identifySymbols(plusList.separators, sortName, scopedSortId, restrictedSortIndex);
+			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopeId);
+			AbstractSymbol[] identifiedSeparators = identifySymbols(plusList.separators, sortName, scopeId);
 			
 			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators);
-			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(plusList.name), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
+			boolean containsRestrictedSort = isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators);
+			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof StarList){
 			StarList starList = (StarList) construct;
 			AbstractSymbol symbol = starList.symbol;
-			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopedSortId, restrictedSortIndex);
-			AbstractSymbol[] identifiedSeparators = identifySymbols(starList.separators, sortName, scopedSortId, restrictedSortIndex);
+			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopeId);
+			AbstractSymbol[] identifiedSeparators = identifySymbols(starList.separators, sortName, scopeId);
 			
 			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators);
-			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(starList.name), isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators));
+			boolean containsRestrictedSort = isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators);
+			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Choice){
 			Choice choice = (Choice) construct;
-			AbstractSymbol[] identifiedSymbols = identifySymbols(choice.symbols, sortName, scopedSortId, restrictedSortIndex);
+			AbstractSymbol[] identifiedSymbols = identifySymbols(choice.symbols, sortName, scopeId);
 			
 			Choice identifiedChoice = new Choice(identifiedSymbols);
-			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(choice.name), containsRestrictedSorts(identifiedSymbols));
+			boolean containsRestrictedSort = containsRestrictedSorts(identifiedSymbols);
+			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Sequence){
 			Sequence sequence = (Sequence) construct;
-			AbstractSymbol[] identifiedSymbols = identifySymbols(sequence.symbols, sortName, scopedSortId, restrictedSortIndex);
+			AbstractSymbol[] identifiedSymbols = identifySymbols(sequence.symbols, sortName, scopeId);
 			
 			Sequence identifiedSequence = new Sequence(identifiedSymbols);
-			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(sequence.name), containsRestrictedSorts(identifiedSymbols));
+			boolean containsRestrictedSort = containsRestrictedSorts(identifiedSymbols);
+			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else{
 			throw new RuntimeException(String.format("Unsupported construct type: %s", construct.getClass().toString()));
 		}
 	}
 	
-	private AbstractSymbol identifySymbol(AbstractSymbol symbol, String sortName, int scopedSortId, int restrictedSortIndex){
+	private AbstractSymbol identifySymbol(AbstractSymbol symbol, String sortName, int scopeId){
 		if(symbol instanceof Sort){
 			Sort sort = (Sort) symbol;
 			if(sort.sortName.equals(sortName)){
 				if(sort instanceof RSort){
-					return new IdentifiedSymbol(sort, restrictedSortIndex, true);
+					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, scopeId, true)), true);
 				}else if(sort instanceof TLSort){
-					return new IdentifiedSymbol(sort, getContainerIndex(sort.sortName), false);
+					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, 0, false)), false);
 				}
-				return new IdentifiedSymbol(sort, scopedSortId, false);
+				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, scopeId, false)), false);
 			}else{
-				return new IdentifiedSymbol(sort, getContainerIndex(sort.sortName), false);
+				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, 0, false)), false);
 			}
 		}else if(symbol instanceof AbstractConstruct){
-			return identifyConstruct((AbstractConstruct) symbol, sortName, scopedSortId, restrictedSortIndex);
+			return identifyConstruct((AbstractConstruct) symbol, sortName, scopeId);
 		}
 		return symbol;
 	}
 	
-	private AbstractSymbol[] identifySymbols(AbstractSymbol[] symbols, String sortName, int scopedSortId, int restrictedSortIndex){
+	private AbstractSymbol[] identifySymbols(AbstractSymbol[] symbols, String sortName, int scopeId){
 		AbstractSymbol[] newSymbols = new AbstractSymbol[symbols.length];
 		for(int i = symbols.length - 1; i >= 0; --i){
-			newSymbols[i] = identifySymbol(symbols[i], sortName, scopedSortId, restrictedSortIndex);
+			newSymbols[i] = identifySymbol(symbols[i], sortName, scopeId);
 		}
 		return newSymbols;
 	}
 	
-	private Alternative identifySortsAndConstructs(String sortName, int scopedSortId, int restrictedSortIndex, Alternative alternative){
-		return new Alternative(identifySymbols(alternative.alternative, sortName, scopedSortId, restrictedSortIndex));
+	private Alternative identifySortsAndConstructs(String sortName, int scopeId, Alternative alternative){
+		return new Alternative(identifySymbols(alternative.alternative, sortName, scopeId));
 	}
 	
-	private ArrayList<Alternative> encodeAlternatives(String sortName, int sortId, int restrictedSortIndex, IStructure[] structures, IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives){
+	private ArrayList<Alternative> encodeAlternatives(String sortName, int scopeId, IStructure[] structures, IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives){
 		ArrayList<Alternative> alternatives = new ArrayList<Alternative>();
 		ArrayList<Alternative> nonRestrictedAlternatives =  new ArrayList<Alternative>();
+		boolean restrictedSortEncountered = false;
 		for(int i = structures.length - 1; i >= 0; --i){
 			IStructure structure = structures[i];
 			if(structure instanceof Scope){
-				ArrayList<Alternative> scopedAlternatives = encodeAlternatives(sortName, getNextFreeSortIndex(), getNextFreeSortIndex(), ((Scope) structure).alternatives, groupedAlternatives);
+				ArrayList<Alternative> scopedAlternatives = encodeAlternatives(sortName, getNextFreeScopeIndex(), ((Scope) structure).alternatives, groupedAlternatives);
 				Object[] scopedAlternativesBackingArray = scopedAlternatives.getBackingArray();
 				alternatives.addFromArray(scopedAlternativesBackingArray, 0, scopedAlternatives.size());
 				for(int j = scopedAlternatives.size() - 1; j >= 0; --j){
 					Alternative scopedAlternative = scopedAlternatives.get(j);
 					if(!containsRestrictedSorts(scopedAlternative.alternative)){
 						nonRestrictedAlternatives.add(scopedAlternative);
+					}else{
+						restrictedSortEncountered = true;
 					}
 				}
 			}else{
 				Alternative alternative = (Alternative) structure;
-				Alternative identifiedAlternative = identifySortsAndConstructs(sortName, sortId, restrictedSortIndex, alternative);
+				Alternative identifiedAlternative = identifySortsAndConstructs(sortName, scopeId, alternative);
 				alternatives.add(identifiedAlternative);
 				if(!containsRestrictedSorts(identifiedAlternative.alternative)){
 					nonRestrictedAlternatives.add(identifiedAlternative);
+				}else{
+					restrictedSortEncountered = true;
 				}
 			}
 		}
 		
-		groupedAlternatives.putUnsafe(sortId, alternatives);
-		
-		groupedAlternatives.putUnsafe(restrictedSortIndex, nonRestrictedAlternatives);
+		groupedAlternatives.putUnsafe(getContainerIndex(new Key(new Sort(sortName), scopeId, false)), alternatives);
+		if(restrictedSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(new RSort(sortName), scopeId, true)), nonRestrictedAlternatives);
 		
 		return alternatives;
 	}
@@ -195,7 +205,7 @@ public class GrammarEncoder{
 	public IntegerKeyedHashMap<ArrayList<Alternative>> flatten(String sortName, IStructure[] structures){
 		IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives = new IntegerKeyedHashMap<ArrayList<Alternative>>();
 		
-		encodeAlternatives(sortName, getContainerIndex(sortName), getNextFreeSortIndex(), structures, groupedAlternatives);
+		encodeAlternatives(sortName, 0, structures, groupedAlternatives);
 		
 		return groupedAlternatives;
 	}

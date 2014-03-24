@@ -62,7 +62,9 @@ public abstract class AbstractList extends AbstractConstruct{
 				if(!separators[i].equals(otherList.separators[i])) return false;
 			}
 			if(isPlusList != otherList.isPlusList) return false;
+			
+			return true;
 		}
-		return true;
+		return false;
 	}
 }

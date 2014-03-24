@@ -8,4 +8,8 @@ public abstract class AbstractSymbol{
 		
 		this.name = name;
 	}
+	
+	public String toString(){
+		return name;
+	}
 }

@@ -16,9 +16,7 @@ public class TLSort extends Sort{
 		
 		if(other instanceof TLSort){
 			TLSort otherRSort = (TLSort) other;
-			if(!sortName.equals(otherRSort.sortName)) return false;
-			
-			return true;
+			return sortName.equals(otherRSort.sortName);
 		}
 		return false;
 	}
