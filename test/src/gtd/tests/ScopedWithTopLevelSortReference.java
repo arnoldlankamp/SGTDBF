@@ -28,6 +28,7 @@ public class ScopedWithTopLevelSortReference extends SGTDBF{
 		return new IStructure[]{
 			new Alternative(new Sort("A"), new Literal("+"), new RSort("A")),
 			new Scope(
+				new Alternative(new Sort("A"), new Literal("*"), new RSort("A")),
 				new Alternative(new Literal("|"), new TLSort("A"), new Literal("|")),
 				new Alternative(new Literal("a"))
 			)
@@ -36,10 +37,10 @@ public class ScopedWithTopLevelSortReference extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(ScopedWithTopLevelSortReference.class).generate();
-		ScopedWithTopLevelSortReference swtlsr = new ScopedWithTopLevelSortReference("a+|a+a|+a".toCharArray(), structure);
+		ScopedWithTopLevelSortReference swtlsr = new ScopedWithTopLevelSortReference("a*|a+a|*a".toCharArray(), structure);
 		AbstractNode result = swtlsr.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(A(A(A(a),+,A(|,A(A(a),+,A(a)),|)),+,A(a))) <- good");
+		System.out.println("S(A(A(A(a),*,A(|,A(A(a),+,A(a)),|)),*,A(a))) <- good");
 	}
 }

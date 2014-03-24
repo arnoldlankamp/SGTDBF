@@ -77,16 +77,22 @@ public class GrammarEncoder{
 		}
 	}
 	
-	private static boolean isRestrictedSort(AbstractSymbol symbol){
-		if(symbol instanceof IdentifiedSymbol){
-			return ((IdentifiedSymbol) symbol).restricted;
+	private static boolean isSelfRecursiveSort(AbstractSymbol identifiedSymbol, String sortName){
+		if(identifiedSymbol instanceof IdentifiedSymbol){
+			AbstractSymbol symbol = ((IdentifiedSymbol) identifiedSymbol).symbol;
+			if(symbol instanceof Sort){
+				if(symbol instanceof TLSort) return false;
+				
+				Sort sort = (Sort) symbol;
+				return sort.sortName.equals(sortName);
+			}
 		}
 		return false;
 	}
 	
-	private static boolean containsRestrictedSorts(AbstractSymbol[] symbols){
+	private static boolean containsSelfRecursiveSort(AbstractSymbol[] symbols, String sortName){
 		for(int i = symbols.length - 1; i >= 0; --i){
-			if(isRestrictedSort(symbols[i])) return true;
+			if(isSelfRecursiveSort(symbols[i], sortName)) return true;
 		}
 		return false;
 	}
@@ -96,7 +102,7 @@ public class GrammarEncoder{
 			Optional optional = (Optional) construct;
 			AbstractSymbol optionalSymbol = identifySymbol(optional.symbol, sortName, scopeId);
 			Optional identifiedOptional = new Optional(optionalSymbol);
-			boolean containsRestrictedSort = isRestrictedSort(optionalSymbol);
+			boolean containsRestrictedSort = isSelfRecursiveSort(optionalSymbol, sortName);
 			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof PlusList){
 			PlusList plusList = (PlusList) construct;
@@ -105,7 +111,7 @@ public class GrammarEncoder{
 			AbstractSymbol[] identifiedSeparators = identifySymbols(plusList.separators, sortName, scopeId);
 			
 			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators);
-			boolean containsRestrictedSort = isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators);
+			boolean containsRestrictedSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
 			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof StarList){
 			StarList starList = (StarList) construct;
@@ -114,21 +120,21 @@ public class GrammarEncoder{
 			AbstractSymbol[] identifiedSeparators = identifySymbols(starList.separators, sortName, scopeId);
 			
 			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators);
-			boolean containsRestrictedSort = isRestrictedSort(identifiedSymbol) || containsRestrictedSorts(identifiedSeparators);
+			boolean containsRestrictedSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
 			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Choice){
 			Choice choice = (Choice) construct;
 			AbstractSymbol[] identifiedSymbols = identifySymbols(choice.symbols, sortName, scopeId);
 			
 			Choice identifiedChoice = new Choice(identifiedSymbols);
-			boolean containsRestrictedSort = containsRestrictedSorts(identifiedSymbols);
+			boolean containsRestrictedSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
 			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Sequence){
 			Sequence sequence = (Sequence) construct;
 			AbstractSymbol[] identifiedSymbols = identifySymbols(sequence.symbols, sortName, scopeId);
 			
 			Sequence identifiedSequence = new Sequence(identifiedSymbols);
-			boolean containsRestrictedSort = containsRestrictedSorts(identifiedSymbols);
+			boolean containsRestrictedSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
 			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence, scopeId, containsRestrictedSort)), containsRestrictedSort);
 		}else{
 			throw new RuntimeException(String.format("Unsupported construct type: %s", construct.getClass().toString()));
@@ -168,8 +174,8 @@ public class GrammarEncoder{
 	
 	private ArrayList<Alternative> encodeAlternatives(String sortName, int scopeId, IStructure[] structures, IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives){
 		ArrayList<Alternative> alternatives = new ArrayList<Alternative>();
-		ArrayList<Alternative> nonRestrictedAlternatives =  new ArrayList<Alternative>();
-		boolean restrictedSortEncountered = false;
+		ArrayList<Alternative> nonSelfRecursiveAlternatives =  new ArrayList<Alternative>();
+		boolean selfRecursiveSortEncountered = false;
 		for(int i = structures.length - 1; i >= 0; --i){
 			IStructure structure = structures[i];
 			if(structure instanceof Scope){
@@ -178,26 +184,26 @@ public class GrammarEncoder{
 				alternatives.addFromArray(scopedAlternativesBackingArray, 0, scopedAlternatives.size());
 				for(int j = scopedAlternatives.size() - 1; j >= 0; --j){
 					Alternative scopedAlternative = scopedAlternatives.get(j);
-					if(!containsRestrictedSorts(scopedAlternative.alternative)){
-						nonRestrictedAlternatives.add(scopedAlternative);
+					if(!containsSelfRecursiveSort(scopedAlternative.alternative, sortName)){
+						nonSelfRecursiveAlternatives.add(scopedAlternative);
 					}else{
-						restrictedSortEncountered = true;
+						selfRecursiveSortEncountered = true;
 					}
 				}
 			}else{
 				Alternative alternative = (Alternative) structure;
 				Alternative identifiedAlternative = identifySortsAndConstructs(sortName, scopeId, alternative);
 				alternatives.add(identifiedAlternative);
-				if(!containsRestrictedSorts(identifiedAlternative.alternative)){
-					nonRestrictedAlternatives.add(identifiedAlternative);
+				if(!containsSelfRecursiveSort(identifiedAlternative.alternative, sortName)){
+					nonSelfRecursiveAlternatives.add(identifiedAlternative);
 				}else{
-					restrictedSortEncountered = true;
+					selfRecursiveSortEncountered = true;
 				}
 			}
 		}
 		
 		groupedAlternatives.putUnsafe(getContainerIndex(new Key(new Sort(sortName), scopeId, false)), alternatives);
-		if(restrictedSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(new RSort(sortName), scopeId, true)), nonRestrictedAlternatives);
+		if(selfRecursiveSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(new RSort(sortName), scopeId, true)), nonSelfRecursiveAlternatives);
 		
 		return alternatives;
 	}
