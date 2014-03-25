@@ -19,7 +19,6 @@ import gtd.util.Stack;
 @SuppressWarnings({"unchecked"})
 public class SGTDBF implements IGTD{
 	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
-	private final static DeadEnd DEAD_NODE = new DeadEnd();
 	
 	protected final char[] input;
 	
@@ -62,65 +61,10 @@ public class SGTDBF implements IGTD{
 		location = 0;
 	}
 	
-	private static class DeadEnd extends AbstractStackNode{
-		
-		public DeadEnd(){
-			super(-1, false);
-		}
-		
-		public boolean isEmptyLeafNode() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public String getName() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public int getContainerIndex() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractNode match(char[] input, int location) {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractStackNode getCleanCopy(int startLocation) {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractStackNode getCleanCopyWithResult(int startLocation, AbstractNode result) {
-			throw new UnsupportedOperationException();
-		}
-		
-		public int getLength() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractStackNode[] getChildren() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public boolean canBeEmpty() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractStackNode getEmptyChild() {
-			throw new UnsupportedOperationException();
-		}
-		
-		public AbstractNode getResult() {
-			throw new UnsupportedOperationException();
-		}
-	}
-	
 	private AbstractStackNode updateNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result){
 		AbstractStackNode alternative = sharedNextNodes[next.getId()];
 		
 		if(alternative != null){
-			if(alternative == DEAD_NODE){
-				return null;
-			}
-			
 			if(node.getStartLocation() == location){
 				if(alternative.isMatchable()){
 					if(alternative.isEmptyLeafNode()){
@@ -181,10 +125,6 @@ public class SGTDBF implements IGTD{
 	private boolean updateAlternativeNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result, IntegerObjectList<EdgesSet> edgesMap, ArrayList<Link>[] prefixesMap){
 		AbstractStackNode alternative = sharedNextNodes[next.getId()];
 		if(alternative != null){
-			if(alternative == DEAD_NODE){
-				return false;
-			}
-			
 			if(node.getStartLocation() == location){
 				if(alternative.isMatchable()){
 					if(alternative.isEmptyLeafNode()){
@@ -259,20 +199,18 @@ public class SGTDBF implements IGTD{
 		AbstractStackNode nextNext = next.getNext();
 		AbstractStackNode nextNextAlternative = sharedNextNodes[nextNext.getId()];
 		if(nextNextAlternative != null){
-			if(nextNextAlternative != DEAD_NODE){
-				if(nextNextAlternative.isMatchable()){
-					if(nextNextAlternative.isEmptyLeafNode()){
-						propagateEdgesAndPrefixesForNullable(next, nextResult, nextNextAlternative, nextNextAlternative.getResult(), nrOfAddedEdges);
-					}else{
-						nextNextAlternative.updateNode(next, nextResult);
-					}
+			if(nextNextAlternative.isMatchable()){
+				if(nextNextAlternative.isEmptyLeafNode()){
+					propagateEdgesAndPrefixesForNullable(next, nextResult, nextNextAlternative, nextNextAlternative.getResult(), nrOfAddedEdges);
 				}else{
-					EdgesSet nextNextAlternativeEdgesSet = nextNextAlternative.getIncomingEdges();
-					if(nextNextAlternativeEdgesSet != null && nextNextAlternativeEdgesSet.getLastVisistedLevel() == location){
-						propagateEdgesAndPrefixesForNullable(next, nextResult, nextNextAlternative, nextNextAlternativeEdgesSet.getLastResult(), nrOfAddedEdges);
-					}else{
-						nextNextAlternative.updateNode(next, nextResult);
-					}
+					nextNextAlternative.updateNode(next, nextResult);
+				}
+			}else{
+				EdgesSet nextNextAlternativeEdgesSet = nextNextAlternative.getIncomingEdges();
+				if(nextNextAlternativeEdgesSet != null && nextNextAlternativeEdgesSet.getLastVisistedLevel() == location){
+					propagateEdgesAndPrefixesForNullable(next, nextResult, nextNextAlternative, nextNextAlternativeEdgesSet.getLastResult(), nrOfAddedEdges);
+				}else{
+					nextNextAlternative.updateNode(next, nextResult);
 				}
 			}
 		}
@@ -294,8 +232,6 @@ public class SGTDBF implements IGTD{
 				
 				AbstractStackNode nextNextAltAlternative = sharedNextNodes[alternativeNext.getId()];
 				if(nextNextAltAlternative != null){
-					if(nextNextAltAlternative == DEAD_NODE) continue;
-					
 					if(nextNextAltAlternative.isMatchable()){
 						if(nextNextAltAlternative.isEmptyLeafNode()){
 							propagateAlternativeEdgesAndPrefixes(next, nextResult, nextNextAltAlternative, nextNextAltAlternative.getResult(), nrOfAddedEdges, nextNextEdgesMap, nextNextPrefixesMap);
@@ -584,9 +520,7 @@ public class SGTDBF implements IGTD{
 					
 					AbstractStackNode sharedChild = sharedNextNodes[childId];
 					if(sharedChild != null){
-						if(sharedChild != DEAD_NODE){
-							sharedChild.setEdgesSetWithPrefix(cachedEdges, null, location);
-						}
+						sharedChild.setEdgesSetWithPrefix(cachedEdges, null, location);
 					}else{
 						if(child.isMatchable()){
 							int length = child.getLength();
