@@ -61,19 +61,19 @@ public class GrammarEncoder{
 		}
 	}
 	
-	private static StarList constructIdentifiedStarList(AbstractSymbol idenfitiedSymbol, AbstractSymbol[] identifiedSeparators){
-		if(idenfitiedSymbol instanceof Char){
-			return new StarList((Char) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof CharRange){
-			return new StarList((CharRange) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof Literal){
-			return new StarList((Literal) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof CILiteral){
-			return new StarList((CILiteral) idenfitiedSymbol, identifiedSeparators);
-		}else if(idenfitiedSymbol instanceof IdentifiedSymbol){
-			return new StarList((IdentifiedSymbol) idenfitiedSymbol, identifiedSeparators);
+	private static StarList constructIdentifiedStarList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators){
+		if(identifiedSymbol instanceof Char){
+			return new StarList((Char) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CharRange){
+			return new StarList((CharRange) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof Literal){
+			return new StarList((Literal) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CILiteral){
+			return new StarList((CILiteral) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof IdentifiedSymbol){
+			return new StarList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
 		}else{
-			throw new RuntimeException(String.format("Unsupported star list symbol type: %s", idenfitiedSymbol.getClass().toString()));
+			throw new RuntimeException(String.format("Unsupported star list symbol type: %s", identifiedSymbol.getClass().toString()));
 		}
 	}
 	
@@ -97,45 +97,66 @@ public class GrammarEncoder{
 		return false;
 	}
 	
+	private static boolean isRestrictedSort(AbstractSymbol symbol){
+		return symbol instanceof RSort;
+	}
+	
+	private static boolean containsRestrictedSort(AbstractSymbol[] symbols){
+		for(int i = symbols.length - 1; i >= 0; --i){
+			if(isRestrictedSort(symbols[i])) return true;
+		}
+		return false;
+	}
+	
 	private IdentifiedSymbol identifyConstruct(AbstractConstruct construct, String sortName, int scopeId){
 		if(construct instanceof Optional){
 			Optional optional = (Optional) construct;
-			AbstractSymbol optionalSymbol = identifySymbol(optional.symbol, sortName, scopeId);
-			Optional identifiedOptional = new Optional(optionalSymbol);
-			boolean containsRestrictedSort = isSelfRecursiveSort(optionalSymbol, sortName);
-			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional, scopeId, containsRestrictedSort)), containsRestrictedSort);
+			AbstractSymbol symbol = optional.symbol;
+			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopeId);
+			Optional identifiedOptional = new Optional(identifiedSymbol);
+			boolean containsRestrictedSort = isRestrictedSort(symbol);
+			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName);
+			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof PlusList){
 			PlusList plusList = (PlusList) construct;
 			AbstractSymbol symbol = plusList.symbol;
 			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopeId);
-			AbstractSymbol[] identifiedSeparators = identifySymbols(plusList.separators, sortName, scopeId);
+			AbstractSymbol[] separators = plusList.separators;
+			AbstractSymbol[] identifiedSeparators = identifySymbols(separators, sortName, scopeId);
 			
 			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators);
-			boolean containsRestrictedSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
-			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList, scopeId, containsRestrictedSort)), containsRestrictedSort);
+			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
+			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
+			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof StarList){
 			StarList starList = (StarList) construct;
 			AbstractSymbol symbol = starList.symbol;
 			AbstractSymbol identifiedSymbol = identifySymbol(symbol, sortName, scopeId);
-			AbstractSymbol[] identifiedSeparators = identifySymbols(starList.separators, sortName, scopeId);
+			AbstractSymbol[] separators = starList.separators;
+			AbstractSymbol[] identifiedSeparators = identifySymbols(separators, sortName, scopeId);
 			
 			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators);
-			boolean containsRestrictedSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
-			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList, scopeId, containsRestrictedSort)), containsRestrictedSort);
+			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
+			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
+			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Choice){
 			Choice choice = (Choice) construct;
-			AbstractSymbol[] identifiedSymbols = identifySymbols(choice.symbols, sortName, scopeId);
+			AbstractSymbol[] symbols = choice.symbols;
+			AbstractSymbol[] identifiedSymbols = identifySymbols(symbols, sortName, scopeId);
 			
 			Choice identifiedChoice = new Choice(identifiedSymbols);
-			boolean containsRestrictedSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
-			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice, scopeId, containsRestrictedSort)), containsRestrictedSort);
+			boolean containsRestrictedSort = containsRestrictedSort(symbols);
+			boolean containsSelfRecursiveSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
+			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
 		}else if(construct instanceof Sequence){
 			Sequence sequence = (Sequence) construct;
-			AbstractSymbol[] identifiedSymbols = identifySymbols(sequence.symbols, sortName, scopeId);
+			AbstractSymbol[] symbols = sequence.symbols;
+			AbstractSymbol[] identifiedSymbols = identifySymbols(symbols, sortName, scopeId);
 			
 			Sequence identifiedSequence = new Sequence(identifiedSymbols);
-			boolean containsRestrictedSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
-			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence, scopeId, containsRestrictedSort)), containsRestrictedSort);
+			boolean containsRestrictedSort = containsRestrictedSort(symbols);
+			boolean containsSelfRecursiveSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
+			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
 		}else{
 			throw new RuntimeException(String.format("Unsupported construct type: %s", construct.getClass().toString()));
 		}
