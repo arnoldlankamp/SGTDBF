@@ -173,6 +173,9 @@ public class GrammarEncoder{
 				}
 				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, scopeId, false)), false);
 			}else{
+				if(sort instanceof RSort){
+					throw new RuntimeException(String.format("Encountered a sort of type '%s' inside a rule of type '%s'. Restricted sorts with a type other then that of the rule itself make no sense.", sort.sortName, sortName));
+				}
 				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort, 0, false)), false);
 			}
 		}else if(symbol instanceof AbstractConstruct){
