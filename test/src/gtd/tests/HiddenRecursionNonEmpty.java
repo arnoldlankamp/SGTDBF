@@ -14,11 +14,7 @@ S ::= S T U | epsilon | a
 T ::= T U S | epsilon
 U ::= U S T | epsilon
 */
-public class HiddenRecursionNonEmpty extends SGTDBF{
-
-	public HiddenRecursionNonEmpty(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class HiddenRecursionNonEmpty{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -44,7 +40,7 @@ public class HiddenRecursionNonEmpty extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(HiddenRecursionNonEmpty.class).generate();
-		HiddenRecursionNonEmpty hrne = new HiddenRecursionNonEmpty("a".toCharArray(), structure);
+		SGTDBF hrne = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = hrne.parse("S");
 		System.out.println(result);
 		

@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= aO?
 O ::= a
 */
-public class Optional1 extends SGTDBF{
-	
-	public Optional1(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Optional1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class Optional1 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Optional1.class).generate();
-		Optional1 o1 = new Optional1("aa".toCharArray(), structure);
+		SGTDBF o1 = new SGTDBF("aa".toCharArray(), structure);
 		AbstractNode result = o1.parse("S");
 		System.out.println(result);
 		

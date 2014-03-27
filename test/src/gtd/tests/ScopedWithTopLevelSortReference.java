@@ -12,11 +12,7 @@ import gtd.grammar.symbols.Sort;
 import gtd.grammar.symbols.TLSort;
 import gtd.result.AbstractNode;
 
-public class ScopedWithTopLevelSortReference extends SGTDBF{
-	
-	public ScopedWithTopLevelSortReference(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class ScopedWithTopLevelSortReference{
 	
 	public static IStructure[] S(){
 		return new IStructure[]{
@@ -37,7 +33,7 @@ public class ScopedWithTopLevelSortReference extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(ScopedWithTopLevelSortReference.class).generate();
-		ScopedWithTopLevelSortReference swtlsr = new ScopedWithTopLevelSortReference("a*|a+a|*a".toCharArray(), structure);
+		SGTDBF swtlsr = new SGTDBF("a*|a+a|*a".toCharArray(), structure);
 		AbstractNode result = swtlsr.parse("S");
 		System.out.println(result);
 		

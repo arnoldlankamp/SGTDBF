@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= A+
 A ::= epsilon
 */
-public class EpsilonList extends SGTDBF{
-	
-	public EpsilonList(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class EpsilonList{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class EpsilonList extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(EpsilonList.class).generate();
-		EpsilonList el = new EpsilonList("".toCharArray(), structure);
+		SGTDBF el = new SGTDBF("".toCharArray(), structure);
 		AbstractNode result = el.parse("S");
 		System.out.println(result);
 		

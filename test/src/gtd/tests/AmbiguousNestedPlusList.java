@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= A+
 A ::= [a]+
 */
-public class AmbiguousNestedPlusList extends SGTDBF{
-	
-	public AmbiguousNestedPlusList(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class AmbiguousNestedPlusList{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class AmbiguousNestedPlusList extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousNestedPlusList.class).generate();
-		AmbiguousNestedPlusList anpl = new AmbiguousNestedPlusList("aa".toCharArray(), structure);
+		SGTDBF anpl = new SGTDBF("aa".toCharArray(), structure);
 		AbstractNode result = anpl.parse("S");
 		System.out.println(result);
 		

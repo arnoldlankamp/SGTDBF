@@ -15,11 +15,7 @@ S ::= E
 E ::= E + F | F
 F ::= a | ( E )
 */
-public class EFa extends SGTDBF{
-	
-	private EFa(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class EFa{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -88,7 +84,7 @@ public class EFa extends SGTDBF{
 			
 			long startReal = System.nanoTime();
 			long start = tmxb.getCurrentThreadCpuTime();
-			EFa eFa = new EFa(input, structure);
+			SGTDBF eFa = new SGTDBF(input, structure);
 			eFa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			long endReal = System.nanoTime();
@@ -109,18 +105,18 @@ public class EFa extends SGTDBF{
 		
 		char[] input = createInput(5);
 		
-		EFa testOut = new EFa(input, structure);
+		SGTDBF testOut = new SGTDBF(input, structure);
 		if(testOut.parse("S") != null) System.out.println("WARNING: Running in parser instead of recognizer mode.");
 		
 		// Warmup.
 		for(int i = 9999; i >= 0; --i){
-			EFa eFa = new EFa(input, structure);
+			SGTDBF eFa = new SGTDBF(input, structure);
 			eFa.parse("S");
 		}
 		
 		for(int i = 200001; i <= 1000001; i += 200000){
 			input = createInput(i);
-			EFa eFa = new EFa(input, structure);
+			SGTDBF eFa = new SGTDBF(input, structure);
 			eFa.parse("S");
 		}
 		

@@ -10,11 +10,7 @@ import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
-public class Priority extends SGTDBF{
-	
-	public Priority(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Priority{
 	
 	public static IStructure[] S(){
 		return new IStructure[]{
@@ -34,7 +30,7 @@ public class Priority extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Priority.class).generate();
-		Priority p = new Priority("a+a*a".toCharArray(), structure);
+		SGTDBF p = new SGTDBF("a+a*a".toCharArray(), structure);
 		AbstractNode result = p.parse("S");
 		System.out.println(result);
 		

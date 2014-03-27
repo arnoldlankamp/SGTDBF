@@ -13,11 +13,7 @@ S ::= AAB
 A ::= epsilon
 B ::= a
 */
-public class Epsilon extends SGTDBF{
-	
-	public Epsilon(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Epsilon{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -39,7 +35,7 @@ public class Epsilon extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Epsilon.class).generate();
-		Epsilon e = new Epsilon(new char[]{'a'}, structure);
+		SGTDBF e = new SGTDBF(new char[]{'a'}, structure);
 		AbstractNode result = e.parse("S");
 		System.out.println(result);
 		

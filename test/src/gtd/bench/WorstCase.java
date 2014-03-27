@@ -14,11 +14,7 @@ import java.lang.management.ThreadMXBean;
 /*
 S ::= SSS | SS | a | epsilon
 */
-public class WorstCase extends SGTDBF{
-	
-	public WorstCase(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class WorstCase{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -57,7 +53,7 @@ public class WorstCase extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			WorstCase wc = new WorstCase(input, structure);
+			SGTDBF wc = new SGTDBF(input, structure);
 			wc.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -75,7 +71,7 @@ public class WorstCase extends SGTDBF{
 		// Warmup.
 		char[] input = createInput(5);
 		for(int i = 9999; i >= 0; --i){
-			WorstCase wc = new WorstCase(input, structure);
+			SGTDBF wc = new SGTDBF(input, structure);
 			wc.parse("S");
 		}
 		

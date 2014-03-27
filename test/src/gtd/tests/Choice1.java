@@ -9,11 +9,7 @@ import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
-public class Choice1 extends SGTDBF{
-	
-	public Choice1(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Choice1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -35,7 +31,7 @@ public class Choice1 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Choice1.class).generate();
-		Choice1 c1 = new Choice1("a".toCharArray(), structure);
+		SGTDBF c1 = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = c1.parse("S");
 		System.out.println(result);
 		

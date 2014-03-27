@@ -13,11 +13,7 @@ S ::= A
 A ::= BB
 B ::= aa | a
 */
-public class Ambiguous5 extends SGTDBF{
-	
-	public Ambiguous5(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Ambiguous5{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -40,7 +36,7 @@ public class Ambiguous5 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Ambiguous5.class).generate();
-		Ambiguous5 a5 = new Ambiguous5("aaa".toCharArray(), structure);
+		SGTDBF a5 = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = a5.parse("S");
 		System.out.println(result);
 		

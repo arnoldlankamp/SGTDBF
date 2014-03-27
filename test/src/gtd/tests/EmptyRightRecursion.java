@@ -14,11 +14,7 @@ S ::= AB
 A ::= a
 B ::= B | epsilon
 */
-public class EmptyRightRecursion extends SGTDBF{
-	
-	public EmptyRightRecursion(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class EmptyRightRecursion{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -41,7 +37,7 @@ public class EmptyRightRecursion extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(EmptyRightRecursion.class).generate();
-		EmptyRightRecursion erre = new EmptyRightRecursion("a".toCharArray(), structure);
+		SGTDBF erre = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = erre.parse("S");
 		System.out.println(result);
 		

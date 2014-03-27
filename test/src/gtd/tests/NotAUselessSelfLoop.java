@@ -14,11 +14,7 @@ A ::= CC | a
 B ::= AA | CC
 C ::= AA | a
 */
-public class NotAUselessSelfLoop extends SGTDBF{
-	
-	public NotAUselessSelfLoop(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class NotAUselessSelfLoop{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -50,7 +46,7 @@ public class NotAUselessSelfLoop extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(NotAUselessSelfLoop.class).generate();
-		NotAUselessSelfLoop nausl = new NotAUselessSelfLoop("aaa".toCharArray(), structure);
+		SGTDBF nausl = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = nausl.parse("S");
 		System.out.println(result);
 		

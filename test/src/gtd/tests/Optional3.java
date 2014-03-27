@@ -14,11 +14,7 @@ S ::= aO? | aA
 O ::= A
 A ::= a
 */
-public class Optional3 extends SGTDBF{
-	
-	public Optional3(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Optional3{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -41,7 +37,7 @@ public class Optional3 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Optional3.class).generate();
-		Optional3 o3 = new Optional3("aa".toCharArray(), structure);
+		SGTDBF o3 = new SGTDBF("aa".toCharArray(), structure);
 		AbstractNode result = o3.parse("S");
 		System.out.println(result);
 		

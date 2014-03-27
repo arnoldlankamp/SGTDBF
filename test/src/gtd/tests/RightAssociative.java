@@ -10,11 +10,7 @@ import gtd.grammar.symbols.RSort;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
-public class RightAssociative extends SGTDBF{
-	
-	public RightAssociative(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class RightAssociative{
 	
 	public static IStructure[] S(){
 		return new IStructure[]{
@@ -31,7 +27,7 @@ public class RightAssociative extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(RightAssociative.class).generate();
-		RightAssociative ra = new RightAssociative("a+a+a".toCharArray(), structure);
+		SGTDBF ra = new SGTDBF("a+a+a".toCharArray(), structure);
 		AbstractNode result = ra.parse("S");
 		System.out.println(result);
 		

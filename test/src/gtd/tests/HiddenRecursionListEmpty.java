@@ -13,12 +13,8 @@ S ::= S* T* U*
 T ::= T* U* S*
 U ::= U* S* T*
 */
-public class HiddenRecursionListEmpty extends SGTDBF{
+public class HiddenRecursionListEmpty{
 
-	public HiddenRecursionListEmpty(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
-	
 	public static Alternative[] S(){
 		return new Alternative[]{
 			new Alternative(new StarList(new Sort("S")), new StarList(new Sort("T")), new StarList(new Sort("U")))
@@ -39,7 +35,7 @@ public class HiddenRecursionListEmpty extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(HiddenRecursionListEmpty.class).generate();
-		HiddenRecursionListEmpty hrle = new HiddenRecursionListEmpty("".toCharArray(), structure);
+		SGTDBF hrle = new SGTDBF("".toCharArray(), structure);
 		AbstractNode result = hrle.parse("S");
 		System.out.println(result);
 		

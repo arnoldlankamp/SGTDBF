@@ -12,11 +12,7 @@ import gtd.result.AbstractNode;
 S ::= A
 A ::= aA | a
 */
-public class RightRecursion extends SGTDBF{
-	
-	public RightRecursion(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class RightRecursion{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class RightRecursion extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(RightRecursion.class).generate();
-		RightRecursion rr = new RightRecursion("aaa".toCharArray(), structure);
+		SGTDBF rr = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = rr.parse("S");
 		System.out.println(result);
 		

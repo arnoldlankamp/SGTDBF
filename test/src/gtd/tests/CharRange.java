@@ -9,11 +9,7 @@ import gtd.result.AbstractNode;
 /*
 S ::= [a-z]
 */
-public class CharRange extends SGTDBF{
-	
-	public CharRange(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class CharRange{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -23,7 +19,7 @@ public class CharRange extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CharRange.class).generate();
-		CharRange cr = new CharRange("a".toCharArray(), structure);
+		SGTDBF cr = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = cr.parse("S");
 		System.out.println(result);
 		

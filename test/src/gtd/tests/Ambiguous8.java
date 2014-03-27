@@ -16,11 +16,7 @@ C ::= a
 
 NOTE: This test, tests prefix sharing.
 */
-public class Ambiguous8 extends SGTDBF{
-	
-	public Ambiguous8(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Ambiguous8{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -49,7 +45,7 @@ public class Ambiguous8 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Ambiguous8.class).generate();
-		Ambiguous8 a8 = new Ambiguous8("aa".toCharArray(), structure);
+		SGTDBF a8 = new SGTDBF("aa".toCharArray(), structure);
 		AbstractNode result = a8.parse("S");
 		System.out.println(result);
 		

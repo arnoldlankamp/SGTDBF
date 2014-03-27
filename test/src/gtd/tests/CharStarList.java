@@ -11,11 +11,7 @@ import gtd.result.AbstractNode;
 /*
 S ::= [a-z]*
 */
-public class CharStarList extends SGTDBF{
-	
-	public CharStarList(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class CharStarList{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -25,7 +21,7 @@ public class CharStarList extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CharStarList.class).generate();
-		CharStarList csl = new CharStarList("abc".toCharArray(), structure);
+		SGTDBF csl = new SGTDBF("abc".toCharArray(), structure);
 		AbstractNode result = csl.parse("S");
 		System.out.println(result);
 		

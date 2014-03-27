@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= aA+ | A+a
 A ::= a
 */
-public class AmbiguousNonTerminalPlusList1 extends SGTDBF{
-	
-	public AmbiguousNonTerminalPlusList1(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class AmbiguousNonTerminalPlusList1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -34,7 +30,7 @@ public class AmbiguousNonTerminalPlusList1 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousNonTerminalPlusList1.class).generate();
-		AmbiguousNonTerminalPlusList1 nrpl1 = new AmbiguousNonTerminalPlusList1("aaa".toCharArray(), structure);
+		SGTDBF nrpl1 = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = nrpl1.parse("S");
 		System.out.println(result);
 		

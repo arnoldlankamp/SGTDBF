@@ -12,11 +12,7 @@ import gtd.result.AbstractNode;
 S ::= A | a
 A ::= a
 */
-public class Ambiguous1 extends SGTDBF{
-	
-	public Ambiguous1(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Ambiguous1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class Ambiguous1 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Ambiguous1.class).generate();
-		Ambiguous1 a1 = new Ambiguous1("a".toCharArray(), structure);
+		SGTDBF a1 = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = a1.parse("S");
 		System.out.println(result);
 		

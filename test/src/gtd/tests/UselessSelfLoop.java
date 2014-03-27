@@ -13,11 +13,7 @@ S ::= A | B
 A ::= B | a
 B ::= A | a
 */
-public class UselessSelfLoop extends SGTDBF{
-	
-	public UselessSelfLoop(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class UselessSelfLoop{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -42,7 +38,7 @@ public class UselessSelfLoop extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(UselessSelfLoop.class).generate();
-		UselessSelfLoop usl = new UselessSelfLoop("a".toCharArray(), structure);
+		SGTDBF usl = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = usl.parse("S");
 		System.out.println(result);
 		

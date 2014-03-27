@@ -13,11 +13,7 @@ import java.lang.management.ThreadMXBean;
 /*
 S ::= aSb | a 
 */
-public class ASb extends SGTDBF{
-	
-	private ASb(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class ASb{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -59,7 +55,7 @@ public class ASb extends SGTDBF{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			ASb aSb = new ASb(input, structure);
+			SGTDBF aSb = new SGTDBF(input, structure);
 			aSb.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -77,7 +73,7 @@ public class ASb extends SGTDBF{
 		char[] input = createInput(5);
 		
 		for(int i = 9999; i >= 0; --i){
-			ASb aSb = new ASb(input, structure);
+			SGTDBF aSb = new SGTDBF(input, structure);
 			aSb.parse("S");
 		}
 		

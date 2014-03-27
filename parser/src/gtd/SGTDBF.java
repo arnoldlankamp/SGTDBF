@@ -17,7 +17,7 @@ import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
 
 @SuppressWarnings({"unchecked"})
-public class SGTDBF implements IGTD{
+public final class SGTDBF implements IGTD{
 	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
 	
 	protected final char[] input;

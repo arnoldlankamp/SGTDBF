@@ -15,11 +15,7 @@ A ::= a
 
 sep(X, Y) means, a list of X separated by Y's.
 */
-public class SeparatedStarList extends SGTDBF{
-	
-	public SeparatedStarList(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class SeparatedStarList{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -35,7 +31,7 @@ public class SeparatedStarList extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(SeparatedStarList.class).generate();
-		SeparatedStarList nrsl = new SeparatedStarList("ababa".toCharArray(), structure);
+		SGTDBF nrsl = new SGTDBF("ababa".toCharArray(), structure);
 		AbstractNode result = nrsl.parse("S");
 		System.out.println(result);
 		

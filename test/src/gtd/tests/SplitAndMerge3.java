@@ -14,11 +14,7 @@ A ::= Ba | a
 B ::= Aa | a
 C ::= B
 */
-public class SplitAndMerge3 extends SGTDBF{
-	
-	public SplitAndMerge3(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class SplitAndMerge3{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -49,7 +45,7 @@ public class SplitAndMerge3 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(SplitAndMerge3.class).generate();
-		SplitAndMerge3 sm3 = new SplitAndMerge3("aaa".toCharArray(), structure);
+		SGTDBF sm3 = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = sm3.parse("S");
 		System.out.println(result);
 		

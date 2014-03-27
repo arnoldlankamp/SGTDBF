@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 * N ::= A
 * A ::= epsilon
 */
-public class NullableSharing extends SGTDBF{
-	
-	public NullableSharing(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class NullableSharing{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -39,7 +35,7 @@ public class NullableSharing extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(NullableSharing.class).generate();
-		NullableSharing ns = new NullableSharing("".toCharArray(), structure);
+		SGTDBF ns = new SGTDBF("".toCharArray(), structure);
 		AbstractNode result = ns.parse("S");
 		System.out.println(result);
 		

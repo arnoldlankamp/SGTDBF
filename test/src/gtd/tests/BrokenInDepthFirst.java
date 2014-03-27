@@ -15,11 +15,7 @@ B ::= a | aa
 C ::= a
 D ::= a | aa
 */
-public class BrokenInDepthFirst extends SGTDBF{
-	
-	public BrokenInDepthFirst(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class BrokenInDepthFirst{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -56,7 +52,7 @@ public class BrokenInDepthFirst extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(BrokenInDepthFirst.class).generate();
-		BrokenInDepthFirst bidf = new BrokenInDepthFirst("aaaaa".toCharArray(), structure);
+		SGTDBF bidf = new SGTDBF("aaaaa".toCharArray(), structure);
 		AbstractNode result = bidf.parse("S");
 		System.out.println(result);
 		

@@ -13,11 +13,7 @@ S ::= AB
 A ::= a
 B ::= b
 */
-public class Simple2 extends SGTDBF{
-	
-	public Simple2(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Simple2{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -39,7 +35,7 @@ public class Simple2 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Simple2.class).generate();
-		Simple2 s2 = new Simple2("ab".toCharArray(), structure);
+		SGTDBF s2 = new SGTDBF("ab".toCharArray(), structure);
 		AbstractNode result = s2.parse("S");
 		System.out.println(result);
 		

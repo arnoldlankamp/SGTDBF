@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= A
 A ::= AA | a | epsilon
 */
-public class CycleEpsilon extends SGTDBF{
-	
-	public CycleEpsilon(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class CycleEpsilon{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -35,7 +31,7 @@ public class CycleEpsilon extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CycleEpsilon.class).generate();
-		CycleEpsilon ce = new CycleEpsilon("a".toCharArray(), structure);
+		SGTDBF ce = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = ce.parse("S");
 		System.out.println(result);
 		

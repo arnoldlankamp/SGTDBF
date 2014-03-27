@@ -12,11 +12,7 @@ import gtd.result.AbstractNode;
 /*
 S ::= SSS | SS | a | epsilon
 */
-public class AmbiguousRecursiveNullable extends SGTDBF{
-	
-	public AmbiguousRecursiveNullable(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class AmbiguousRecursiveNullable{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -29,7 +25,7 @@ public class AmbiguousRecursiveNullable extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousRecursiveNullable.class).generate();
-		AmbiguousRecursiveNullable arn = new AmbiguousRecursiveNullable("aa".toCharArray(), structure);
+		SGTDBF arn = new SGTDBF("aa".toCharArray(), structure);
 		AbstractNode result = arn.parse("S");
 		System.out.println(result);
 		

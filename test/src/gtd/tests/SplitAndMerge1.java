@@ -13,11 +13,7 @@ S ::= aAa
 A ::= Ba | aB
 B ::= a
 */
-public class SplitAndMerge1 extends SGTDBF{
-	
-	public SplitAndMerge1(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class SplitAndMerge1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -40,7 +36,7 @@ public class SplitAndMerge1 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(SplitAndMerge1.class).generate();
-		SplitAndMerge1 sm1 = new SplitAndMerge1("aaaa".toCharArray(), structure);
+		SGTDBF sm1 = new SGTDBF("aaaa".toCharArray(), structure);
 		AbstractNode result = sm1.parse("S");
 		System.out.println(result);
 		

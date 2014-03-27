@@ -11,11 +11,7 @@ import gtd.result.AbstractNode;
 /*
 S ::= SSS | SS | a
 */
-public class AmbiguousRecursive extends SGTDBF{
-	
-	public AmbiguousRecursive(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class AmbiguousRecursive{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -27,7 +23,7 @@ public class AmbiguousRecursive extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousRecursive.class).generate();
-		AmbiguousRecursive ar = new AmbiguousRecursive("aaa".toCharArray(), structure);
+		SGTDBF ar = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = ar.parse("S");
 		System.out.println(result);
 		

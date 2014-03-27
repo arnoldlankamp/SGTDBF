@@ -14,11 +14,7 @@ E ::= E + E | E * E | 1
 
 NOTE: This test, tests prefix sharing.
 */
-public class Ambiguous9 extends SGTDBF{
-	
-	public Ambiguous9(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class Ambiguous9{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -36,7 +32,7 @@ public class Ambiguous9 extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Ambiguous9.class).generate();
-		Ambiguous9 a9 = new Ambiguous9("1+1+1".toCharArray(), structure);
+		SGTDBF a9 = new SGTDBF("1+1+1".toCharArray(), structure);
 		AbstractNode result = a9.parse("S");
 		System.out.println(result);
 		

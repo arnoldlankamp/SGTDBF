@@ -12,11 +12,7 @@ import gtd.result.AbstractNode;
 /*
 S ::= SSSS | a | epsilon
 */
-public class HiddenHiddenRightRecursive extends SGTDBF{
-	
-	public HiddenHiddenRightRecursive(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class HiddenHiddenRightRecursive{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -28,7 +24,7 @@ public class HiddenHiddenRightRecursive extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(HiddenHiddenRightRecursive.class).generate();
-		HiddenHiddenRightRecursive hhrr = new HiddenHiddenRightRecursive("a".toCharArray(), structure);
+		SGTDBF hhrr = new SGTDBF("a".toCharArray(), structure);
 		AbstractNode result = hhrr.parse("S");
 		System.out.println(result);
 		

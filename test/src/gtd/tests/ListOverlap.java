@@ -14,11 +14,7 @@ import gtd.result.AbstractNode;
 * A ::= a
 * B ::= b
 */
-public class ListOverlap extends SGTDBF{
-	
-	public ListOverlap(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class ListOverlap{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -40,7 +36,7 @@ public class ListOverlap extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(ListOverlap.class).generate();
-		ListOverlap lo = new ListOverlap("aab".toCharArray(), structure);
+		SGTDBF lo = new SGTDBF("aab".toCharArray(), structure);
 		AbstractNode result = lo.parse("S");
 		System.out.println(result);
 		

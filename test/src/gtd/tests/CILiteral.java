@@ -11,11 +11,7 @@ S ::= ci(bla)
 
 NOTE: ci(*) means whatever * represents is Case Insensitive.
 */
-public class CILiteral extends SGTDBF{
-	
-	public CILiteral(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class CILiteral{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -25,7 +21,7 @@ public class CILiteral extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CILiteral.class).generate();
-		CILiteral cil = new CILiteral("Bla".toCharArray(), structure);
+		SGTDBF cil = new SGTDBF("Bla".toCharArray(), structure);
 		AbstractNode result = cil.parse("S");
 		System.out.println(result);
 		

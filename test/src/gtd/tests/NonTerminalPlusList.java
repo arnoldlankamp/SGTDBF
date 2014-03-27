@@ -13,11 +13,7 @@ import gtd.result.AbstractNode;
 S ::= A+
 A ::= a
 */
-public class NonTerminalPlusList extends SGTDBF{
-	
-	public NonTerminalPlusList(char[] input, ParserStructure structure){
-		super(input, structure);
-	}
+public class NonTerminalPlusList{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
@@ -33,7 +29,7 @@ public class NonTerminalPlusList extends SGTDBF{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(NonTerminalPlusList.class).generate();
-		NonTerminalPlusList nrpl = new NonTerminalPlusList("aaa".toCharArray(), structure);
+		SGTDBF nrpl = new SGTDBF("aaa".toCharArray(), structure);
 		AbstractNode result = nrpl.parse("S");
 		System.out.println(result);
 		
