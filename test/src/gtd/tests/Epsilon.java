@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -35,7 +35,7 @@ public class Epsilon{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Epsilon.class).generate();
-		SGTDBF e = new SGTDBF(new char[]{'a'}, structure);
+		Parser e = new Parser(new char[]{'a'}, structure);
 		AbstractNode result = e.parse("S");
 		System.out.println(result);
 		

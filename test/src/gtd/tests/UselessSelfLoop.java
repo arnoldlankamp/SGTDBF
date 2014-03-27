@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -38,7 +38,7 @@ public class UselessSelfLoop{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(UselessSelfLoop.class).generate();
-		SGTDBF usl = new SGTDBF("a".toCharArray(), structure);
+		Parser usl = new Parser("a".toCharArray(), structure);
 		AbstractNode result = usl.parse("S");
 		System.out.println(result);
 		

@@ -1,6 +1,6 @@
 package gtd.bench;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -50,7 +50,7 @@ public class ASA{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			SGTDBF asa = new SGTDBF(input, structure);
+			Parser asa = new Parser(input, structure);
 			asa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -68,7 +68,7 @@ public class ASA{
 		char[] input = createInput(51);
 		
 		for(int i = 9999; i >= 0; --i){
-			SGTDBF asa = new SGTDBF(input, structure);
+			Parser asa = new Parser(input, structure);
 			asa.parse("S");
 		}
 		

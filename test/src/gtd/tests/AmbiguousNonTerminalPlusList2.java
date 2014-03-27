@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -30,7 +30,7 @@ public class AmbiguousNonTerminalPlusList2{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousNonTerminalPlusList2.class).generate();
-		SGTDBF nrpl2 = new SGTDBF("aaa".toCharArray(), structure);
+		Parser nrpl2 = new Parser("aaa".toCharArray(), structure);
 		AbstractNode result = nrpl2.parse("S");
 		System.out.println(result);
 		

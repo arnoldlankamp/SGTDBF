@@ -1,6 +1,6 @@
 package gtd.bench;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -53,7 +53,7 @@ public class WorstCase{
 			cleanup();
 			
 			long start = tmxb.getCurrentThreadCpuTime();
-			SGTDBF wc = new SGTDBF(input, structure);
+			Parser wc = new Parser(input, structure);
 			wc.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			
@@ -71,7 +71,7 @@ public class WorstCase{
 		// Warmup.
 		char[] input = createInput(5);
 		for(int i = 9999; i >= 0; --i){
-			SGTDBF wc = new SGTDBF(input, structure);
+			Parser wc = new Parser(input, structure);
 			wc.parse("S");
 		}
 		

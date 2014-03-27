@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -37,7 +37,7 @@ public class Sequence1{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Sequence1.class).generate();
-		SGTDBF seq1 = new SGTDBF("abc".toCharArray(), structure);
+		Parser seq1 = new Parser("abc".toCharArray(), structure);
 		AbstractNode result = seq1.parse("S");
 		System.out.println(result);
 		

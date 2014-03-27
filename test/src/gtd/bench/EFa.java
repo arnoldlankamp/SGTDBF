@@ -1,6 +1,6 @@
 package gtd.bench;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -84,7 +84,7 @@ public class EFa{
 			
 			long startReal = System.nanoTime();
 			long start = tmxb.getCurrentThreadCpuTime();
-			SGTDBF eFa = new SGTDBF(input, structure);
+			Parser eFa = new Parser(input, structure);
 			eFa.parse("S");
 			long end = tmxb.getCurrentThreadCpuTime();
 			long endReal = System.nanoTime();
@@ -105,18 +105,18 @@ public class EFa{
 		
 		char[] input = createInput(5);
 		
-		SGTDBF testOut = new SGTDBF(input, structure);
+		Parser testOut = new Parser(input, structure);
 		if(testOut.parse("S") != null) System.out.println("WARNING: Running in parser instead of recognizer mode.");
 		
 		// Warmup.
 		for(int i = 9999; i >= 0; --i){
-			SGTDBF eFa = new SGTDBF(input, structure);
+			Parser eFa = new Parser(input, structure);
 			eFa.parse("S");
 		}
 		
 		for(int i = 200001; i <= 1000001; i += 200000){
 			input = createInput(i);
-			SGTDBF eFa = new SGTDBF(input, structure);
+			Parser eFa = new Parser(input, structure);
 			eFa.parse("S");
 		}
 		

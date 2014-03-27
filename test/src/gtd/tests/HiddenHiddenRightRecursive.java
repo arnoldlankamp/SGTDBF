@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -24,7 +24,7 @@ public class HiddenHiddenRightRecursive{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(HiddenHiddenRightRecursive.class).generate();
-		SGTDBF hhrr = new SGTDBF("a".toCharArray(), structure);
+		Parser hhrr = new Parser("a".toCharArray(), structure);
 		AbstractNode result = hhrr.parse("S");
 		System.out.println(result);
 		

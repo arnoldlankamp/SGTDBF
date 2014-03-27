@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -29,7 +29,7 @@ public class Ambiguous3{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(Ambiguous3.class).generate();
-		SGTDBF a3 = new SGTDBF("aaa".toCharArray(), structure);
+		Parser a3 = new Parser("aaa".toCharArray(), structure);
 		AbstractNode result = a3.parse("S");
 		System.out.println(result);
 		

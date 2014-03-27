@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -25,7 +25,7 @@ public class AmbiguousRecursiveNullable{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousRecursiveNullable.class).generate();
-		SGTDBF arn = new SGTDBF("aa".toCharArray(), structure);
+		Parser arn = new Parser("aa".toCharArray(), structure);
 		AbstractNode result = arn.parse("S");
 		System.out.println(result);
 		

@@ -17,7 +17,7 @@ import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
 
 @SuppressWarnings({"unchecked"})
-public final class SGTDBF implements IGTD{
+public final class Parser implements IParser{
 	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
 	
 	protected final char[] input;
@@ -40,7 +40,7 @@ public final class SGTDBF implements IGTD{
 	private final int numberOfContainers;
 	private final int numberOfUniqueNodes;
 	
-	public SGTDBF(char[] input, ParserStructure structure){
+	public Parser(char[] input, ParserStructure structure){
 		super();
 		
 		this.input = input;

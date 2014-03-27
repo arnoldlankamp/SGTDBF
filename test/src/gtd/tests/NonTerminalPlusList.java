@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -29,7 +29,7 @@ public class NonTerminalPlusList{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(NonTerminalPlusList.class).generate();
-		SGTDBF nrpl = new SGTDBF("aaa".toCharArray(), structure);
+		Parser nrpl = new Parser("aaa".toCharArray(), structure);
 		AbstractNode result = nrpl.parse("S");
 		System.out.println(result);
 		

@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -29,7 +29,7 @@ public class RightRecursion{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(RightRecursion.class).generate();
-		SGTDBF rr = new SGTDBF("aaa".toCharArray(), structure);
+		Parser rr = new Parser("aaa".toCharArray(), structure);
 		AbstractNode result = rr.parse("S");
 		System.out.println(result);
 		

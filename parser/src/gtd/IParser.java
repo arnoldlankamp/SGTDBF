@@ -2,6 +2,6 @@ package gtd;
 
 import gtd.result.AbstractNode;
 
-public interface IGTD{
+public interface IParser{
 	AbstractNode parse(String start);
 }

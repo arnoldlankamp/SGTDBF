@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -31,7 +31,7 @@ public class AmbiguousEpsilonList{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousEpsilonList.class).generate();
-		SGTDBF ael = new SGTDBF("a".toCharArray(), structure);
+		Parser ael = new Parser("a".toCharArray(), structure);
 		AbstractNode result = ael.parse("S");
 		System.out.println(result);
 		

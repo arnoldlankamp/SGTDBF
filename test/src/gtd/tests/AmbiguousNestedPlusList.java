@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -29,7 +29,7 @@ public class AmbiguousNestedPlusList{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(AmbiguousNestedPlusList.class).generate();
-		SGTDBF anpl = new SGTDBF("aa".toCharArray(), structure);
+		Parser anpl = new Parser("aa".toCharArray(), structure);
 		AbstractNode result = anpl.parse("S");
 		System.out.println(result);
 		

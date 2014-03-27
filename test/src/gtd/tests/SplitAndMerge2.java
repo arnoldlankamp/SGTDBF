@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -51,7 +51,7 @@ public class SplitAndMerge2{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(SplitAndMerge2.class).generate();
-		SGTDBF sm2 = new SGTDBF("aaa".toCharArray(), structure);
+		Parser sm2 = new Parser("aaa".toCharArray(), structure);
 		AbstractNode result = sm2.parse("S");
 		System.out.println(result);
 		

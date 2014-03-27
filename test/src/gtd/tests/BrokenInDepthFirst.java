@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -52,7 +52,7 @@ public class BrokenInDepthFirst{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(BrokenInDepthFirst.class).generate();
-		SGTDBF bidf = new SGTDBF("aaaaa".toCharArray(), structure);
+		Parser bidf = new Parser("aaaaa".toCharArray(), structure);
 		AbstractNode result = bidf.parse("S");
 		System.out.println(result);
 		

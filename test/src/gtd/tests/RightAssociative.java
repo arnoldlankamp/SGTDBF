@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -27,7 +27,7 @@ public class RightAssociative{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(RightAssociative.class).generate();
-		SGTDBF ra = new SGTDBF("a+a+a".toCharArray(), structure);
+		Parser ra = new Parser("a+a+a".toCharArray(), structure);
 		AbstractNode result = ra.parse("S");
 		System.out.println(result);
 		

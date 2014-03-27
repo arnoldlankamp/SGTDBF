@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -21,7 +21,7 @@ public class CILiteral{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CILiteral.class).generate();
-		SGTDBF cil = new SGTDBF("Bla".toCharArray(), structure);
+		Parser cil = new Parser("Bla".toCharArray(), structure);
 		AbstractNode result = cil.parse("S");
 		System.out.println(result);
 		

@@ -1,6 +1,6 @@
 package gtd.tests;
 
-import gtd.SGTDBF;
+import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
@@ -21,7 +21,7 @@ public class CharPlusList{
 	
 	public static void main(String[] args){
 		ParserStructure structure = new FromClassGenerator(CharPlusList.class).generate();
-		SGTDBF cpl = new SGTDBF("abc".toCharArray(), structure);
+		Parser cpl = new Parser("abc".toCharArray(), structure);
 		AbstractNode result = cpl.parse("S");
 		System.out.println(result);
 		
