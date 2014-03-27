@@ -20,7 +20,7 @@ import gtd.util.Stack;
 public final class Parser implements IParser{
 	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
 	
-	protected final char[] input;
+	private final char[] input;
 	
 	private DoubleStack<AbstractStackNode, AbstractNode>[] todoLists;
 	private int queueIndex;
@@ -33,7 +33,7 @@ public final class Parser implements IParser{
 	
 	private AbstractStackNode[] sharedNextNodes;
 	
-	protected int location;
+	private int location;
 	
 	private final AbstractStackNode[][] expectMatrix;
 	private final ArrayList<String> containerIndexMap;
