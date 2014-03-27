@@ -67,16 +67,13 @@ public class EdgesSet{
 		return edges[index];
 	}
 	
-	public void setLastVisistedLevel(int lastVisitedLevel){
-		this.lastVisitedLevel = lastVisitedLevel;
-	}
-	
 	public int getLastVisistedLevel(){
 		return lastVisitedLevel;
 	}
 	
-	public void setLastResult(AbstractContainerNode lastResult){
+	public void setLastResult(AbstractContainerNode lastResult, int lastVisitedLevel){
 		this.lastResult = lastResult;
+		this.lastVisitedLevel = lastVisitedLevel;
 	}
 	
 	public AbstractContainerNode getLastResult(){
@@ -85,9 +82,5 @@ public class EdgesSet{
 	
 	public int size(){
 		return size;
-	}
-	
-	public void clear(){
-		size = 0;
 	}
 }

@@ -335,9 +335,8 @@ public class SGTDBF implements IGTD{
 				edge = edgeSet.get(j);
 				stacksWithNonTerminalsToReduce.push(edge, resultStore);
 			}
-		
-			edgeSet.setLastVisistedLevel(location);
-			edgeSet.setLastResult(resultStore);
+			
+			edgeSet.setLastResult(resultStore, location);
 		}else{
 			resultStore = edgeSet.getLastResult();
 		}
