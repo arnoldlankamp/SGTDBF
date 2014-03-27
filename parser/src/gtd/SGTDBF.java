@@ -46,7 +46,7 @@ public class SGTDBF implements IGTD{
 		this.input = input;
 		
 		expectMatrix = structure.expectMatrix;
-		containerIndexMap = structure.sortIndexMap;
+		containerIndexMap = structure.containerIndexMap;
 		numberOfContainers = containerIndexMap.size();
 		numberOfUniqueNodes = structure.numberOfUniqueNodes;
 		
