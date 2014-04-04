@@ -66,7 +66,7 @@ public class FromClassGenerator{
 		ArrayList<String> sortIndexMap = new ArrayList<String>();
 		for(int i = 0; i < containerIndexMap.size(); ++i){
 			Key identifiedSymbolKey = containerIndexMap.get(i);
-			sortIndexMap.add(identifiedSymbolKey.scopeId == 0 && !identifiedSymbolKey.isRestricted ? identifiedSymbolKey.symbol.name : null);
+			sortIndexMap.add(identifiedSymbolKey.scopeId == 0 && !identifiedSymbolKey.isRestricted ? identifiedSymbolKey.symbolName : null);
 		}
 		
 		AbstractStackNode[][] expectMatrix = new AbstractStackNode[sortIndexMap.size()][];

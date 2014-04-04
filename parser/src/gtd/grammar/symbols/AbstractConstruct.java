@@ -1,8 +1,11 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public abstract class AbstractConstruct extends AbstractSymbol{
 	
-	public AbstractConstruct(String name){
-		super(name);
+	protected AbstractConstruct(String name, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(name, beforeFilters, afterFilters);
 	}
 }

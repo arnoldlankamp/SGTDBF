@@ -1,12 +1,23 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class Sort extends AbstractSymbol{
 	public final String sortName;
 	
-	public Sort(String sortName){
-		super(sortName);
+	protected Sort(String sortName, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(sortName, beforeFilters, afterFilters);
 		
 		this.sortName = sortName;
+	}
+	
+	public Sort(String sortName){
+		this(sortName, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new Sort(sortName, beforeFilters, afterFilters);
 	}
 
 	public int hashCode(){
@@ -19,7 +30,7 @@ public class Sort extends AbstractSymbol{
 		
 		if(other instanceof Sort){
 			Sort otherSort = (Sort) other;
-			return sortName.equals(otherSort.sortName);
+			return sortName.equals(otherSort.sortName) && hasEqualFilters(otherSort);
 		}
 		return false;
 	}

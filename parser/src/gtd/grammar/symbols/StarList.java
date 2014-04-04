@@ -1,30 +1,40 @@
 package gtd.grammar.symbols;
 
 import gtd.generator.IdentifiedSymbol;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public class StarList extends AbstractList{
-
+	
+	protected StarList(AbstractSymbol symbol, AbstractSymbol[] separators, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(symbol, false, separators, beforeFilters, afterFilters);
+	}
+	
 	public StarList(Char character, AbstractSymbol... separators){
-		super(character, false, separators);
+		this(character, separators, null, null);
 	}
 	
 	public StarList(CharRange charRange, AbstractSymbol... separators){
-		super(charRange, false, separators);
+		this(charRange, separators, null, null);
 	}
 	
 	public StarList(Literal literal, AbstractSymbol... separators){
-		super(literal, false, separators);
+		this(literal, separators, null, null);
 	}
 	
 	public StarList(CILiteral ciLiteral, AbstractSymbol... separators){
-		super(ciLiteral, false, separators);
+		this(ciLiteral, separators, null, null);
 	}
 	
 	public StarList(Sort sort, AbstractSymbol... separators){
-		super(sort, false, separators);
+		this(sort, separators, null, null);
 	}
 	
 	public StarList(IdentifiedSymbol identifiedSymbol, AbstractSymbol... separators){
-		super(identifiedSymbol, false, separators);
+		this(identifiedSymbol, separators, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new StarList(symbol, separators, beforeFilters, afterFilters);
 	}
 }

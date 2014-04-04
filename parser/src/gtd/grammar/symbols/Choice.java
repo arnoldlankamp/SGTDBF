@@ -1,12 +1,23 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class Choice extends AbstractConstruct{
 	public final AbstractSymbol[] symbols;
 	
-	public Choice(AbstractSymbol... symbols){
-		super(generateName(symbols));
+	protected Choice(AbstractSymbol[] symbols, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(generateName(symbols), beforeFilters, afterFilters);
 		
 		this.symbols = symbols;
+	}
+	
+	public Choice(AbstractSymbol... symbols){
+		this(symbols, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new Choice(symbols, beforeFilters, afterFilters);
 	}
 	
 	private static String generateName(AbstractSymbol[] symbols){
@@ -45,7 +56,7 @@ public class Choice extends AbstractConstruct{
 				if(!symbols[i].equals(otherChoice.symbols[i])) return false;
 			}
 			
-			return true;
+			return hasEqualFilters(otherChoice);
 		}
 		return false;
 	}

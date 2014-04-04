@@ -1,12 +1,23 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class Sequence extends AbstractConstruct{
 	public final AbstractSymbol[] symbols;
 	
-	public Sequence(AbstractSymbol... symbols){
-		super(generateName(symbols));
+	protected Sequence(AbstractSymbol[] symbols, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(generateName(symbols), beforeFilters, afterFilters);
 		
 		this.symbols = symbols;
+	}
+	
+	public Sequence(AbstractSymbol... symbols){
+		this(symbols, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new Sequence(symbols, beforeFilters, afterFilters);
 	}
 	
 	private static String generateName(AbstractSymbol[] symbols){
@@ -44,7 +55,8 @@ public class Sequence extends AbstractConstruct{
 			for(int i = otherSequence.symbols.length - 1; i >= 0; --i){
 				if(!symbols[i].equals(otherSequence.symbols[i])) return false;
 			}
+			return hasEqualFilters(otherSequence);
 		}
-		return true;
+		return false;
 	}
 }

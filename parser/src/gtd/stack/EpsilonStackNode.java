@@ -2,12 +2,14 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 import gtd.result.EpsilonNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class EpsilonStackNode extends AbstractMatchableStackNode{
 	private final static EpsilonNode result = new EpsilonNode();
 	
-	public EpsilonStackNode(int id, boolean isEndNode){
-		super(id, isEndNode);
+	public EpsilonStackNode(int id, boolean isEndNode, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 	}
 	
 	private EpsilonStackNode(EpsilonStackNode original, int startLocation){

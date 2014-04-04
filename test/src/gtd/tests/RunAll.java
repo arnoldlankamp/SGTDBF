@@ -180,5 +180,21 @@ public class RunAll{
 		System.out.println("ScopedWithTopLevelSortReference:");
 		ScopedWithTopLevelSortReference.main(args);
 		System.out.println();
+		
+		System.out.println("PrecedeRestriction:");
+		PrecedeRestriction.main(args);
+		System.out.println();
+		System.out.println("PrecedeRequirement:");
+		PrecedeRequirement.main(args);
+		System.out.println();
+		System.out.println("MatchRequirement:");
+		MatchRequirement.main(args);
+		System.out.println();
+		System.out.println("FollowRestriction:");
+		FollowRestriction.main(args);
+		System.out.println();
+		System.out.println("FollowRequirement:");
+		FollowRequirement.main(args);
+		System.out.println();
 	}
 }

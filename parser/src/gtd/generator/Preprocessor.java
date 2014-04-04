@@ -79,16 +79,16 @@ public class Preprocessor{
 	
 	private AbstractStackNode buildStackNode(AbstractSymbol symbol, boolean endNode){
 		if(symbol instanceof Epsilon){
-			return new EpsilonStackNode(++idCounter, endNode);
+			return new EpsilonStackNode(++idCounter, endNode, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof Char){
-			return new CharStackNode(++idCounter, endNode, ((Char) symbol).character);
+			return new CharStackNode(++idCounter, endNode, ((Char) symbol).character, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof CharRange){
 			CharRange charRange = (CharRange) symbol;
 			char[][] ranges = new char[1][];
 			ranges[0] = new char[2];
 			ranges[0][0] = charRange.from;
 			ranges[0][1] = charRange.to;
-			return new CharRangeStackNode(++idCounter, endNode, charRange.name, ranges);
+			return new CharRangeStackNode(++idCounter, endNode, charRange.name, ranges, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof CharRanges){
 			CharRanges charRanges = (CharRanges) symbol;
 			CharRange[] charRangesArray = charRanges.charRanges;
@@ -100,11 +100,11 @@ public class Preprocessor{
 				ranges[i][0] = charRange.from;
 				ranges[i][1] = charRange.to;
 			}
-			return new CharRangeStackNode(++idCounter, endNode, charRanges.name, ranges);
+			return new CharRangeStackNode(++idCounter, endNode, charRanges.name, ranges, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof Literal){
-			return new LiteralStackNode(++idCounter, endNode, ((Literal) symbol).literal.toCharArray());
+			return new LiteralStackNode(++idCounter, endNode, ((Literal) symbol).literal.toCharArray(), symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof CILiteral){
-			return new CaseInsensitiveLiteralStackNode(++idCounter, endNode, ((CILiteral) symbol).literal.toCharArray());
+			return new CaseInsensitiveLiteralStackNode(++idCounter, endNode, ((CILiteral) symbol).literal.toCharArray(), symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof IdentifiedSymbol){
 			IdentifiedSymbol identifiedSymbol = (IdentifiedSymbol) symbol;
 			int containerId = identifiedSymbol.id;
@@ -112,19 +112,19 @@ public class Preprocessor{
 			
 			if(wrappedSymbol instanceof Sort){
 				String sortName = ((Sort) wrappedSymbol).sortName;
-				return new SortStackNode(++idCounter, containerId, endNode, sortName);
+				return new SortStackNode(++idCounter, containerId, endNode, sortName, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else if(wrappedSymbol instanceof Optional){
 				Optional optional = (Optional) wrappedSymbol;
 				
 				AbstractStackNode child = buildStackNode(optional.symbol, true);
-				return new OptionalStackNode(++idCounter, containerId, endNode, child, optional.name);
+				return new OptionalStackNode(++idCounter, containerId, endNode, child, optional.name, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else if(wrappedSymbol instanceof PlusList){
 				PlusList plusList = (PlusList) wrappedSymbol;
 				
 				AbstractStackNode child = buildStackNode(plusList.symbol, true);
 				AbstractSymbol[] separatorSymbols = plusList.separators;
 				if(separatorSymbols.length == 0){
-					return new ListStackNode(++idCounter, containerId, endNode, child, plusList.name, true);
+					return new ListStackNode(++idCounter, containerId, endNode, child, plusList.name, true, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 				}
 				
 				int numberOfSeparators = separatorSymbols.length;
@@ -134,14 +134,14 @@ public class Preprocessor{
 					separators[i].markAsSeparator();
 				}
 				
-				return new SeparatedListStackNode(++idCounter, containerId, endNode, child, separators, plusList.name, true);
+				return new SeparatedListStackNode(++idCounter, containerId, endNode, child, separators, plusList.name, true, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else if(wrappedSymbol instanceof StarList){
 				StarList starList = (StarList) wrappedSymbol;
 				
 				AbstractStackNode child = buildStackNode(starList.symbol, true);
 				AbstractSymbol[] separatorSymbols = starList.separators;
 				if(separatorSymbols.length == 0){
-					return new ListStackNode(++idCounter, containerId, endNode, child, starList.name, false);
+					return new ListStackNode(++idCounter, containerId, endNode, child, starList.name, false, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 				}
 				
 				int numberOfSeparators = separatorSymbols.length;
@@ -151,7 +151,7 @@ public class Preprocessor{
 					separators[i].markAsSeparator();
 				}
 				
-				return new SeparatedListStackNode(++idCounter, containerId, endNode, child, separators, starList.name, false);
+				return new SeparatedListStackNode(++idCounter, containerId, endNode, child, separators, starList.name, false, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else if(wrappedSymbol instanceof Choice){
 				Choice choice = (Choice) wrappedSymbol;
 				
@@ -162,7 +162,7 @@ public class Preprocessor{
 					children[i] = buildStackNode(childSymbols[i], true);
 				}
 				
-				return new ChoiceStackNode(++idCounter, containerId, endNode, children, choice.name);
+				return new ChoiceStackNode(++idCounter, containerId, endNode, children, choice.name, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else if(wrappedSymbol instanceof Sequence){
 				Sequence sequence = (Sequence) wrappedSymbol;
 				
@@ -174,7 +174,7 @@ public class Preprocessor{
 				}
 				children[numberOfChildren - 1] = buildStackNode(childSymbols[numberOfChildren - 1], true);
 				
-				return new SequenceStackNode(++idCounter, containerId, endNode, children, sequence.name);
+				return new SequenceStackNode(++idCounter, containerId, endNode, children, sequence.name, wrappedSymbol.beforeFilters, wrappedSymbol.afterFilters);
 			}else{
 				throw new RuntimeException(String.format("Unsupported identified symbol type: %s", wrappedSymbol.getClass().toString()));
 			}

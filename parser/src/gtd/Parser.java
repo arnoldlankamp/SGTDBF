@@ -10,6 +10,8 @@ import gtd.stack.AbstractExpandableStackNode;
 import gtd.stack.AbstractStackNode;
 import gtd.stack.SortStackNode;
 import gtd.stack.edge.EdgesSet;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 import gtd.util.ArrayList;
 import gtd.util.DoubleStack;
 import gtd.util.IntegerList;
@@ -61,6 +63,28 @@ public final class Parser implements IParser{
 		location = 0;
 	}
 	
+	private boolean canEnter(AbstractStackNode node){
+		IBeforeFilter[] beforeFilters = node.getBeforeFilters();
+		if(beforeFilters != null){
+			for(int i = beforeFilters.length - 1; i >= 0; --i){
+				if(beforeFilters[i].isFiltered(input, location)) return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean canComplete(AbstractStackNode node){
+		IAfterFilter[] afterFilters = node.getAfterFilters();
+		if(afterFilters != null){
+			for(int i = afterFilters.length - 1; i >= 0; --i){
+				if(afterFilters[i].isFiltered(input, node.getStartLocation(), location)) return false;
+			}
+		}
+		
+		return true;
+	}
+		
 	private AbstractStackNode updateNextNode(AbstractStackNode next, AbstractStackNode node, AbstractNode result){
 		AbstractStackNode alternative = sharedNextNodes[next.getId()];
 		
@@ -376,6 +400,8 @@ public final class Parser implements IParser{
 	}
 	
 	private void move(AbstractStackNode node, AbstractNode result){
+		if(!canComplete(node)) return;
+		
 		if(node.isEndNode()){
 			if(node.getStartLocation() != location || node.getId() == AbstractExpandableStackNode.DEFAULT_LIST_EPSILON_ID){
 				updateEdges(node, result);
@@ -469,6 +495,8 @@ public final class Parser implements IParser{
 				AbstractNode result = first.match(input, location);
 				if(result == null) continue; // Discard if it didn't match.
 				
+				if(!canEnter(first)) return;
+				
 				first = first.getCleanCopyWithResult(location, result);
 				addTodo(first, length, result);
 			}else{
@@ -482,6 +510,8 @@ public final class Parser implements IParser{
 	}
 	
 	private void expandStack(AbstractStackNode node){
+		if(!canEnter(node)) return;
+		
 		if(node.isMatchable()){
 			addTodo(node, node.getLength(), node.getResult());
 		}else if(!node.isExpandable()){
@@ -528,6 +558,8 @@ public final class Parser implements IParser{
 							
 							AbstractNode result = child.match(input, location);
 							if(result == null) continue; // Discard if it didn't match.
+							
+							if(!canEnter(node)) continue;
 							
 							child = child.getCleanCopyWithResult(location, result);
 							addTodo(child, length, result);
@@ -592,7 +624,7 @@ public final class Parser implements IParser{
 		// Initialize.
 		todoLists = new DoubleStack[DEFAULT_TODOLIST_CAPACITY];
 		
-		AbstractStackNode rootNode = new SortStackNode(AbstractStackNode.START_SYMBOL_ID, containerIndexMap.find(start), true, start);
+		AbstractStackNode rootNode = new SortStackNode(AbstractStackNode.START_SYMBOL_ID, containerIndexMap.find(start), true, start, null, null);
 		rootNode = rootNode.getCleanCopy(0);
 		rootNode.initEdges();
 		

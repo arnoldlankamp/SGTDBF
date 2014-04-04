@@ -1,30 +1,40 @@
 package gtd.grammar.symbols;
 
 import gtd.generator.IdentifiedSymbol;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public class PlusList extends AbstractList{
 	
+	protected PlusList(AbstractSymbol symbol, AbstractSymbol[] separators, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(symbol, true, separators, beforeFilters, afterFilters);
+	}
+	
 	public PlusList(Char character, AbstractSymbol... separators){
-		super(character, true, separators);
+		this(character, separators, null, null);
 	}
 	
 	public PlusList(CharRange charRange, AbstractSymbol... separators){
-		super(charRange, true, separators);
+		this(charRange, separators, null, null);
 	}
 	
 	public PlusList(Literal literal, AbstractSymbol... separators){
-		super(literal, true, separators);
+		this(literal, separators, null, null);
 	}
 	
 	public PlusList(CILiteral ciLiteral, AbstractSymbol... separators){
-		super(ciLiteral, true, separators);
+		this(ciLiteral, separators, null, null);
 	}
 	
 	public PlusList(Sort sort, AbstractSymbol... separators){
-		super(sort, true, separators);
+		this(sort, separators, null, null);
 	}
 	
 	public PlusList(IdentifiedSymbol identifiedSymbol, AbstractSymbol... separators){
-		super(identifiedSymbol, true, separators);
+		this(identifiedSymbol, separators, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new PlusList(symbol, separators, beforeFilters, afterFilters);
 	}
 }

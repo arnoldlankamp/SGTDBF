@@ -1,12 +1,15 @@
 package gtd.stack;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class SequenceStackNode extends AbstractExpandableStackNode{
 	private final String nodeName;
 	
 	private final AbstractStackNode[] children;
 	
-	public SequenceStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode[] nodes, String nodeName){
-		super(id, containerIndex, isEndNode);
+	public SequenceStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode[] nodes, String nodeName, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, containerIndex, isEndNode, beforeFilters, afterFilters);
 		
 		this.nodeName = nodeName;
 		

@@ -1,13 +1,15 @@
 package gtd.stack;
 
 import gtd.result.AbstractNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class SortStackNode extends AbstractStackNode{
 	private final int containerIndex;
 	private final String sortName;
 	
-	public SortStackNode(int id, int containerIndex, boolean isEndNode, String sortName){
-		super(id, isEndNode);
+	public SortStackNode(int id, int containerIndex, boolean isEndNode, String sortName, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 		
 		this.containerIndex = containerIndex;
 		this.sortName = sortName;

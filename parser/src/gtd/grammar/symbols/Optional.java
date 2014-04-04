@@ -1,12 +1,23 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class Optional extends AbstractConstruct{
 	public final AbstractSymbol symbol;
 	
-	public Optional(AbstractSymbol symbol){
-		super(String.format("%s?", symbol.name));
+	protected Optional(AbstractSymbol symbol, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(String.format("%s?", symbol.name), beforeFilters, afterFilters);
 		
 		this.symbol = symbol;
+	}
+	
+	public Optional(AbstractSymbol symbol){
+		this(symbol, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new Optional(symbol, beforeFilters, afterFilters);
 	}
 
 	public int hashCode(){
@@ -22,7 +33,7 @@ public class Optional extends AbstractConstruct{
 			Optional otherOptional = (Optional) other;
 			if(!symbol.equals(otherOptional.symbol)) return false;
 			
-			return true;
+			return hasEqualFilters(otherOptional);
 		}
 		return false;
 	}

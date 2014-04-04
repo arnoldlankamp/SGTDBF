@@ -3,6 +3,8 @@ package gtd.stack;
 import gtd.result.AbstractNode;
 import gtd.result.struct.Link;
 import gtd.stack.edge.EdgesSet;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 import gtd.util.ArrayList;
 import gtd.util.BitSet;
 import gtd.util.IntegerList;
@@ -12,6 +14,9 @@ import gtd.util.IntegerObjectList;
 public abstract class AbstractStackNode{
 	public final static int START_SYMBOL_ID = -1;
 	public final static int DEFAULT_START_LOCATION = -1;
+	
+	private final IBeforeFilter[] beforeFilters;
+	private final IAfterFilter[] afterFilters;
 	
 	protected AbstractStackNode next;
 	protected AbstractStackNode[] alternateNexts;
@@ -31,12 +36,15 @@ public abstract class AbstractStackNode{
 	private BitSet propagatedPrefixes;
 	private IntegerList propagatedReductions;
 	
-	protected AbstractStackNode(int id, boolean isEndNode){
+	protected AbstractStackNode(int id, boolean isEndNode, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
 		super();
 		
 		this.id = id;
 		
 		this.isEndNode = isEndNode;
+		
+		this.beforeFilters = beforeFilters;
+		this.afterFilters = afterFilters;
 		
 		startLocation = DEFAULT_START_LOCATION;
 	}
@@ -51,6 +59,9 @@ public abstract class AbstractStackNode{
 		
 		this.isEndNode = original.isEndNode;
 		this.isSeparator = original.isSeparator;
+		
+		this.beforeFilters = original.beforeFilters;
+		this.afterFilters = original.afterFilters;
 		
 		this.startLocation = startLocation;
 	}
@@ -82,6 +93,14 @@ public abstract class AbstractStackNode{
 	
 	public final boolean isEpsilon(){
 		return (this instanceof EpsilonStackNode);
+	}
+	
+	public IBeforeFilter[] getBeforeFilters(){
+		return beforeFilters;
+	}
+	
+	public IAfterFilter[] getAfterFilters(){
+		return afterFilters;
 	}
 	
 	public abstract boolean isEmptyLeafNode();

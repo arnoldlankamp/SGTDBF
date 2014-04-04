@@ -1,11 +1,13 @@
 package gtd.stack;
 
 import gtd.result.AbstractNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public abstract class AbstractMatchableStackNode extends AbstractStackNode{
 	
-	protected AbstractMatchableStackNode(int id, boolean isEndNode){
-		super(id, isEndNode);
+	protected AbstractMatchableStackNode(int id, boolean isEndNode, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 	}
 	
 	protected AbstractMatchableStackNode(AbstractMatchableStackNode original, int startLocation){

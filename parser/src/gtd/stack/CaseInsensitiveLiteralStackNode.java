@@ -2,14 +2,16 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 import gtd.result.LiteralNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class CaseInsensitiveLiteralStackNode extends AbstractMatchableStackNode{
 	private final char[][] ciLiteral;
 	
 	private final AbstractNode result;
 	
-	public CaseInsensitiveLiteralStackNode(int id, boolean isEndNode, char[] ciLiteral){
-		super(id, isEndNode);
+	public CaseInsensitiveLiteralStackNode(int id, boolean isEndNode, char[] ciLiteral, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 		
 		int nrOfCharacters = ciLiteral.length;
 		this.ciLiteral = new char[nrOfCharacters][];

@@ -1,12 +1,23 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public class Literal extends AbstractSymbol{
 	public final String literal;
 	
-	public Literal(String literal){
-		super(String.format("lit(%s)", literal));
+	protected Literal(String literal, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(String.format("lit(%s)", literal), beforeFilters, afterFilters);
 		
 		this.literal = literal;
+	}
+	
+	public Literal(String literal){
+		this(literal, null, null);
+	}
+	
+	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		return new Literal(literal, beforeFilters, afterFilters);
 	}
 
 	public int hashCode(){
@@ -21,7 +32,7 @@ public class Literal extends AbstractSymbol{
 			Literal otherLiteral = (Literal) other;
 			if(!literal.equals(otherLiteral.literal)) return false;
 			
-			return true;
+			return hasEqualFilters(otherLiteral);
 		}
 		return false;
 	}

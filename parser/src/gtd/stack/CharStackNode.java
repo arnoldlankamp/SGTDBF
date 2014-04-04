@@ -2,6 +2,8 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 import gtd.result.CharNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class CharStackNode extends AbstractMatchableStackNode{
 	private final char character;
@@ -10,8 +12,8 @@ public final class CharStackNode extends AbstractMatchableStackNode{
 	
 	private final AbstractNode result;
 	
-	public CharStackNode(int id, boolean isEndNode, char character){
-		super(id, isEndNode);
+	public CharStackNode(int id, boolean isEndNode, char character, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 		
 		this.production = "["+character+"]";
 		

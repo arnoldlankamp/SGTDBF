@@ -1,5 +1,8 @@
 package gtd.grammar.symbols;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 public abstract class AbstractList extends AbstractConstruct{
 	private final static AbstractSymbol[] NO_SEPARATORS = new AbstractSymbol[0];
 	
@@ -7,8 +10,8 @@ public abstract class AbstractList extends AbstractConstruct{
 	public final AbstractSymbol symbol;
 	public final AbstractSymbol[] separators;
 	
-	protected AbstractList(AbstractSymbol symbol, boolean isPlusList, AbstractSymbol... separators){
-		super(generateName(symbol, isPlusList, separators));
+	protected AbstractList(AbstractSymbol symbol, boolean isPlusList, AbstractSymbol[] separators, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(generateName(symbol, isPlusList, separators), beforeFilters, afterFilters);
 		
 		this.isPlusList = isPlusList;
 		this.symbol = symbol;
@@ -63,7 +66,7 @@ public abstract class AbstractList extends AbstractConstruct{
 			}
 			if(isPlusList != otherList.isPlusList) return false;
 			
-			return true;
+			return hasEqualFilters(otherList);
 		}
 		return false;
 	}

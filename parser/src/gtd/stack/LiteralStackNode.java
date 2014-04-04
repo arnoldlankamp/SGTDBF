@@ -2,14 +2,16 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 import gtd.result.LiteralNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class LiteralStackNode extends AbstractMatchableStackNode{
 	private final char[] literal;
 	
 	private final LiteralNode result;
 	
-	public LiteralStackNode(int id, boolean isEndNode, char[] literal){
-		super(id, isEndNode);
+	public LiteralStackNode(int id, boolean isEndNode, char[] literal, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 
 		this.literal = literal;
 		result = new LiteralNode(literal);

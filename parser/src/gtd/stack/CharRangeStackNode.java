@@ -2,6 +2,8 @@ package gtd.stack;
 
 import gtd.result.AbstractNode;
 import gtd.result.CharNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	private final char[][] ranges;
@@ -10,8 +12,8 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	
 	private final AbstractNode result;
 	
-	public CharRangeStackNode(int id, boolean isEndNode, String production, char[][] ranges){
-		super(id, isEndNode);
+	public CharRangeStackNode(int id, boolean isEndNode, String production, char[][] ranges, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 		
 		this.production = production;
 

@@ -1,5 +1,8 @@
 package gtd.stack;
 
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
+
 
 public final class ListStackNode extends AbstractExpandableStackNode{
 	private final String nodeName;
@@ -7,8 +10,8 @@ public final class ListStackNode extends AbstractExpandableStackNode{
 	private final AbstractStackNode[] children;
 	private final AbstractStackNode emptyChild;
 	
-	public ListStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode child, String nodeName, boolean isPlusList){
-		super(id, containerIndex, isEndNode);
+	public ListStackNode(int id, int containerIndex, boolean isEndNode, AbstractStackNode child, String nodeName, boolean isPlusList, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, containerIndex, isEndNode, beforeFilters, afterFilters);
 		
 		this.nodeName = nodeName;
 		

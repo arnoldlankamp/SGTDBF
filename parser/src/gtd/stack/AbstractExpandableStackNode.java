@@ -1,15 +1,17 @@
 package gtd.stack;
 
 import gtd.result.AbstractNode;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 
 public abstract class AbstractExpandableStackNode extends AbstractStackNode{
 	public final static int DEFAULT_LIST_EPSILON_ID = -2;
-	public final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, true);
+	public final static EpsilonStackNode EMPTY = new EpsilonStackNode(DEFAULT_LIST_EPSILON_ID, true, null, null);
 	
 	private final int containerIndex;
 	
-	protected AbstractExpandableStackNode(int id, int containerIndex, boolean isEndNode){
-		super(id, isEndNode);
+	protected AbstractExpandableStackNode(int id, int containerIndex, boolean isEndNode, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		super(id, isEndNode, beforeFilters, afterFilters);
 		
 		this.containerIndex = containerIndex;
 	}
