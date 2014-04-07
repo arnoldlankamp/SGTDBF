@@ -98,6 +98,9 @@ public class GrammarEncoder{
 	}
 	
 	private static boolean isRestrictedSort(AbstractSymbol symbol){
+		if(symbol instanceof IdentifiedSymbol){
+			return ((IdentifiedSymbol) symbol).symbol instanceof RSort;
+		}
 		return symbol instanceof RSort;
 	}
 	
@@ -199,7 +202,7 @@ public class GrammarEncoder{
 	private ArrayList<Alternative> encodeAlternatives(String sortName, int scopeId, IStructure[] structures, IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives){
 		ArrayList<Alternative> alternatives = new ArrayList<Alternative>();
 		ArrayList<Alternative> nonSelfRecursiveAlternatives =  new ArrayList<Alternative>();
-		boolean selfRecursiveSortEncountered = false;
+		boolean restrictedSortEncountered = false;
 		for(int i = structures.length - 1; i >= 0; --i){
 			IStructure structure = structures[i];
 			if(structure instanceof Scope){
@@ -210,8 +213,8 @@ public class GrammarEncoder{
 					Alternative scopedAlternative = scopedAlternatives.get(j);
 					if(!containsSelfRecursiveSort(scopedAlternative.alternative, sortName)){
 						nonSelfRecursiveAlternatives.add(scopedAlternative);
-					}else{
-						selfRecursiveSortEncountered = true;
+					}else if(containsRestrictedSort(scopedAlternative.alternative)){
+						restrictedSortEncountered = true;
 					}
 				}
 			}else{
@@ -220,14 +223,14 @@ public class GrammarEncoder{
 				alternatives.add(identifiedAlternative);
 				if(!containsSelfRecursiveSort(identifiedAlternative.alternative, sortName)){
 					nonSelfRecursiveAlternatives.add(identifiedAlternative);
-				}else{
-					selfRecursiveSortEncountered = true;
+				}else if(containsRestrictedSort(identifiedAlternative.alternative)){
+					restrictedSortEncountered = true;
 				}
 			}
 		}
 		
 		groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, false)), alternatives);
-		if(selfRecursiveSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, true)), nonSelfRecursiveAlternatives);
+		if(restrictedSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, true)), nonSelfRecursiveAlternatives);
 		
 		return alternatives;
 	}
