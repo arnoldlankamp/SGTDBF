@@ -100,8 +100,4 @@ public class SortContainerNode extends AbstractContainerNode{
 		
 		return (depth < cycleMark.depth) ? (cachedResult = sb.toString()) : sb.toString();
 	}
-	
-	public String toString(){
-		return print(new IndexedStack<AbstractNode>(), 0, new CycleMark());
-	}
 }

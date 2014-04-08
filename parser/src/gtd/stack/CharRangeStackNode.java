@@ -8,14 +8,10 @@ import gtd.stack.filter.IBeforeFilter;
 public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	private final char[][] ranges;
 	
-	private final String production;
-	
 	private final AbstractNode result;
 	
 	public CharRangeStackNode(int id, boolean isEndNode, String production, char[][] ranges, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
 		super(id, isEndNode, beforeFilters, afterFilters);
-		
-		this.production = production;
 
 		this.ranges = ranges;
 		
@@ -27,8 +23,6 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 		
 		ranges = original.ranges;
 		
-		production = original.production;
-		
 		result = null;
 	}
 	
@@ -36,8 +30,6 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 		super(original, startLocation);
 		
 		this.ranges = original.ranges;
-		
-		this.production = original.production;
 		
 		this.result = result;
 	}
@@ -51,7 +43,7 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 		for(int i = ranges.length - 1; i >= 0; --i){
 			char[] range = ranges[i];
 			if(next >= range[0] && next <= range[1]){
-				return new CharNode(production, next);
+				return new CharNode(next);
 			}
 		}
 		return null;
@@ -75,7 +67,6 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(production);
 		sb.append(getId());
 		sb.append('(');
 		sb.append(startLocation);

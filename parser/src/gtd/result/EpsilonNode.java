@@ -25,8 +25,4 @@ public class EpsilonNode extends AbstractNode{
 	protected String print(IndexedStack<AbstractNode> stack, int depth, CycleMark cycleMark){
 		return EPSILON_STRING;
 	}
-	
-	public String toString(){
-		return EPSILON_STRING;
-	}
 }

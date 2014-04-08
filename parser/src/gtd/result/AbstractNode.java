@@ -30,4 +30,8 @@ public abstract class AbstractNode{
 			depth = Integer.MAX_VALUE;
 		}
 	}
+	
+	public String toString(){
+		return print(new IndexedStack<AbstractNode>(), 0, new CycleMark());
+	}
 }

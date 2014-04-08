@@ -27,8 +27,4 @@ public class LiteralNode extends AbstractNode{
 	protected String print(IndexedStack<AbstractNode> stack, int depth, CycleMark cycleMark){
 		return new String(content);
 	}
-	
-	public String toString(){
-		return new String(content);
-	}
 }

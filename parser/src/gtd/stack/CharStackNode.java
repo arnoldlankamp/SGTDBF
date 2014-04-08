@@ -19,7 +19,7 @@ public final class CharStackNode extends AbstractMatchableStackNode{
 		
 		this.character = character;
 		
-		result = new CharNode(production, character);
+		result = new CharNode(character);
 	}
 	
 	private CharStackNode(CharStackNode original, int startLocation){
