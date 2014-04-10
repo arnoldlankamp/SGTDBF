@@ -35,6 +35,6 @@ public class AmbiguousEpsilonList{
 		AbstractNode result = ael.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([A+([A+(A([a](a))),A+(repeat(A()),A([a](a)))],repeat(A())),A+(repeat(A()),A([a](a))),A+(A([a](a)))]) <- good");
+		System.out.println("S([A+([A+(A('a')),A+(repeat(A()),A('a'))],repeat(A())),A+(repeat(A()),A('a')),A+(A('a'))]) <- good");
 	}
 }

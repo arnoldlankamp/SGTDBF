@@ -23,6 +23,6 @@ public class CharRange{
 		AbstractNode result = cr.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([a-z](a)) <- good");
+		System.out.println("S('a') <- good");
 	}
 }

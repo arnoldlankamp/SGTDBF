@@ -88,7 +88,7 @@ public class Preprocessor{
 			ranges[0] = new char[2];
 			ranges[0][0] = charRange.from;
 			ranges[0][1] = charRange.to;
-			return new CharRangeStackNode(++idCounter, endNode, charRange.name, ranges, symbol.beforeFilters, symbol.afterFilters);
+			return new CharRangeStackNode(++idCounter, endNode, ranges, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof CharRanges){
 			CharRanges charRanges = (CharRanges) symbol;
 			CharRange[] charRangesArray = charRanges.charRanges;
@@ -100,7 +100,7 @@ public class Preprocessor{
 				ranges[i][0] = charRange.from;
 				ranges[i][1] = charRange.to;
 			}
-			return new CharRangeStackNode(++idCounter, endNode, charRanges.name, ranges, symbol.beforeFilters, symbol.afterFilters);
+			return new CharRangeStackNode(++idCounter, endNode, ranges, symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof Literal){
 			return new LiteralStackNode(++idCounter, endNode, ((Literal) symbol).literal.toCharArray(), symbol.beforeFilters, symbol.afterFilters);
 		}else if(symbol instanceof CILiteral){

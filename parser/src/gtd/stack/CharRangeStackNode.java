@@ -10,7 +10,7 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	
 	private final AbstractNode result;
 	
-	public CharRangeStackNode(int id, boolean isEndNode, String production, char[][] ranges, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+	public CharRangeStackNode(int id, boolean isEndNode, char[][] ranges, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
 		super(id, isEndNode, beforeFilters, afterFilters);
 
 		this.ranges = ranges;
@@ -67,6 +67,7 @@ public final class CharRangeStackNode extends AbstractMatchableStackNode{
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
+		sb.append(this.getClass().getName());
 		sb.append(getId());
 		sb.append('(');
 		sb.append(startLocation);
