@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sequence;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
@@ -19,19 +19,19 @@ public class Sequence1{
 	
 	public static Alternative[] A(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
 	public static Alternative[] B(){
 		return new Alternative[]{
-			new Alternative(new Literal("b"))
+			new Alternative(new Char('b'))
 		};
 	}
 	
 	public static Alternative[] C(){
 		return new Alternative[]{
-			new Alternative(new Literal("c"))
+			new Alternative(new Char('c'))
 		};
 	}
 	
@@ -41,6 +41,6 @@ public class Sequence1{
 		AbstractNode result = seq1.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(sequence(A,B,C)(A(a),B(b),C(c))) <- good");
+		System.out.println("S(sequence(A,B,C)(A('a'),B('b'),C('c'))) <- good");
 	}
 }

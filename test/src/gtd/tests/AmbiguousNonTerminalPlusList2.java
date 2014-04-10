@@ -34,6 +34,6 @@ public class AmbiguousNonTerminalPlusList2{
 		AbstractNode result = nrpl2.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([A+([A+(A(a),A(a)),A+(A(aa))],A(a)),A+(A(a),A(aa))]) <- good");
+		System.out.println("S([A+([A+(A(\"a\"),A(\"a\")),A+(A(\"aa\"))],A(\"a\")),A+(A(\"a\"),A(\"aa\"))]) <- good");
 	}
 }

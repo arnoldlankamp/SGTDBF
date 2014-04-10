@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Optional;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
@@ -18,8 +18,8 @@ public class Optional3{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"), new Optional(new Sort("O"))),
-			new Alternative(new Literal("a"), new Sort("A"))
+			new Alternative(new Char('a'), new Optional(new Sort("O"))),
+			new Alternative(new Char('a'), new Sort("A"))
 		};
 	}
 	
@@ -31,7 +31,7 @@ public class Optional3{
 	
 	public static Alternative[] A(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -41,7 +41,7 @@ public class Optional3{
 		AbstractNode result = o3.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(a,A(a)),S(a,O?(O(A(a))))] <- good");
+		System.out.println("[S('a',A('a')),S('a',O?(O(A('a'))))] <- good");
 	}
 }
 

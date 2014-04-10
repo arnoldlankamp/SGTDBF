@@ -56,6 +56,6 @@ public class BrokenInDepthFirst{
 		AbstractNode result = bidf.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(a,[A(B(aa),C(a),D(a)),A(B(a),C(a),D(aa))]),S([A(B(aa),C(a),D(a)),A(B(a),C(a),D(aa))],a)] <- good");
+		System.out.println("[S(\"a\",[A(B(\"aa\"),C(\"a\"),D(\"a\")),A(B(\"a\"),C(\"a\"),D(\"aa\"))]),S([A(B(\"aa\"),C(\"a\"),D(\"a\")),A(B(\"a\"),C(\"a\"),D(\"aa\"))],\"a\")] <- good");
 	}
 }

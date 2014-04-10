@@ -25,6 +25,10 @@ public class LiteralNode extends AbstractNode{
 	}
 	
 	protected String print(IndexedStack<AbstractNode> stack, int depth, CycleMark cycleMark){
-		return new String(content);
+		StringBuilder sb = new StringBuilder();
+		sb.append('"');
+		sb.append(content);
+		sb.append('"');
+		return sb.toString();
 	}
 }

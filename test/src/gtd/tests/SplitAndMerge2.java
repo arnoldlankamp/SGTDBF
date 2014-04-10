@@ -55,6 +55,6 @@ public class SplitAndMerge2{
 		AbstractNode result = sm2.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(D(C(B(A(a)),aa))),S(D(C(B(A(a)),a)),a)] <- good");
+		System.out.println("[S(D(C(B(A(\"a\")),\"aa\"))),S(D(C(B(A(\"a\")),\"a\")),\"a\")] <- good");
 	}
 }

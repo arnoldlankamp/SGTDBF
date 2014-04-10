@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
@@ -48,7 +48,7 @@ public class Ambiguous6{
 	public static Alternative[] D(){
 		return new Alternative[]{
 			new Alternative(new Sort("E")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -66,7 +66,7 @@ public class Ambiguous6{
 	
 	public static Alternative[] G(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -76,6 +76,6 @@ public class Ambiguous6{
 		AbstractNode result = a6.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(A(B(C([D(E(F(G(a)))),D(a)])))),S(E(F(G(a))))] <- good");
+		System.out.println("[S(A(B(C([D(E(F(G('a')))),D('a')])))),S(E(F(G('a'))))] <- good");
 	}
 }

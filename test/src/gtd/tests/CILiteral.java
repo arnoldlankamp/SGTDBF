@@ -25,6 +25,6 @@ public class CILiteral{
 		AbstractNode result = cil.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(Bla) <- good");
+		System.out.println("S(\"Bla\") <- good");
 	}
 }

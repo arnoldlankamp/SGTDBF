@@ -32,6 +32,6 @@ public class Simple1{
 		AbstractNode result = s1.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(A(aa),b) <- good");
+		System.out.println("S(A(\"aa\"),\"b\") <- good");
 	}
 }

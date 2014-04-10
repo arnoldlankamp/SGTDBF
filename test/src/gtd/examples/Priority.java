@@ -23,7 +23,7 @@ public class Priority {
 	public static IStructure[] Expr() {
 		return new IStructure[] {
 			new Alternative(new Sort("Expr"), new Char('+'), new Sort("Expr")),
-			new Scope( // Recursive sorts within a scope can only contain alternative from within that scope and scopes below it in the hierarchy
+			new Scope( // Recursive sorts within a scope can only contain alternatives from within that scope and scopes below it in the hierarchy
 				new Alternative(new Sort("Expr"), new Char('*'), new Sort("Expr")),
 				// The top-level version of the sort can be referenced from within a scope using TLSorts instead of 'normal' ones
 				new Alternative(new Char('('), new TLSort("Expr"), new Char(')')),

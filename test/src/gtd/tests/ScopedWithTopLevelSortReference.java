@@ -6,7 +6,7 @@ import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.structure.IStructure;
 import gtd.grammar.structure.Scope;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.RSort;
 import gtd.grammar.symbols.Sort;
 import gtd.grammar.symbols.TLSort;
@@ -22,11 +22,11 @@ public class ScopedWithTopLevelSortReference{
 	
 	public static IStructure[] A(){
 		return new IStructure[]{
-			new Alternative(new Sort("A"), new Literal("+"), new RSort("A")),
+			new Alternative(new Sort("A"), new Char('+'), new RSort("A")),
 			new Scope(
-				new Alternative(new Sort("A"), new Literal("*"), new RSort("A")),
-				new Alternative(new Literal("|"), new TLSort("A"), new Literal("|")),
-				new Alternative(new Literal("a"))
+				new Alternative(new Sort("A"), new Char('*'), new RSort("A")),
+				new Alternative(new Char('|'), new TLSort("A"), new Char('|')),
+				new Alternative(new Char('a'))
 			)
 		};
 	}
@@ -37,6 +37,6 @@ public class ScopedWithTopLevelSortReference{
 		AbstractNode result = swtlsr.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(A(A(A(a),*,A(|,A(A(a),+,A(a)),|)),*,A(a))) <- good");
+		System.out.println("S(A(A(A('a'),'*',A('|',A(A('a'),'+',A('a')),'|')),'*',A('a'))) <- good");
 	}
 }

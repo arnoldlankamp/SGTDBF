@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
@@ -23,13 +23,13 @@ public class Simple2{
 	
 	public static Alternative[] A(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
 	public static Alternative[] B(){
 		return new Alternative[]{
-			new Alternative(new Literal("b"))
+			new Alternative(new Char('b'))
 		};
 	}
 	
@@ -39,6 +39,6 @@ public class Simple2{
 		AbstractNode result = s2.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(A(a),B(b)) <- good");
+		System.out.println("S(A('a'),B('b')) <- good");
 	}
 }

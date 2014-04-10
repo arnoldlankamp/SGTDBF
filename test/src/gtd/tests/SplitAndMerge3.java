@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
@@ -25,15 +25,15 @@ public class SplitAndMerge3{
 	
 	public static Alternative[] A(){
 		return new Alternative[]{
-			new Alternative(new Sort("B"), new Literal("a")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Sort("B"), new Char('a')),
+			new Alternative(new Char('a'))
 		};
 	}
 	
 	public static Alternative[] B(){
 		return new Alternative[]{
-			new Alternative(new Sort("A"), new Literal("a")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Sort("A"), new Char('a')),
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -49,6 +49,6 @@ public class SplitAndMerge3{
 		AbstractNode result = sm3.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(A(B(A(a),a),a)),S(C(B(A(B(a),a),a)))] <- good");
+		System.out.println("[S(A(B(A('a'),'a'),'a')),S(C(B(A(B('a'),'a'),'a')))] <- good");
 	}
 }

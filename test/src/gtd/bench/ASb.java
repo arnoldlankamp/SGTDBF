@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
 
 import java.lang.management.ManagementFactory;
@@ -17,8 +17,8 @@ public class ASb{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"), new Sort("S"), new Literal("b")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'), new Sort("S"), new Char('b')),
+			new Alternative(new Char('a'))
 		};
 	}
 	

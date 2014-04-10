@@ -4,7 +4,7 @@ import gtd.Parser;
 import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
-import gtd.grammar.symbols.Literal;
+import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
@@ -26,7 +26,7 @@ public class NotAUselessSelfLoop{
 	public static Alternative[] A(){
 		return new Alternative[]{
 			new Alternative(new Sort("C"), new Sort("C")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -40,7 +40,7 @@ public class NotAUselessSelfLoop{
 	public static Alternative[] C(){
 		return new Alternative[]{
 			new Alternative(new Sort("A"), new Sort("A")),
-			new Alternative(new Literal("a"))
+			new Alternative(new Char('a'))
 		};
 	}
 	
@@ -50,6 +50,6 @@ public class NotAUselessSelfLoop{
 		AbstractNode result = nausl.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S([B(C(A(a),A(a)),C(a)),B(A(C(a),C(a)),A(a)),B(C(a),C(A(a),A(a))),B(A(a),A(C(a),C(a)))]),S(A(C(a),C(a)),A(a)),S(A(a),A(C(a),C(a)))] <- good");
+		System.out.println("[S([B(C(A('a'),A('a')),C('a')),B(A(C('a'),C('a')),A('a')),B(C('a'),C(A('a'),A('a'))),B(A('a'),A(C('a'),C('a')))]),S(A(C('a'),C('a')),A('a')),S(A('a'),A(C('a'),C('a')))] <- good");
 	}
 }
