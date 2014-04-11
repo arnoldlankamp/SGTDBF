@@ -32,14 +32,15 @@ public class HelloWorld {
 	}
 
 	public static void main(String[] args) {
-		// Convert the given class into a for the parser usable format (this structure is reusable)
+		// Convert the given class into a for the parser usable format.
+		// Note that this structure is reusable between parser instances.
 		ParserStructure structure = new FromClassGenerator(HelloWorld.class).generate();
 
 		char[] input = "Hello world".toCharArray();
-		// Construct a new parser instance for the given input string
+		// Construct a new parser instance for the given input string.
 		Parser parser = new Parser(input, structure);
 
-		// Start the parser with the given sort as start symbol
+		// Start the parser with the given sort as start symbol.
 		AbstractNode result = parser.parse("Exclamation");
 		System.out.println(result);
 	}

@@ -21,7 +21,8 @@ public class Associativity {
 
 	public static IStructure[] Expr() {
 		return new IStructure[] {
-			// Restrict the nesting of the self recursive alternatives of this sort on the right side
+			// Restrict the nesting of the self recursive alternatives of this sort
+			// on the right side.
 			new Alternative(new Sort("Expr"), new Char('+'), new RSort("Expr")),
 			new Alternative(new Sort("Expr"), new Char('-'), new RSort("Expr")),
 			new Alternative(new Sort("Number"))
