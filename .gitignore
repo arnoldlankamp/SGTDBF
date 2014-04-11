@@ -1,5 +1,4 @@
-interface/bin
-util/bin
-parser/bin
-forest/bin
-test/bin
+target
+.project
+.classpath
+.settings
