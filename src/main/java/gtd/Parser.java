@@ -655,6 +655,6 @@ public final class Parser implements IParser{
 		}
 		
 		// Parse error.
-		throw new RuntimeException("Parse Error before: "+(location == Integer.MAX_VALUE ? 0 : location));
+		throw new ParseErrorException(location == Integer.MAX_VALUE ? 0 : location);
 	}
 }
