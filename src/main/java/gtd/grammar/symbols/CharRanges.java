@@ -28,7 +28,7 @@ public class CharRanges extends AbstractSymbol{
 			nameBuilder.append(charRange.from);
 			nameBuilder.append('-');
 			nameBuilder.append(charRange.to);
-			for(int i = 0; i < charRanges.length; ++i){
+			for(int i = 1; i < charRanges.length; ++i){
 				charRange = charRanges[i];
 				nameBuilder.append(' ');
 				nameBuilder.append(charRange.from);
