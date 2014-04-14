@@ -463,7 +463,6 @@ public final class Parser implements IParser{
 	}
 	
 	private void addTodo(AbstractStackNode node, int length, AbstractNode result){
-		if(result == null) throw new RuntimeException();
 		int queueDepth = todoLists.length;
 		if(length >= queueDepth){
 			DoubleStack<AbstractStackNode, AbstractNode>[] oldTodoLists = todoLists;
