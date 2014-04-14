@@ -37,7 +37,7 @@ public class Hierarchy {
 		public static Alternative[] S() {
 			return new Alternative[] {
 				new Alternative(new Sort("A")),
-				new Alternative(new Sort("B"))
+				new Alternative(new Sort("A"), new Sort("B"))
 			};
 		}
 	}
@@ -46,7 +46,7 @@ public class Hierarchy {
 		// Generate a parser structure for the SubClass
 		ParserStructure structure = new FromClassGenerator(SubClass.class).generate();
 
-		char[] input = "b".toCharArray();
+		char[] input = "ab".toCharArray();
 		Parser parser = new Parser(input, structure);
 
 		AbstractNode result = parser.parse("S");
