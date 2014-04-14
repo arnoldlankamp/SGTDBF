@@ -9,6 +9,7 @@ import gtd.grammar.symbols.AbstractSymbol;
 import gtd.grammar.symbols.CILiteral;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.CharRange;
+import gtd.grammar.symbols.CharRanges;
 import gtd.grammar.symbols.Choice;
 import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Optional;
@@ -50,6 +51,8 @@ public class GrammarEncoder{
 			return new PlusList((Char) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRange){
 			return new PlusList((CharRange) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CharRanges){
+			return new PlusList((CharRanges) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof Literal){
 			return new PlusList((Literal) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CILiteral){
@@ -66,6 +69,8 @@ public class GrammarEncoder{
 			return new StarList((Char) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRange){
 			return new StarList((CharRange) identifiedSymbol, identifiedSeparators);
+		}else if(identifiedSymbol instanceof CharRanges){
+			return new StarList((CharRanges) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof Literal){
 			return new StarList((Literal) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CILiteral){

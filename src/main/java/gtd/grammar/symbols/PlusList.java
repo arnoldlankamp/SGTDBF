@@ -18,6 +18,10 @@ public class PlusList extends AbstractList{
 		this(charRange, separators, null, null);
 	}
 	
+	public PlusList(CharRanges charRanges, AbstractSymbol... separators){
+		this(charRanges, separators, null, null);
+	}
+	
 	public PlusList(Literal literal, AbstractSymbol... separators){
 		this(literal, separators, null, null);
 	}

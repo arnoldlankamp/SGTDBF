@@ -18,6 +18,10 @@ public class StarList extends AbstractList{
 		this(charRange, separators, null, null);
 	}
 	
+	public StarList(CharRanges charRanges, AbstractSymbol... separators){
+		this(charRanges, separators, null, null);
+	}
+	
 	public StarList(Literal literal, AbstractSymbol... separators){
 		this(literal, separators, null, null);
 	}
