@@ -19,6 +19,8 @@ import gtd.grammar.symbols.Sequence;
 import gtd.grammar.symbols.Sort;
 import gtd.grammar.symbols.StarList;
 import gtd.grammar.symbols.TLSort;
+import gtd.stack.filter.IAfterFilter;
+import gtd.stack.filter.IBeforeFilter;
 import gtd.util.ArrayList;
 import gtd.util.IntegerKeyedHashMap;
 
@@ -46,40 +48,46 @@ public class GrammarEncoder{
 		return ++scopeIndexCounter;
 	}
 	
-	private static PlusList constructIdentifiedPlusList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators){
+	private static PlusList constructIdentifiedPlusList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		PlusList plusList;
 		if(identifiedSymbol instanceof Char){
-			return new PlusList((Char) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((Char) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRange){
-			return new PlusList((CharRange) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((CharRange) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRanges){
-			return new PlusList((CharRanges) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((CharRanges) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof Literal){
-			return new PlusList((Literal) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((Literal) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CILiteral){
-			return new PlusList((CILiteral) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((CILiteral) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof IdentifiedSymbol){
-			return new PlusList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
+			plusList = new PlusList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
 		}else{
 			throw new RuntimeException(String.format("Unsupported plus list symbol type: %s", identifiedSymbol.getClass().toString()));
 		}
+		
+		return (PlusList) plusList.withBeforeFilters(beforeFilters).withAfterFilters(afterFilters);
 	}
 	
-	private static StarList constructIdentifiedStarList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators){
+	private static StarList constructIdentifiedStarList(AbstractSymbol identifiedSymbol, AbstractSymbol[] identifiedSeparators, IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
+		StarList starList;
 		if(identifiedSymbol instanceof Char){
-			return new StarList((Char) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((Char) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRange){
-			return new StarList((CharRange) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((CharRange) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CharRanges){
-			return new StarList((CharRanges) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((CharRanges) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof Literal){
-			return new StarList((Literal) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((Literal) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof CILiteral){
-			return new StarList((CILiteral) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((CILiteral) identifiedSymbol, identifiedSeparators);
 		}else if(identifiedSymbol instanceof IdentifiedSymbol){
-			return new StarList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
+			starList = new StarList((IdentifiedSymbol) identifiedSymbol, identifiedSeparators);
 		}else{
 			throw new RuntimeException(String.format("Unsupported star list symbol type: %s", identifiedSymbol.getClass().toString()));
 		}
+		
+		return (StarList) starList.withBeforeFilters(beforeFilters).withAfterFilters(afterFilters);
 	}
 	
 	private static boolean isSelfRecursiveSort(AbstractSymbol identifiedSymbol, String sortName){
@@ -132,7 +140,7 @@ public class GrammarEncoder{
 			AbstractSymbol[] separators = plusList.separators;
 			AbstractSymbol[] identifiedSeparators = identifySymbols(separators, sortName, scopeId);
 			
-			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators);
+			PlusList identifiedPlusList = constructIdentifiedPlusList(identifiedSymbol, identifiedSeparators, plusList.beforeFilters, plusList.afterFilters);
 			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
 			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
 			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
@@ -143,7 +151,7 @@ public class GrammarEncoder{
 			AbstractSymbol[] separators = starList.separators;
 			AbstractSymbol[] identifiedSeparators = identifySymbols(separators, sortName, scopeId);
 			
-			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators);
+			StarList identifiedStarList = constructIdentifiedStarList(identifiedSymbol, identifiedSeparators, starList.beforeFilters, starList.afterFilters);
 			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
 			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
 			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
