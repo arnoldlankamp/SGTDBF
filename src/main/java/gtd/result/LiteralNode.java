@@ -4,7 +4,7 @@ import gtd.result.struct.Link;
 import gtd.util.IndexedStack;
 
 public class LiteralNode extends AbstractNode{
-	private final char[] content;
+	protected final char[] content;
 	
 	public LiteralNode(char[] content){
 		super();
