@@ -5,6 +5,7 @@ import gtd.util.ArrayList;
 import gtd.util.HashMap;
 import gtd.util.IndexedStack;
 
+@SuppressWarnings("unchecked")
 public class ListContainerNode extends AbstractContainerNode{
 	private String cachedResult;
 	
@@ -297,8 +298,10 @@ public class ListContainerNode extends AbstractContainerNode{
 		// Gather
 		HashMap<ArrayList<Link>, String> sharedPrefixCache = new HashMap<ArrayList<Link>, String>();
 		ArrayList<String[]> gatheredAlternatives = new ArrayList<String[]>();
-		gatherAlternatives(firstAlternative, gatheredAlternatives, stack, childDepth, cycleMark, sharedPrefixCache);
-		if(alternatives != null){
+		if(alternatives instanceof Link){
+			gatherAlternatives((Link) alternatives, gatheredAlternatives, stack, childDepth, cycleMark, sharedPrefixCache);
+		}else{
+			ArrayList<Link> alternatives = (ArrayList<Link>) this.alternatives;
 			for(int i = alternatives.size() - 1; i >= 0; --i){
 				gatherAlternatives(alternatives.get(i), gatheredAlternatives, stack, childDepth, cycleMark, sharedPrefixCache);
 			}

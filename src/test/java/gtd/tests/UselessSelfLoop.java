@@ -42,6 +42,6 @@ public class UselessSelfLoop{
 		AbstractNode result = usl.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S([A([B(cycle(A,2)),B('a')]),A('a')]),S([B([A(cycle(B,2)),A('a')]),B('a')])] <- good");
+		System.out.println("[S([B('a'),B([A('a'),A(cycle(B,2))])]),S([A('a'),A([B('a'),B(cycle(A,2))])])] <- good");
 	}
 }

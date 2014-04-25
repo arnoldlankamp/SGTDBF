@@ -4,6 +4,7 @@ import gtd.result.struct.Link;
 import gtd.util.ArrayList;
 import gtd.util.IndexedStack;
 
+@SuppressWarnings("unchecked")
 public class SortContainerNode extends AbstractContainerNode{
 	private String cachedResult;
 	
@@ -75,8 +76,11 @@ public class SortContainerNode extends AbstractContainerNode{
 		
 		// Gather
 		ArrayList<String[]> gatheredAlternatives = new ArrayList<String[]>();
-		gatherAlternatives(firstAlternative, gatheredAlternatives, stack, childDepth, cycleMark);
-		if(alternatives != null){
+		
+		if(alternatives instanceof Link){
+			gatherAlternatives((Link) alternatives, gatheredAlternatives, stack, childDepth, cycleMark);
+		}else{
+			ArrayList<Link> alternatives = (ArrayList<Link>) this.alternatives;
 			for(int i = alternatives.size() - 1; i >= 0; --i){
 				gatherAlternatives(alternatives.get(i), gatheredAlternatives, stack, childDepth, cycleMark);
 			}

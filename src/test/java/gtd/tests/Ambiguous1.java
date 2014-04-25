@@ -33,6 +33,6 @@ public class Ambiguous1{
 		AbstractNode result = a1.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(A('a')),S('a')] <- good");
+		System.out.println("[S('a'),S(A('a'))] <- good");
 	}
 }

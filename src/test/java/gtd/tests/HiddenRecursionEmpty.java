@@ -42,6 +42,6 @@ public class HiddenRecursionEmpty{
 		AbstractNode result = hre.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S(cycle(S,1),[T(cycle(T,1),[U(cycle(U,1),cycle(S,3),cycle(T,2)),U()],cycle(S,2)),T()],[U(cycle(U,1),cycle(S,2),[T(cycle(T,1),cycle(U,2),cycle(S,3)),T()]),U()]),S()] <- good");
+		System.out.println("[S(),S(cycle(S,1),[T(),T(cycle(T,1),[U(),U(cycle(U,1),cycle(S,3),cycle(T,2))],cycle(S,2))],[U(),U(cycle(U,1),cycle(S,2),[T(),T(cycle(T,1),cycle(U,2),cycle(S,3))])])] <- good");
 	}
 }

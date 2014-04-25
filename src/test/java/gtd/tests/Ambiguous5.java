@@ -40,6 +40,6 @@ public class Ambiguous5{
 		AbstractNode result = a5.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([A(B(\"aa\"),B(\"a\")),A(B(\"a\"),B(\"aa\"))]) <- good");
+		System.out.println("S([A(B(\"a\"),B(\"aa\")),A(B(\"aa\"),B(\"a\"))]) <- good");
 	}
 }

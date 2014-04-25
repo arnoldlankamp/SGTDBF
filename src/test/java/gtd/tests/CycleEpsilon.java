@@ -35,6 +35,6 @@ public class CycleEpsilon{
 		AbstractNode result = ce.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([A([A(cycle(A,1),cycle(A,1)),A()],cycle(A,1)),A(cycle(A,1),[A(cycle(A,1),cycle(A,1)),A()]),A('a')]) <- good");
+		System.out.println("S([A('a'),A([A(),A(cycle(A,1),cycle(A,1))],cycle(A,1)),A(cycle(A,1),[A(),A(cycle(A,1),cycle(A,1))])]) <- good");
 	}
 }

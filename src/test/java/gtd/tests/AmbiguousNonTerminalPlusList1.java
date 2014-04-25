@@ -5,7 +5,6 @@ import gtd.generator.FromClassGenerator;
 import gtd.generator.ParserStructure;
 import gtd.grammar.structure.Alternative;
 import gtd.grammar.symbols.Char;
-import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.PlusList;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
@@ -18,7 +17,7 @@ public class AmbiguousNonTerminalPlusList1{
 	
 	public static Alternative[] S(){
 		return new Alternative[]{
-			new Alternative(new Literal("a"), new PlusList(new Sort("A"))),
+			new Alternative(new Char('a'), new PlusList(new Sort("A"))),
 			new Alternative(new PlusList(new Sort("A")), new Char('a'))
 		};
 	}
@@ -35,6 +34,6 @@ public class AmbiguousNonTerminalPlusList1{
 		AbstractNode result = nrpl1.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S('a',A+(A('a'),A('a'))),S(A+(A('a'),A('a')),'a')] <- good");
+		System.out.println("[S(A+(A('a'),A('a')),'a'),S('a',A+(A('a'),A('a')))] <- good");
 	}
 }

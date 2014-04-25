@@ -41,6 +41,6 @@ public class EmptyRightRecursion{
 		AbstractNode result = erre.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S(A('a'),[B(cycle(B,1)),B()]) <- good");
+		System.out.println("S(A('a'),[B(),B(cycle(B,1))]) <- good");
 	}
 }

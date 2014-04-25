@@ -41,7 +41,7 @@ public class Optional3{
 		AbstractNode result = o3.parse("S");
 		System.out.println(result);
 		
-		System.out.println("[S('a',A('a')),S('a',O?(O(A('a'))))] <- good");
+		System.out.println("[S('a',O?(O(A('a')))),S('a',A('a'))] <- good");
 	}
 }
 

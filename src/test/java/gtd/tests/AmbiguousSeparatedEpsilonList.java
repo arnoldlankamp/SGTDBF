@@ -42,7 +42,7 @@ public class AmbiguousSeparatedEpsilonList{
 		AbstractNode result = asel.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([{A, SEP}+([{A, SEP}+(A('a')),{A, SEP}+(A(),repeat(SEP(),A()),SEP(),A('a'))],SEP(),A(),repeat(SEP(),A())),{A, SEP}+(A(),repeat(SEP(),A()),SEP(),A('a')),{A, SEP}+(A('a'))]) <- good, but not minimal");
+		System.out.println("S([{A, SEP}+(A(),repeat(SEP(),A()),SEP(),A('a')),{A, SEP}+(A('a')),{A, SEP}+([{A, SEP}+(A('a')),{A, SEP}+(A(),repeat(SEP(),A()),SEP(),A('a'))],SEP(),A(),repeat(SEP(),A()))]) <- good, but not minimal");
 		//System.out.println("S([(ASEP)+([(ASEP)+(A('a')),(ASEP)+(A(),repeat(SEP(),A()),SEP(),A('a'))],repeat(SEP(),A())),(ASEP)+(A(),repeat(SEP(),A()),SEP(),A('a')),(ASEP)+(A('a'))]) <- good");
 	}
 }

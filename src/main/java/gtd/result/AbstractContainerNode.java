@@ -3,10 +3,10 @@ package gtd.result;
 import gtd.result.struct.Link;
 import gtd.util.ArrayList;
 
+@SuppressWarnings("unchecked")
 public abstract class AbstractContainerNode extends AbstractNode{
 	protected final String name;
-	protected Link firstAlternative;
-	protected ArrayList<Link> alternatives;
+	protected Object alternatives;
 	
 	protected final boolean isNullable;
 	protected final boolean isSeparator;
@@ -20,10 +20,17 @@ public abstract class AbstractContainerNode extends AbstractNode{
 	}
 	
 	public void addAlternative(Link children){
-		if(firstAlternative == null){
-			firstAlternative = children;
+		if(this.alternatives == null){
+			this.alternatives = children;
 		}else{
-			if(alternatives == null) alternatives = new ArrayList<Link>(1);
+			ArrayList<Link> alternatives;
+			if(this.alternatives instanceof ArrayList){
+				alternatives = (ArrayList<Link>) this.alternatives;
+			}else{
+				alternatives = new ArrayList<Link>(2);
+				alternatives.add((Link) this.alternatives);
+				this.alternatives = alternatives;
+			}
 			alternatives.add(children);
 		}
 	}

@@ -36,6 +36,6 @@ public class Ambiguous9{
 		AbstractNode result = a9.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([E(E('1'),'+',E(E('1'),'+',E('1'))),E(E(E('1'),'+',E('1')),'+',E('1'))]) <- good");
+		System.out.println("S([E(E(E('1'),'+',E('1')),'+',E('1')),E(E('1'),'+',E(E('1'),'+',E('1')))]) <- good");
 	}
 }

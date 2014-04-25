@@ -33,6 +33,6 @@ public class AmbiguousNestedPlusList{
 		AbstractNode result = anpl.parse("S");
 		System.out.println(result);
 		
-		System.out.println("S([A+(A([a]+('a')),A([a]+('a'))),A+(A([a]+('a','a')))]) <- good");
+		System.out.println("S([A+(A([a]+('a','a'))),A+(A([a]+('a')),A([a]+('a')))]) <- good");
 	}
 }
