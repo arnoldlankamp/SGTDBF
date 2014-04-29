@@ -599,26 +599,6 @@ public final class Parser implements IParser{
 		}
 	}
 	
-	protected boolean isAtEndOfInput(){
-		return (location == input.length);
-	}
-	
-	protected boolean isInLookAhead(char[][] ranges, char[] characters){
-		if(location == input.length) return false;
-		
-		char next = input[location];
-		for(int i = ranges.length - 1; i >= 0; --i){
-			char[] range = ranges[i];
-			if(next >= range[0] && next <= range[1]) return true;
-		}
-		
-		for(int i = characters.length - 1; i >= 0; --i){
-			if(next == characters[i]) return true;
-		}
-		
-		return false;
-	}
-	
 	public AbstractNode parse(String start){
 		// Initialize.
 		todoLists = new DoubleStack[DEFAULT_TODOLIST_CAPACITY];
