@@ -8,6 +8,7 @@ import gtd.grammar.structure.IStructure;
 import gtd.grammar.structure.Scope;
 import gtd.grammar.symbols.Char;
 import gtd.grammar.symbols.CharRange;
+import gtd.grammar.symbols.RSort;
 import gtd.grammar.symbols.Sort;
 import gtd.grammar.symbols.TLSort;
 import gtd.result.AbstractNode;
@@ -22,11 +23,14 @@ public class Priority {
 
 	public static IStructure[] Expr() {
 		return new IStructure[] {
-			new Alternative(new Sort("Expr"), new Char('+'), new Sort("Expr")),
+			// Restricted sorts and scopes can be combined; note that
+			// restrictions are only applied within the scope and not to any of
+			// the alternatives inherited from nested scopes.
+			new Alternative(new Sort("Expr"), new Char('+'), new RSort("Expr")),
 			// Recursive sorts within a scope can only contain alternatives from
 			// within that scope and scopes below it in the hierarchy.
 			new Scope(
-				new Alternative(new Sort("Expr"), new Char('*'), new Sort("Expr")),
+				new Alternative(new Sort("Expr"), new Char('*'), new RSort("Expr")),
 				// The top-level version of the sort can be referenced from within
 				// a scope using TLSorts instead of 'normal' ones.
 				new Alternative(new Char('('), new TLSort("Expr"), new Char(')')),

@@ -165,7 +165,7 @@ public class GrammarEncoder{
 	
 	private ArrayList<Alternative> encodeAlternatives(String sortName, int scopeId, IStructure[] structures, IntegerKeyedHashMap<ArrayList<Alternative>> groupedAlternatives){
 		ArrayList<Alternative> alternatives = new ArrayList<Alternative>();
-		ArrayList<Alternative> nonSelfRecursiveAlternatives =  new ArrayList<Alternative>();
+		ArrayList<Alternative> nonRestrictedSelfRecursiveAlternatives = new ArrayList<Alternative>();
 		boolean restrictedSortEncountered = false;
 		for(int i = structures.length - 1; i >= 0; --i){
 			IStructure structure = structures[i];
@@ -173,20 +173,13 @@ public class GrammarEncoder{
 				ArrayList<Alternative> scopedAlternatives = encodeAlternatives(sortName, getNextFreeScopeIndex(), ((Scope) structure).alternatives, groupedAlternatives);
 				Object[] scopedAlternativesBackingArray = scopedAlternatives.getBackingArray();
 				alternatives.addFromArray(scopedAlternativesBackingArray, 0, scopedAlternatives.size());
-				for(int j = scopedAlternatives.size() - 1; j >= 0; --j){
-					Alternative scopedAlternative = scopedAlternatives.get(j);
-					if(!containsSelfRecursiveSort(scopedAlternative.alternative, sortName)){
-						nonSelfRecursiveAlternatives.add(scopedAlternative);
-					}else if(containsRestrictedSort(scopedAlternative.alternative)){
-						restrictedSortEncountered = true;
-					}
-				}
+				nonRestrictedSelfRecursiveAlternatives.addFromArray(scopedAlternativesBackingArray, 0, scopedAlternatives.size());
 			}else{
 				Alternative alternative = (Alternative) structure;
 				Alternative identifiedAlternative = identifySortsAndConstructs(sortName, scopeId, alternative);
 				alternatives.add(identifiedAlternative);
 				if(!containsSelfRecursiveSort(identifiedAlternative.alternative, sortName)){
-					nonSelfRecursiveAlternatives.add(identifiedAlternative);
+					nonRestrictedSelfRecursiveAlternatives.add(identifiedAlternative);
 				}else if(containsRestrictedSort(identifiedAlternative.alternative)){
 					restrictedSortEncountered = true;
 				}
@@ -194,7 +187,7 @@ public class GrammarEncoder{
 		}
 		
 		groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, false)), alternatives);
-		if(restrictedSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, true)), nonSelfRecursiveAlternatives);
+		if(restrictedSortEncountered) groupedAlternatives.putUnsafe(getContainerIndex(new Key(sortName, scopeId, true)), nonRestrictedSelfRecursiveAlternatives);
 		
 		return alternatives;
 	}

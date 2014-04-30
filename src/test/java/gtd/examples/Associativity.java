@@ -12,7 +12,7 @@ import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
 public class Associativity {
-	
+
 	public static IStructure[] Number() {
 		return new IStructure[] {
 			new Alternative(new CharRange('0', '9'))
