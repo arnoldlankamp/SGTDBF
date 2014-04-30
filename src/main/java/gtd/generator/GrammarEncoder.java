@@ -83,7 +83,7 @@ public class GrammarEncoder{
 			Optional identifiedOptional = new Optional(identifiedSymbol);
 			boolean containsRestrictedSort = isRestrictedSort(symbol);
 			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName);
-			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
+			return new IdentifiedSymbol(identifiedOptional, getContainerIndex(new Key(optional.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)));
 		}else if(construct instanceof PlusList){
 			PlusList plusList = (PlusList) construct;
 			AbstractSymbol symbol = plusList.symbol;
@@ -94,7 +94,7 @@ public class GrammarEncoder{
 			PlusList identifiedPlusList = (PlusList) new PlusList(identifiedSymbol, identifiedSeparators).withBeforeFilters(plusList.beforeFilters).withAfterFilters(plusList.afterFilters);
 			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
 			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
-			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
+			return new IdentifiedSymbol(identifiedPlusList, getContainerIndex(new Key(plusList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)));
 		}else if(construct instanceof StarList){
 			StarList starList = (StarList) construct;
 			AbstractSymbol symbol = starList.symbol;
@@ -105,7 +105,7 @@ public class GrammarEncoder{
 			StarList identifiedStarList = (StarList) new StarList(identifiedSymbol, identifiedSeparators).withBeforeFilters(starList.beforeFilters).withAfterFilters(starList.afterFilters);
 			boolean containsRestrictedSort = isRestrictedSort(symbol) || containsRestrictedSort(separators);
 			boolean containsSelfRecursiveSort = isSelfRecursiveSort(identifiedSymbol, sortName) || containsSelfRecursiveSort(identifiedSeparators, sortName);
-			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
+			return new IdentifiedSymbol(identifiedStarList, getContainerIndex(new Key(starList.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)));
 		}else if(construct instanceof Choice){
 			Choice choice = (Choice) construct;
 			AbstractSymbol[] symbols = choice.symbols;
@@ -114,7 +114,7 @@ public class GrammarEncoder{
 			Choice identifiedChoice = new Choice(identifiedSymbols);
 			boolean containsRestrictedSort = containsRestrictedSort(symbols);
 			boolean containsSelfRecursiveSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
-			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
+			return new IdentifiedSymbol(identifiedChoice, getContainerIndex(new Key(choice.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)));
 		}else if(construct instanceof Sequence){
 			Sequence sequence = (Sequence) construct;
 			AbstractSymbol[] symbols = sequence.symbols;
@@ -123,7 +123,7 @@ public class GrammarEncoder{
 			Sequence identifiedSequence = new Sequence(identifiedSymbols);
 			boolean containsRestrictedSort = containsRestrictedSort(symbols);
 			boolean containsSelfRecursiveSort = containsSelfRecursiveSort(identifiedSymbols, sortName);
-			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)), containsRestrictedSort);
+			return new IdentifiedSymbol(identifiedSequence, getContainerIndex(new Key(sequence.name, containsSelfRecursiveSort ? scopeId : 0, containsRestrictedSort)));
 		}else{
 			throw new RuntimeException(String.format("Unsupported construct type: %s", construct.getClass().toString()));
 		}
@@ -134,16 +134,16 @@ public class GrammarEncoder{
 			Sort sort = (Sort) symbol;
 			if(sort.sortName.equals(sortName)){
 				if(sort instanceof RSort){
-					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, scopeId, true)), true);
+					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, scopeId, true)));
 				}else if(sort instanceof TLSort){
-					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, 0, false)), false);
+					return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, 0, false)));
 				}
-				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, scopeId, false)), false);
+				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, scopeId, false)));
 			}else{
 				if(sort instanceof RSort){
 					throw new RuntimeException(String.format("Encountered a sort of type '%s' inside a rule of type '%s'. Restricted sorts with a type other then that of the rule itself make no sense.", sort.sortName, sortName));
 				}
-				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, 0, false)), false);
+				return new IdentifiedSymbol(sort, getContainerIndex(new Key(sort.name, 0, false)));
 			}
 		}else if(symbol instanceof AbstractConstruct){
 			return identifyConstruct((AbstractConstruct) symbol, sortName, scopeId);

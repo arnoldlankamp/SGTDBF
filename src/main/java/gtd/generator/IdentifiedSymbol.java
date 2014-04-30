@@ -7,14 +7,12 @@ import gtd.stack.filter.IBeforeFilter;
 public class IdentifiedSymbol extends AbstractSymbol{
 	public final AbstractSymbol symbol;
 	public final int id;
-	public final boolean restricted;
 
-	public IdentifiedSymbol(AbstractSymbol symbol, int id, boolean restricted) {
+	public IdentifiedSymbol(AbstractSymbol symbol, int id) {
 		super(symbol.name, null, null);
 		
 		this.symbol = symbol;
 		this.id = id;
-		this.restricted = restricted;
 	}
 	
 	protected AbstractSymbol cloneWithFilters(IBeforeFilter[] beforeFilters, IAfterFilter[] afterFilters){
