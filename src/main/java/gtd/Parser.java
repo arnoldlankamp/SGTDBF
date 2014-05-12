@@ -19,7 +19,7 @@ import gtd.util.IntegerObjectList;
 import gtd.util.Stack;
 
 @SuppressWarnings({"unchecked"})
-public final class Parser implements IParser{
+public final class Parser{
 	private final static int DEFAULT_TODOLIST_CAPACITY = 16;
 	
 	private final char[] input;
