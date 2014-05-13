@@ -635,6 +635,6 @@ public final class Parser{
 		}
 		
 		// Parse error.
-		throw new ParseErrorException(location == Integer.MAX_VALUE ? 0 : location);
+		throw new ParseErrorException(location);
 	}
 }
