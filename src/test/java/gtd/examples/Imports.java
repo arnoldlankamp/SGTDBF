@@ -8,9 +8,9 @@ import gtd.grammar.symbols.Literal;
 import gtd.grammar.symbols.Sort;
 import gtd.result.AbstractNode;
 
-public class Hierarchy {
+public class Imports {
 
-	public static class SuperClass {
+	public static class GenericStuff {
 
 		public static Alternative[] A() {
 			return new Alternative[] {
@@ -25,15 +25,15 @@ public class Hierarchy {
 		}
 	}
 
-	public static class SubClass extends SuperClass {
-		// Add a new sort
+	public static class Spec {
+		public final static Class<?>[] IMPORTS = new Class<?>[]{GenericStuff.class};
+
 		public static Alternative[] B() {
 			return new Alternative[] {
 				new Alternative(new Literal("b"))
 			};
 		}
 
-		// Replace the definition of S
 		public static Alternative[] S() {
 			return new Alternative[] {
 				new Alternative(new Sort("A")),
@@ -44,7 +44,7 @@ public class Hierarchy {
 
 	public static void main(String[] args) {
 		// Generate a parser structure for the SubClass
-		ParserStructure structure = new FromClassGenerator(SubClass.class).generate();
+		ParserStructure structure = new FromClassGenerator(Spec.class).generate();
 
 		char[] input = "ab".toCharArray();
 		Parser parser = new Parser(input, structure);
