@@ -36,6 +36,7 @@ public class FromClassGenerator{
 					Class<?> importedClass = imports[i];
 					if(!sourceClasses.contains(importedClass)){ // O(N^2) operation, but the list should be fairly short anyway
 						sourceClasses.add(importedClass);
+						gatherModuleImports(importedClass, sourceClasses);
 					}
 				}
 				return;
