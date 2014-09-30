@@ -165,7 +165,7 @@ public class Hierarchy {
 ```
 
 Additionally a public static array of classes called IMPORTS can be defined, which will be imported transitively, in order:
-```
+```java
 package gtd.examples;
 
 import gtd.Parser;
