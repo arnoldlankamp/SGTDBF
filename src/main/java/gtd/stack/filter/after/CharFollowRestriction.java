@@ -12,13 +12,13 @@ public class CharFollowRestriction implements IAfterFilter{
 	}
 	
 	public boolean isFiltered(char[] input, int start, int end){
-		if(end >= input.length) return true;
+		if(end >= input.length) return false;
 		
 		return input[end] == character;
 	}
 	
 	public int hashCode(){
-		int hashCode = 9;
+		int hashCode = 11;
 		hashCode ^= character << 21 | character >>> 11;
 		return hashCode;
 	}

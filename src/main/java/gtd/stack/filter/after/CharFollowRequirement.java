@@ -18,7 +18,7 @@ public class CharFollowRequirement implements IAfterFilter{
 	}
 	
 	public int hashCode(){
-		int hashCode = 8;
+		int hashCode = 12;
 		hashCode ^= character << 21 | character >>> 11;
 		return hashCode;
 	}
