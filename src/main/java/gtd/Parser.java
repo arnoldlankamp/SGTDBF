@@ -558,7 +558,7 @@ public final class Parser{
 							AbstractNode result = child.match(input, location);
 							if(result == null) continue; // Discard if it didn't match.
 							
-							if(!canEnter(node)) continue;
+							if(!canEnter(child)) continue;
 							
 							child = child.getCleanCopyWithResult(location, result);
 							addTodo(child, length, result);
