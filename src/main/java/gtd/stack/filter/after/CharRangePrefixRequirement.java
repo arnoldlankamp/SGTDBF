@@ -1,8 +1,8 @@
-package gtd.stack.filter.before;
+package gtd.stack.filter.after;
 
-import gtd.stack.filter.IBeforeFilter;
+import gtd.stack.filter.IAfterFilter;
 
-public class CharRangePrefixRequirement implements IBeforeFilter{
+public class CharRangePrefixRequirement implements IAfterFilter{
 	private final char from;
 	private final char to;
 	
@@ -13,8 +13,8 @@ public class CharRangePrefixRequirement implements IBeforeFilter{
 		this.to = to;
 	}
 	
-	public boolean isFiltered(char[] input, int start){
-		if(start + 1 > input.length) return true;
+	public boolean isFiltered(char[] input, int start, int end){
+		if(start + 1 > end) return true;
 		
 		return (from > input[start] || to < input[start]);
 	}

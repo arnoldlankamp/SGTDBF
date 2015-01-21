@@ -1,6 +1,8 @@
-package gtd.stack.filter.before;
+package gtd.stack.filter.after;
 
-public class CharPrefixRequirement {
+import gtd.stack.filter.IAfterFilter;
+
+public class CharPrefixRequirement implements IAfterFilter{
 private final char character;
 	
 	public CharPrefixRequirement(char character){
@@ -10,8 +12,8 @@ private final char character;
 	}
 	
 
-	public boolean isFiltered(char[] input, int start){
-		if(start + 1 > input.length) return true;
+	public boolean isFiltered(char[] input, int start, int end){
+		if(start + 1 > end) return true;
 		
 		return (input[start] != character);
 	}
