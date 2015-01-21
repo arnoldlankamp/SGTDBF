@@ -33,7 +33,7 @@ public class SequenceStackNode extends AbstractExpandableStackNode{
 			children[i - 1].addNext(children[i]);
 		}
 		
-		return children;
+		return new AbstractStackNode[]{children[0]};
 	}
 	
 	public String getName(){
