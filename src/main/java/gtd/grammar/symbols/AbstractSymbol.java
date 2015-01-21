@@ -9,6 +9,7 @@ import gtd.stack.filter.after.CharPrefixRequirement;
 import gtd.stack.filter.after.CharPrefixRestriction;
 import gtd.stack.filter.after.CharRangeFollowRequirement;
 import gtd.stack.filter.after.CharRangeFollowRestriction;
+import gtd.stack.filter.after.CharRangeMatchRestriction;
 import gtd.stack.filter.after.CharRangePrefixRequirement;
 import gtd.stack.filter.after.CharRangePrefixRestriction;
 import gtd.stack.filter.after.StringFollowRequirement;
@@ -94,16 +95,16 @@ public abstract class AbstractSymbol{
 	}
 	
 	// Convenience methods
-	public AbstractSymbol precededBy(char start, char end) {
-		return withBeforeFilters(new CharRangePrecedeRequirement(start, end));
+	public AbstractSymbol precededBy(char from, char to) {
+		return withBeforeFilters(new CharRangePrecedeRequirement(from, to));
 	}
 	
 	public AbstractSymbol precededBy(String string) {
 		return withBeforeFilters(new StringPrecedeRequirement(string));
 	}
 	
-	public AbstractSymbol notPrecededBy(char start, char end) {
-		return withBeforeFilters(new CharRangePrecedeRestriction(start, end));
+	public AbstractSymbol notPrecededBy(char from, char to) {
+		return withBeforeFilters(new CharRangePrecedeRestriction(from, to));
 	}
 	
 	public AbstractSymbol notPrecededBy(String string) {
@@ -114,24 +115,24 @@ public abstract class AbstractSymbol{
 		return withAfterFilters(new CharPrefixRequirement(character));
 	}
 	
-	public AbstractSymbol startingWith(char start, char end) {
-		return withAfterFilters(new CharRangePrefixRequirement(start, end));
+	public AbstractSymbol startingWith(char from, char to) {
+		return withAfterFilters(new CharRangePrefixRequirement(from, to));
 	}
 	
 	public AbstractSymbol notStartingWith(char character) {
 		return withAfterFilters(new CharPrefixRestriction(character));
 	}
 	
-	public AbstractSymbol notStartingWith(char start, char end) {
-		return withAfterFilters(new CharRangePrefixRestriction(start, end));
+	public AbstractSymbol notStartingWith(char from, char to) {
+		return withAfterFilters(new CharRangePrefixRestriction(from, to));
 	}
 	
 	public AbstractSymbol followedBy(char character) {
 		return withAfterFilters(new CharFollowRequirement(character));
 	}
 	
-	public AbstractSymbol followedBy(char start, char end) {
-		return withAfterFilters(new CharRangeFollowRequirement(start, end));
+	public AbstractSymbol followedBy(char from, char to) {
+		return withAfterFilters(new CharRangeFollowRequirement(from, to));
 	}
 	
 	public AbstractSymbol followedBy(String string) {
@@ -142,8 +143,8 @@ public abstract class AbstractSymbol{
 		return withAfterFilters(new CharFollowRestriction(character));
 	}
 	
-	public AbstractSymbol notFollowedBy(char start, char end) {
-		return withAfterFilters(new CharRangeFollowRestriction(start, end));
+	public AbstractSymbol notFollowedBy(char from, char to) {
+		return withAfterFilters(new CharRangeFollowRestriction(from, to));
 	}
 	
 	public AbstractSymbol notFollowedBy(String string) {
@@ -152,6 +153,10 @@ public abstract class AbstractSymbol{
 	
 	public AbstractSymbol excluding(char character) {
 		return withAfterFilters(new CharMatchRestriction(character));
+	}
+	
+	public AbstractSymbol excluding(char from, char to) {
+		return withAfterFilters(new CharRangeMatchRestriction(from, to));
 	}
 	
 	public AbstractSymbol excluding(String string) {
