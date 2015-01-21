@@ -2,6 +2,22 @@ package gtd.grammar.symbols;
 
 import gtd.stack.filter.IAfterFilter;
 import gtd.stack.filter.IBeforeFilter;
+import gtd.stack.filter.after.CharFollowRequirement;
+import gtd.stack.filter.after.CharFollowRestriction;
+import gtd.stack.filter.after.CharMatchRestriction;
+import gtd.stack.filter.after.CharPrefixRequirement;
+import gtd.stack.filter.after.CharPrefixRestriction;
+import gtd.stack.filter.after.CharRangeFollowRequirement;
+import gtd.stack.filter.after.CharRangeFollowRestriction;
+import gtd.stack.filter.after.CharRangePrefixRequirement;
+import gtd.stack.filter.after.CharRangePrefixRestriction;
+import gtd.stack.filter.after.StringFollowRequirement;
+import gtd.stack.filter.after.StringFollowRestriction;
+import gtd.stack.filter.after.StringMatchRestriction;
+import gtd.stack.filter.before.CharRangePrecedeRequirement;
+import gtd.stack.filter.before.CharRangePrecedeRestriction;
+import gtd.stack.filter.before.StringPrecedeRequirement;
+import gtd.stack.filter.before.StringPrecedeRestriction;
 
 public abstract class AbstractSymbol{
 	public final String name;
@@ -75,5 +91,70 @@ public abstract class AbstractSymbol{
 		}
 		
 		return true;
+	}
+	
+	// Convenience methods
+	public AbstractSymbol precededBy(char start, char end) {
+		return withBeforeFilters(new CharRangePrecedeRequirement(start, end));
+	}
+	
+	public AbstractSymbol precededBy(String string) {
+		return withBeforeFilters(new StringPrecedeRequirement(string));
+	}
+	
+	public AbstractSymbol notPrecededBy(char start, char end) {
+		return withBeforeFilters(new CharRangePrecedeRestriction(start, end));
+	}
+	
+	public AbstractSymbol notPrecededBy(String string) {
+		return withBeforeFilters(new StringPrecedeRestriction(string));
+	}
+	
+	public AbstractSymbol startingWith(char character) {
+		return withAfterFilters(new CharPrefixRequirement(character));
+	}
+	
+	public AbstractSymbol startingWith(char start, char end) {
+		return withAfterFilters(new CharRangePrefixRequirement(start, end));
+	}
+	
+	public AbstractSymbol notStartingWith(char character) {
+		return withAfterFilters(new CharPrefixRestriction(character));
+	}
+	
+	public AbstractSymbol notStartingWith(char start, char end) {
+		return withAfterFilters(new CharRangePrefixRestriction(start, end));
+	}
+	
+	public AbstractSymbol followedBy(char character) {
+		return withAfterFilters(new CharFollowRequirement(character));
+	}
+	
+	public AbstractSymbol followedBy(char start, char end) {
+		return withAfterFilters(new CharRangeFollowRequirement(start, end));
+	}
+	
+	public AbstractSymbol followedBy(String string) {
+		return withAfterFilters(new StringFollowRequirement(string));
+	}
+	
+	public AbstractSymbol notFollowedBy(char character) {
+		return withAfterFilters(new CharFollowRestriction(character));
+	}
+	
+	public AbstractSymbol notFollowedBy(char start, char end) {
+		return withAfterFilters(new CharRangeFollowRestriction(start, end));
+	}
+	
+	public AbstractSymbol notFollowedBy(String string) {
+		return withAfterFilters(new StringFollowRestriction(string));
+	}
+	
+	public AbstractSymbol excluding(char character) {
+		return withAfterFilters(new CharMatchRestriction(character));
+	}
+	
+	public AbstractSymbol excluding(String string) {
+		return withAfterFilters(new StringMatchRestriction(string));
 	}
 }
