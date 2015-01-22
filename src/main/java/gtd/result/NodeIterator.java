@@ -16,45 +16,44 @@ public abstract class NodeIterator{
 	
 	protected abstract void visit(String name, SortContainerNode node);
 	
-	private void visitPrefix(Link link, HashSet<AbstractNode> visitedNodes){
-		if(link == null) return;
+	private void visitPrefix(Link link, HashSet<Link> visitedLinks, HashSet<AbstractNode> visitedNodes){
+		if(link == null || !visitedLinks.add(link)) return;
 		
 		if(link.node instanceof AbstractContainerNode){
-			if(!visitContainerNode((AbstractContainerNode) link.node, visitedNodes)) return;
+			visitContainerNode((AbstractContainerNode) link.node, visitedLinks, visitedNodes);
 		}
 		
 		if(link.prefixes != null){
 			for(int i = link.prefixes.size() - 1; i >= 0; --i){
-				visitPrefix(link.prefixes.get(i), visitedNodes);
+				visitPrefix(link.prefixes.get(i), visitedLinks, visitedNodes);
 			}
 		}
 	}
 	
-	private boolean visitContainerNode(AbstractContainerNode node, HashSet<AbstractNode> visitedNodes){
-		if(!visitedNodes.add(node)) return false;
-		
-		if(node instanceof SortContainerNode){
+	private void visitContainerNode(AbstractContainerNode node, HashSet<Link> visitedLinks, HashSet<AbstractNode> visitedNodes){
+		if(node instanceof SortContainerNode && !visitedNodes.contains(node)){
 			visit(node.name, (SortContainerNode) node);
+
+			visitedNodes.add(node);
 		}
 		
 		if(node.alternatives instanceof Link){
-			visitPrefix((Link) node.alternatives, visitedNodes);
+			visitPrefix((Link) node.alternatives, visitedLinks, visitedNodes);
 		}else{
 			ArrayList<Link> alternatives = (ArrayList<Link>) node.alternatives;
 			for(int i = alternatives.size() - 1; i >= 0; --i){
-				visitPrefix(alternatives.get(i), visitedNodes);
+				visitPrefix(alternatives.get(i), visitedLinks, visitedNodes);
 			}
 		}
-		
-		return true;
 	}
 	
 	public void iterate(){
+		HashSet<Link> visitedLinks = new HashSet<Link>();
 		HashSet<AbstractNode> visitedNodes = new HashSet<AbstractNode>();
 		
 		if(result instanceof AbstractContainerNode) {
 			AbstractContainerNode node = (AbstractContainerNode) result;
-			visitContainerNode(node, visitedNodes);
+			visitContainerNode(node, visitedLinks, visitedNodes);
 		}
 	}
 }
