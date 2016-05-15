@@ -89,7 +89,7 @@ public final class Parser{
 		AbstractStackNode alternative = sharedNextNodes[next.getId()];
 		
 		if(alternative != null){
-			if(node.getStartLocation() == location){
+			if(alternative.getStartLocation() == location){
 				if(alternative.isMatchable()){
 					if(alternative.isEmptyLeafNode()){
 						// Encountered possible stack 'overtake'.
@@ -101,17 +101,15 @@ public final class Parser{
 						return alternative;
 					}
 				}else{
-					if(alternative.getStartLocation() == location){
-						EdgesSet alternativeEdgesSet = alternative.getIncomingEdges();
-						if(alternativeEdgesSet != null && alternativeEdgesSet.getLastVisistedLevel() == location){
-							// Encountered possible stack 'overtake'.
-							if(node.getStartLocation() != location){
-								propagateEdgesAndPrefixes(node, result, alternative, alternativeEdgesSet.getLastResult());
-							}else{
-								propagateEdgesAndPrefixesForNullable(node, result, alternative, alternativeEdgesSet.getLastResult(), node.getEdges().size());
-							}
-							return alternative;
+					EdgesSet alternativeEdgesSet = alternative.getIncomingEdges();
+					if(alternativeEdgesSet != null && alternativeEdgesSet.getLastVisistedLevel() == location){
+						// Encountered possible stack 'overtake'.
+						if(node.getStartLocation() != location){
+							propagateEdgesAndPrefixes(node, result, alternative, alternativeEdgesSet.getLastResult());
+						}else{
+							propagateEdgesAndPrefixesForNullable(node, result, alternative, alternativeEdgesSet.getLastResult(), node.getEdges().size());
 						}
+						return alternative;
 					}
 				}
 			}

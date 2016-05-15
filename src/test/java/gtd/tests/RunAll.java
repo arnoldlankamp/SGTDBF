@@ -156,6 +156,9 @@ public class RunAll{
 		System.out.println("HiddenHiddenRightRecursive:");
 		HiddenHiddenRightRecursive.main(args);
 		System.out.println();
+		System.out.println("HiddenRightRecursive:");
+		HiddenRightRecursive.main(args);
+		System.out.println();
 		
 		System.out.println("AmbiguousRecursiveNullable:");
 		AmbiguousRecursiveNullable.main(args);
